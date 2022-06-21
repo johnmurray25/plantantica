@@ -1,0 +1,16 @@
+.nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.icon {
+    color: #063a20;
+}
+
+.icon :hover {
+    color: #0b5b33;
+}

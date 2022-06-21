@@ -1,0 +1,166 @@
+.container {
+  padding: 0 2rem;
+  background: linear-gradient(-45deg, #0b5b33, #e7fff3, #b4d3c6, #0b5b33);
+  background-size: 400% 400%;
+  animation: gradient 20s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.main {
+  min-height: 100vh;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+}
+
+.footer {
+  display: flex;
+  flex: 1;
+  padding: 2rem 0;
+  border-top: 1px solid rgb(0, 0, 146);
+  justify-content: center;
+  align-items: center;
+}
+
+.footer a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.title a {
+  text-decoration: none;
+  background: linear-gradient(to right, #0b5b33, #00b95c 50%, #0b5b33 50%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 100%;
+  background-position: 0%;
+  transition: background-position 275ms ease;
+}
+
+.title a:hover,
+.title a:focus,
+.title a:active {
+  text-decoration: underline;
+  background-position: 0 100%;
+}
+
+.title {
+  margin: 0;
+  line-height: 1.15;
+  font-size: 4rem;
+}
+
+.title h2 {
+  color: #063a20;
+}
+
+.title,
+.description {
+  text-align: center;
+}
+
+.description {
+  margin: 4rem 0;
+  line-height: 1.5;
+  font-size: 1.5rem;
+  color: #0b5b33;
+}
+
+.code {
+  background: #fafafa;
+  border-radius: 5px;
+  padding: 0.75rem;
+  font-size: 1.1rem;
+  font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
+    Bitstream Vera Sans Mono, Courier New, monospace;
+}
+
+.grid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 800px;
+}
+
+.card {
+  margin: 1rem;
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid #0b5b33;
+  border-radius: 8px;
+  transition: color 0.25s ease, border-color 0.15s ease;
+  color: #0b5b33;
+}
+
+.card:hover,
+.card:focus,
+.card:active {
+  color: white;
+  border-color: #0b5b33;
+  background: linear-gradient(-45deg, #0b5b33, #a5c2b6, #0b5b33);
+  background-size: 400% 400%;
+  animation: gradient 20s ease infinite;
+}
+
+.card h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.card p {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.logo {
+  height: 1em;
+  margin-left: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .grid {
+    width: 100%;
+    flex-direction: column;
+  }
+}
+
+.postContainer {
+  min-width: fit-content;
+  min-height: 100vh;
+  padding: 0;
+  margin: auto;
+  align-items: flex-start;
+}
+
+.blogPost {
+  min-width: 40vw;
+}
+
+.icon {
+  color: #063a20;
+}
+
+.icon :hover {
+  color: #0b5b33;
+}
