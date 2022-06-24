@@ -1,7 +1,7 @@
 .container {
     padding: 0 2rem;
-    color: rgb(216, 216, 0);
-    background: rgb(28, 61, 28);/*linear-gradient(-45deg, #0b5b33, #e7fff3, #b4d3c6, #0b5b33);/**/
+    color: rgb(216, 216, 0);/**/
+    background: rgb(28, 61, 28);/**//*linear-gradient(-45deg, #0b5b33, #e7fff3, #b4d3c6, #0b5b33);/**/
     background-size: 400% 400%;
     animation: gradient 20s ease infinite;
   }
