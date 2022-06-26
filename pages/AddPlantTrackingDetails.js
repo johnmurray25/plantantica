@@ -3,6 +3,7 @@ import styles from "../styles/tracking.module.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Input, Button, Link } from "@mui/material";
+import brightness from './util/BrightnessConstant';
 
 function AddPlantTrackingDetails() {
   const todaysDate = new Date();
@@ -10,8 +11,11 @@ function AddPlantTrackingDetails() {
   const [dateObtained, setDateObtained] = useState(todaysDate);
   const [minDays, setMinDays] = useState(7);
   const [maxDays, setMaxDays] = useState(10);
-  const [nextWater, setNextWater] = useState(todaysDate);
-  const [nextFeeding, setNextFeeding] = useState(todaysDate);
+  const [dateLastWatered, setDateLastWatered] = useState(todaysDate);
+  const [dateToWaterNext, setDateToWaterNext] = useState(todaysDate);
+  const [dateLastFed, setDateLastFed] = useState(todaysDate);
+  const [dateToFeedNext, setDateToFeedNext] = useState(todaysDate);
+  const [lightRequired, setLightRequired] = useState(2)
 
   const savePlantTrackingDetails = async (event) => {
     event.preventDefault();
@@ -20,10 +24,16 @@ function AddPlantTrackingDetails() {
     console.log(`max days: ${maxDays}`);
     let details = {
       species: species,
+      dateObtained: dateObtained,
       minDaysBetweenWatering: minDays,
       maxDaysBetweenWatering: maxDays,
-      
+      dateLastWatered: dateLastWatered,
+      dateToWaterNext: dateToWaterNext,
+      dateLastFed: dateLastFed,
+      dateToFeedNext: dateToFeedNext,
+      lightRequired: lightRequired 
     };
+    console.log(`details: ${details.species}`)
     let response = await fetch(
       "http://localhost:8080/plant-tracking-details/save",
       {
@@ -51,10 +61,10 @@ function AddPlantTrackingDetails() {
     setMaxDays(n);
   };
   const onChangeNextWater = (date) => {
-    setNextWater(date);
+    setDateToWaterNext(date);
   };
   const onChangeNextFeeding = (date) => {
-    setNextFeeding(date);
+    setDateToFeedNext(date);
   };
 
   return (
@@ -65,16 +75,16 @@ function AddPlantTrackingDetails() {
       <div className={styles.main}>
         <form className={styles.form}>
           <fieldset>
-            <label>
+            <label htmlFor="species">
               species:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </label>
-            <Input
-              className={styles.input}
+            <input
+              className="text-start  bg-lightGrayGreen text-slate"
               type="text"
               name="species"
-              id="minDays"
-              min="0"
-              value={species}
+              id="species"
+              placeholder="Enter a species..."
+              selected={species}
               onChange={onChangeSpecies}
             />
             <br></br>
@@ -104,23 +114,39 @@ function AddPlantTrackingDetails() {
               min="0"
             />
             <br></br>
-            <label htmlFor="nextWater">next watering date: </label>
+            <label htmlFor="nextWater">date last watered:</label>
             <DatePicker
               className={styles.input}
               id="nextWater"
-              selected={nextWater}
+              selected={dateLastWatered}
+              onChange={(d) => setDateLastWatered(d)}
+            />
+            <br></br>
+            <label htmlFor="nextWater">date to water next:</label>
+            <DatePicker
+              className={styles.input}
+              id="nextWater"
+              selected={dateToWaterNext}
               onChange={onChangeNextWater}
             />
             <br></br>
-            <label htmlFor="nextFeeding">next feeding date: </label>
+            <label htmlFor="nextFeeding">date last fed:</label>
             <DatePicker
               className={styles.input}
               id="nextFeeding"
-              selected={nextFeeding}
+              selected={dateLastFed}
+              onChange={(d) => setDateLastFed(d)}
+            />
+            <br></br>
+            <label htmlFor="nextFeeding">date to feed next:</label>
+            <DatePicker
+              className={styles.input}
+              id="nextFeeding"
+              selected={dateToFeedNext}
               onChange={onChangeNextFeeding}
             />
             <br></br>
-            <label htmlFor="dateObtained">had since: </label>
+            <label htmlFor="dateObtained">date obtained: </label>
             <DatePicker
               className={styles.input}
               id="dateObtained"
@@ -156,10 +182,7 @@ function AddPlantTrackingDetails() {
           <Button
             type="submit"
             variant="contained"
-            style={{
-              backgroundColor: "rgb(216, 216, 0)",
-              color: "rgb(28, 61, 28)",
-            }}
+            className="bg-yellow text-green font-bold"
             onClick={savePlantTrackingDetails}
           >
             Save

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import styles from "../styles/Home.module.css";
 import Nav from "./components/Nav";
@@ -13,19 +14,28 @@ const Home = () => {
 
   const getPlants = () => {
     setIsLoading(true);
-    const response = fetch("http://localhost:8080/plant-tracking-details/all")
-      .then((response) => {
-        if (response.ok) return response.json();
-        else {
-            setPlants(500);
-            throw new Error("Failed to fetch plant tracking details");
-        }
-      })
-      .then((data) => {
-        if (data.plantTrackingDetailsList)
-          setPlants(data.plantTrackingDetailsList);
-        setIsLoading(false);
-      });
+    try {
+      const response = fetch("http://localhost:8080/plant-tracking-details/all")
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          }
+          else {
+            let msg = "Failed to fetch plant tracking details"
+            console.error(msg)
+            setPlants([{ species: "500" }]);
+            throw new Error(msg);
+          }
+        })
+        .then((data) => {
+          if (data.plantTrackingDetailsList)
+            setPlants(data.plantTrackingDetailsList);
+          setIsLoading(false);
+        });
+    } catch (error) {
+      console.error(error);
+      console.error("catch block : Failed to fetch plant tracking details")
+    }
   };
 
   return (
@@ -36,6 +46,11 @@ const Home = () => {
           <a>Tracking</a>
         </div>
         <div className={styles.grid}>
+          <Link href="/AddPlantTrackingDetails">
+            <a style={{ textAlign: "right", color: "#063a20" }}>
+              Add a plant!
+            </a>
+          </Link>
           {isLoading && <h1>loading...</h1>}
           {plants.length > 0 && (
             <div>
@@ -44,7 +59,7 @@ const Home = () => {
             </div>
           )}
           {plants == 500 && (
-              <div>Error retrieving plant tracking details. Please try again later</div>
+            <div>Error retrieving plant tracking details. Please try again later</div>
           )}
         </div>
       </div>

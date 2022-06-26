@@ -1,7 +1,7 @@
 .container {
   padding: 0 2rem;
-  color: rgb(216, 216, 0); /**/
-  background: rgb(28, 61, 28); 
+  color: rgb(216, 216, 0);
+  background: rgb(28, 61, 28);
 }
 
 .main {
@@ -104,4 +104,9 @@
 
 .blogPost {
   min-width: 40vw;
+}
+
+.form {
+  border: 4px;
+  border-color: rgb(216, 216, 0);
 }
