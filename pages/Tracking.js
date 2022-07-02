@@ -45,12 +45,13 @@ const Home = () => {
         <div className={styles.title}>
           <a>Tracking</a>
         </div>
-        <div className={styles.grid}>
+        <div className="text-right w-60 hover:underline">
           <Link href="/AddPlantTrackingDetails">
-            <a style={{ textAlign: "right", color: "#063a20" }}>
-              Add a plant!
-            </a>
-          </Link>
+          <a>
+            Add a plant!
+          </a>
+        </Link></div>
+        <div className={styles.grid}>
           {isLoading && <h1>loading...</h1>}
           {plants.length > 0 && (
             <div>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styles from "../styles/tracking.module.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Input, Button, Link } from "@mui/material";
+import { Input, Button, Link, Select, MenuItem } from "@mui/material";
 import brightness from './util/BrightnessConstant';
 
 function AddPlantTrackingDetails() {
@@ -31,9 +31,9 @@ function AddPlantTrackingDetails() {
       dateToWaterNext: dateToWaterNext,
       dateLastFed: dateLastFed,
       dateToFeedNext: dateToFeedNext,
-      lightRequired: lightRequired 
+      lightRequired: lightRequired
     };
-    console.log(`details: ${details.species}`)
+    console.log(`Saving plant tracking details for species: ${details.species}`)
     let response = await fetch(
       "http://localhost:8080/plant-tracking-details/save",
       {
@@ -43,14 +43,16 @@ function AddPlantTrackingDetails() {
           "Content-Type": "application/json",
         },
       }
-    ).then((data) => {
-      console.log(`Saved plant tracking details with id ${data.id}`);
-    });
+    )
+    .catch((e) => {
+      console.error(e);
+      console.error("Failed to save plant tracking details");
+      alert("Failed to save plant tracking details");
+    })
+    const content = await response.json();
+    console.log(`Saved plant tracking details with id ${content.id}`);
   };
 
-  const onChangeSpecies = (s) => {
-    setSpecies(s);
-  };
   const onChangeDateObtained = (date) => {
     setDateObtained(date);
   };
@@ -78,15 +80,32 @@ function AddPlantTrackingDetails() {
             <label htmlFor="species">
               species:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </label>
-            <input
-              className="text-start  bg-lightGrayGreen text-slate"
+            <Input
+              className={styles.input}
               type="text"
               name="species"
               id="species"
               placeholder="Enter a species..."
               selected={species}
-              onChange={onChangeSpecies}
+              onChange={(e) => setSpecies(e.target.value)}
             />
+            <br></br>
+            <label htmlFor="lightReq">
+              light required:
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </label>
+            <Select
+              id="lightReq"
+              className="bg-lightGrayGreen m-2 w-2/5"
+              value={lightRequired}
+              label="light required"
+              onChange={(e) => setLightRequired(e.target.value)}
+            >
+              <MenuItem value={2}>Bright indirect</MenuItem>
+              <MenuItem value={10}>Full sun</MenuItem>
+            </Select>
             <br></br>
             <label htmlFor="minDays">
               min days between watering:
@@ -114,45 +133,60 @@ function AddPlantTrackingDetails() {
               min="0"
             />
             <br></br>
-            <label htmlFor="nextWater">date last watered:</label>
-            <DatePicker
-              className={styles.input}
-              id="nextWater"
-              selected={dateLastWatered}
-              onChange={(d) => setDateLastWatered(d)}
-            />
+            <div className="flex">
+              <label htmlFor="nextWater">date last watered:</label>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <DatePicker
+                className={styles.input}
+                id="nextWater"
+                selected={dateLastWatered}
+                onChange={(d) => setDateLastWatered(d)}
+              />
+            </div>
             <br></br>
+            <div className="flex">
             <label htmlFor="nextWater">date to water next:</label>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <DatePicker
               className={styles.input}
               id="nextWater"
               selected={dateToWaterNext}
               onChange={onChangeNextWater}
             />
+            </div>
             <br></br>
+            <div className="flex">
             <label htmlFor="nextFeeding">date last fed:</label>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <DatePicker
               className={styles.input}
               id="nextFeeding"
               selected={dateLastFed}
               onChange={(d) => setDateLastFed(d)}
             />
+            </div>
             <br></br>
+            <div className="flex">
             <label htmlFor="nextFeeding">date to feed next:</label>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <DatePicker
               className={styles.input}
               id="nextFeeding"
               selected={dateToFeedNext}
               onChange={onChangeNextFeeding}
             />
+            </div>
             <br></br>
+            <div className="flex">
             <label htmlFor="dateObtained">date obtained: </label>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <DatePicker
               className={styles.input}
               id="dateObtained"
               selected={dateObtained}
               onChange={onChangeDateObtained}
             />
+            </div>
           </fieldset>
           <br></br>
           <Link
@@ -175,14 +209,14 @@ function AddPlantTrackingDetails() {
             </Button>
           </Link>
           <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
           </span>
           <Button
             type="submit"
             variant="contained"
-            className="bg-yellow text-green font-bold"
+            className="bg-yellow text-green font-bold hover:bg-lighterYellow"
             onClick={savePlantTrackingDetails}
           >
             Save

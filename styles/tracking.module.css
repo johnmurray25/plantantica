@@ -1,7 +1,7 @@
 .container {
   padding: 0 2rem;
-  color: rgb(216, 216, 0);
-  background: rgb(28, 61, 28);
+  color: rgb(248, 245, 240);
+  background: rgb(39, 47, 39);
 }
 
 @keyframes gradient {
@@ -29,7 +29,7 @@
 
 .form {
   border: 4px;
-  border-color: rgb(216, 216, 0);
+  border-color: rgb(248, 245, 240);
 }
 
 .footer {
@@ -50,9 +50,30 @@
 
 .input {
   background-color: #e8ffec;
-  padding: 5px;
+  padding: 8px;
+  margin-bottom: 8px;
   text-align: center;
   color: darkslategrey
+}
+
+.textInput {
+  font: inherit;
+  letter-spacing: inherit;
+  color: currentColor;
+  padding: 4px 0 5px;
+  border: 0;
+  box-sizing: content-box;
+  background: none;
+  height: 1.4375em;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+  display: block;
+  min-width: 0;
+  width: 100%;
+  -webkit-animation-name: mui-auto-fill-cancel;
+  animation-name: mui-auto-fill-cancel;
+  -webkit-animation-duration: 10ms;
+  animation-duration: 10ms;
 }
 
 .title {
@@ -62,7 +83,7 @@
   font-style: italic;
   border-radius: 1px;
   border: 1px;
-  border-color: rgb(216, 216, 0);
+  border-color: rgb(248, 245, 240);
 }
 
 .title h2 {
@@ -105,12 +126,11 @@
   text-align: left;
   color: inherit;
   text-decoration: none;
-  border: 1px solid #0b5b33;
+  border: 1px solid;
   border-radius: 8px;
-  transition: color 0.25s ease, border-color 0.15s ease;
-  color: #0b5b33;
+  /* transition: color 0.25s ease, border-color 0.15s ease; */
 }
-
+/* 
 .card:hover,
 .card:focus,
 .card:active {
@@ -119,7 +139,7 @@
   background: linear-gradient(-45deg, #0b5b33, #a5c2b6, #0b5b33);
   background-size: 400% 400%;
   animation: gradient 20s ease infinite;
-}
+} */
 
 .card h2 {
   margin: 0 0 1rem 0;
