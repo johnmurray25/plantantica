@@ -14,7 +14,7 @@ function PlantTrackingDetails(props) {
   return (
     <div>
       {plants.map((plant) => (
-        <div key={plant.id} className={[styles.card]}>
+        <div key={plant.species} className={[styles.card]}>
           <a>
             <h2>{plant.species}</h2>
             <p

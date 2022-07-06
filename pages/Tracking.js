@@ -1,66 +1,92 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import firebase from '../firebase/clientApp';
+import db from '../firebase/db';
+import { collection, query, doc, getDocs } from "firebase/firestore";
 import styles from "../styles/Home.module.css";
-import Nav from "./components/Nav";
+import NavBar from "./components/NavBar";
 import PlantTrackingDetails from "./components/PlantTrackingDetails";
 
 const Home = () => {
   const [plants, setPlants] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentUser, setCurrentUser] = useState({});
 
   useEffect(() => {
-    getPlants();
+    getCurrentUser().then(getPlants());
   }, []);
 
-  const getPlants = () => {
+  const getCurrentUser = async () => {
+    setCurrentUser(firebase.auth().currentUser);
+  }
+
+  const getPlants = async () => {
     setIsLoading(true);
+    let user = firebase.auth().currentUser;
+    if (!user) {
+      console.error('No user is logged in');
+      setPlants(403);
+      setIsLoading(false);
+      return;
+    }
     try {
-      const response = fetch("http://localhost:8080/plant-tracking-details/all")
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
+      // Load all plant tracking data for current user
+      const collectionRef = collection(doc(db, 'users', user.email), 'plantTrackingDetails');
+      const queryRef = query(collectionRef);
+      const trackingDetails = await getDocs(queryRef);
+      // const trackingDetails = collection(doc('users', user.email), 'plantTrackingDetails');
+      setPlants(trackingDetails.docs
+        .map((doc) => {
+          return {
+            species: doc.get('species'),
+            dateObtained: doc.get('dateObtained'),
+            minDaysBetweenWatering: doc.get('minDays'),
+            maxDaysBetweenWatering: doc.get('maxDays'),
+            dateLastWatered: doc.get('dateLastWatered'),
+            dateToWaterNext: doc.get('dateToWaterNext'),
+            dateLastFed: doc.get('dateLastFed'),
+            dateToFeedNext: doc.get('dateToFeedNext'),
+            lightRequired: doc.get('lightRequired')
           }
-          else {
-            let msg = "Failed to fetch plant tracking details"
-            console.error(msg)
-            setPlants([{ species: "500" }]);
-            throw new Error(msg);
-          }
-        })
-        .then((data) => {
-          if (data.plantTrackingDetailsList)
-            setPlants(data.plantTrackingDetailsList);
-          setIsLoading(false);
-        });
+        }));
+      plants.forEach((plant) => console.log(plant))
+      setIsLoading(false);
     } catch (error) {
+      setPlants(500);
+      setIsLoading(false);
       console.error(error);
-      console.error("catch block : Failed to fetch plant tracking details")
+      console.error("Failed to fetch plant tracking details")
     }
   };
 
   return (
     <div className={styles.container}>
-      <Nav />
+      <NavBar />
       <div className={styles.main}>
         <div className={styles.title}>
           <a>Tracking</a>
         </div>
         <div className="text-right w-60 hover:underline">
           <Link href="/AddPlantTrackingDetails">
-          <a>
-            Add a plant!
-          </a>
-        </Link></div>
+            <a>
+              Add a plant!
+            </a>
+          </Link></div>
         <div className={styles.grid}>
           {isLoading && <h1>loading...</h1>}
           {plants.length > 0 && (
             <div>
-              <p style={{ textAlign: "left" }}>{plants.length} plants found</p>
+              <p style={{ textAlign: "left" }}>
+                {plants.length} plants found
+              </p>
               <PlantTrackingDetails {...{ plants }} />
             </div>
           )}
           {plants == 500 && (
             <div>Error retrieving plant tracking details. Please try again later</div>
+          )}
+          {plants == 403 && (
+            <div>No user is logged in.</div>
           )}
         </div>
       </div>

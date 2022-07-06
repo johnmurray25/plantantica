@@ -36,8 +36,8 @@ const Home = () => {
           {isLoading && <h1>loading...</h1>}
           {posts.length > 0 && (
             <div>
-              <p style={{textAlign: "left"}}>{posts.length} posts found</p>
-              <BlogPosts {...{posts}} />
+              <p style={{ textAlign: "left" }}>{posts.length} posts found</p>
+              <BlogPosts {...{ posts }} />
             </div>
           )}
         </div>

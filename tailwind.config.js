@@ -8,6 +8,7 @@ module.exports = {
     extend: {
       colors: {
         'green': 'rgb(39, 47, 39)',
+        'olive': '#4C6049',
         'yellow': 'rgb(248, 245, 240)',
         'lighterYellow': 'rgb(248, 245, 240)',
         'lightGrayGreen': '#e8ffec',
