@@ -1,18 +1,20 @@
+import React, { useState } from "react";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "../styles/Home.module.css";
 import NavBar from "./components/NavBar";
 import firebase from '../firebase/clientApp';
-import { useAuthState } from "react-firebase-hooks/auth";
+// import { useAuthState } from "react-firebase-hooks/auth";
 import Main from "./components/Main";
 
 export default function Home() {
 
   // Destructure user, loading, and error out of the hook.  
-  const [user, loading, error] = useAuthState(firebase.auth());
+  // const [user, loading, error] = useAuthState(firebase.auth());
+  const [user, setUser] = useState(firebase.auth().currentUser);
   // console.log the current user and loading status
- console.log("Loading:", loading, "|", "Current user: ", user ? user.displayName : 'null');
+ console.log("Current user: ", user ? user.displayName : 'null');
 
   return (
     <div className={styles.container}>
@@ -27,7 +29,7 @@ export default function Home() {
 
       <NavBar />
 
-      <Main user={user}/>
+      <Main />
 
       <footer className={styles.footer}>
         <a

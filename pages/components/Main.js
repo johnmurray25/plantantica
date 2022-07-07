@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import React, { useState } from 'react'
 import styles from "../../styles/Home.module.css";
+import firebase from '../../firebase/clientApp';
 
 function Main(props) {
 
-    const [user, setUser] = useState(props.user)
+    const [user, setUser] = useState(firebase.auth().currentUser);
 
     return (
         <main className={styles.main}>

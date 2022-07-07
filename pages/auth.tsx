@@ -6,7 +6,7 @@ import firebase from '../firebase/clientApp';
 import TreeLogo from './components/TreeLogo';
 
 function SignInScreen(props) {
-    const [isSignedIn, setIsSignedIn] = useState(false); // Local signed-in state.
+    const [isSignedIn, setIsSignedIn] = useState(firebase.auth().currentUser ? true : false); 
 
     const redirectRef = props.href ? props.href : '';
 
@@ -35,7 +35,7 @@ function SignInScreen(props) {
     const authorize = () => {
         const auth = firebase.auth();
         if (!auth.currentUser) {
-            console.error('Failed to authorize user')
+            console.error('No user is logged in')
             return auth;
         }
         console.log(`Authorized user with email: ${auth.currentUser.email}`)

@@ -10,19 +10,17 @@ import PlantTrackingDetails from "./components/PlantTrackingDetails";
 const Home = () => {
   const [plants, setPlants] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentUser, setCurrentUser] = useState({});
+  const [currentUser, setCurrentUser] = useState(firebase.auth().currentUser);
+
+ console.log("Current user: ", currentUser ? currentUser.displayName : 'null');
 
   useEffect(() => {
-    getCurrentUser().then(getPlants());
+    getPlants();
   }, []);
-
-  const getCurrentUser = async () => {
-    setCurrentUser(firebase.auth().currentUser);
-  }
 
   const getPlants = async () => {
     setIsLoading(true);
-    let user = firebase.auth().currentUser;
+    let user = currentUser;
     if (!user) {
       console.error('No user is logged in');
       setPlants(403);
@@ -34,7 +32,6 @@ const Home = () => {
       const collectionRef = collection(doc(db, 'users', user.email), 'plantTrackingDetails');
       const queryRef = query(collectionRef);
       const trackingDetails = await getDocs(queryRef);
-      // const trackingDetails = collection(doc('users', user.email), 'plantTrackingDetails');
       setPlants(trackingDetails.docs
         .map((doc) => {
           return {
@@ -82,10 +79,10 @@ const Home = () => {
               <PlantTrackingDetails {...{ plants }} />
             </div>
           )}
-          {plants == 500 && (
+          {plants === 500 && (
             <div>Error retrieving plant tracking details. Please try again later</div>
           )}
-          {plants == 403 && (
+          {plants === 403 && (
             <div>No user is logged in.</div>
           )}
         </div>
