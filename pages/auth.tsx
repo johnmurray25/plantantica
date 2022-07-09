@@ -1,12 +1,12 @@
 // Import FirebaseAuth and firebase.
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
+import auth from '../firebase/auth';
 import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from '../firebase/clientApp';
 import TreeLogo from './components/TreeLogo';
 
 function SignInScreen(props) {
-    const [isSignedIn, setIsSignedIn] = useState(firebase.auth().currentUser ? true : false); 
+    const [isSignedIn, setIsSignedIn] = useState(auth.currentUser ? true : false); 
 
     const redirectRef = props.href ? props.href : '';
 
@@ -26,14 +26,13 @@ function SignInScreen(props) {
 
     // Listen to the Firebase Auth state and set the local state.
     useEffect(() => {
-        const unregisterAuthObserver = firebase.auth().onAuthStateChanged(user => {
+        const unregisterAuthObserver = auth.onAuthStateChanged(user => {
             setIsSignedIn(!!user);
         });
         return () => unregisterAuthObserver(); // Make sure we un-register Firebase observers when the component unmounts.
     }, []);
 
     const authorize = () => {
-        const auth = firebase.auth();
         if (!auth.currentUser) {
             console.error('No user is logged in')
             return auth;
@@ -52,7 +51,7 @@ function SignInScreen(props) {
             {isSignedIn ?
                 <div>
                     <p>
-                        Welcome {firebase.auth().currentUser.displayName}! You are now signed in.
+                        Welcome {auth.currentUser.displayName}! You are now signed in.
                     </p>
                     <a onClick={signOut}>
                         Sign out

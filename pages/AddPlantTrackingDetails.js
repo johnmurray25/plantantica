@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import firebase from '../firebase/clientApp';
+import auth from '../firebase/auth';
 import db from '../firebase/db';
 import { collection, addDoc, doc } from "firebase/firestore";
 import styles from "../styles/tracking.module.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Input, Button, Link, Select, MenuItem } from "@mui/material";
-import brightness from './util/BrightnessConstant';
 
 function AddPlantTrackingDetails() {
   const todaysDate = new Date();
   const [species, setSpecies] = useState("");
   const [dateObtained, setDateObtained] = useState(todaysDate);
-  const [minDays, setMinDays] = useState(7);
-  const [maxDays, setMaxDays] = useState(10);
+  const [daysBetweenWatering, setDaysBetweenWatering] = useState(7);
   const [dateLastWatered, setDateLastWatered] = useState(todaysDate);
   const [dateToWaterNext, setDateToWaterNext] = useState(todaysDate);
   const [dateLastFed, setDateLastFed] = useState(todaysDate);
@@ -22,24 +21,23 @@ function AddPlantTrackingDetails() {
 
   const savePlantTrackingDetails = async (event) => {
     event.preventDefault();
-    let user = firebase.auth().currentUser;
+    let user = auth.currentUser;
     if (!user) {
       console.error('No user is logged in');
       return;
     }
     console.log(`species: ${species}`);
-    console.log(`min days: ${minDays}`);
-    console.log(`max days: ${maxDays}`);
+    console.log(`days between watering: ${daysBetweenWatering}`);
     let plantTrackingDetails = {
       species: species,
-      dateObtained: dateObtained,
-      minDaysBetweenWatering: minDays,
-      maxDaysBetweenWatering: maxDays,
-      dateLastWatered: dateLastWatered,
-      dateToWaterNext: dateToWaterNext,
-      dateLastFed: dateLastFed,
-      dateToFeedNext: dateToFeedNext,
-      lightRequired: lightRequired
+      dateObtained: dateObtained.getTime(),
+      daysBetweenWatering: daysBetweenWatering,
+      dateLastWatered: dateLastWatered.getTime(),
+      dateToWaterNext: dateToWaterNext.getTime(),
+      dateLastFed: dateLastFed.getTime(),
+      dateToFeedNext: dateToFeedNext.getTime(),
+      lightRequired: lightRequired,
+      dateCreated: (new Date()).getTime(),
     };
     console.log(`Saving plant tracking details for species: ${plantTrackingDetails.species}`)
     // Add a new document with a generated id.
@@ -49,12 +47,6 @@ function AddPlantTrackingDetails() {
 
   const onChangeDateObtained = (date) => {
     setDateObtained(date);
-  };
-  const incMinDays = (n) => {
-    setMinDays(n);
-  };
-  const incMaxDays = (n) => {
-    setMaxDays(n);
   };
   const onChangeNextWater = (date) => {
     setDateToWaterNext(date);
@@ -102,7 +94,7 @@ function AddPlantTrackingDetails() {
             </Select>
             <br></br>
             <label htmlFor="minDays">
-              min days between watering:
+              days between watering:
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             </label>
             <Input
@@ -111,19 +103,6 @@ function AddPlantTrackingDetails() {
               defaultValue={7}
               name="minDays"
               id="minDays"
-              min="0"
-            />
-            <br></br>
-            <label htmlFor="maxDays">
-              max days between watering:
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            </label>
-            <Input
-              className={styles.input}
-              type="number"
-              defaultValue={10}
-              name="maxDays"
-              id="maxDays"
               min="0"
             />
             <br></br>
@@ -184,6 +163,7 @@ function AddPlantTrackingDetails() {
           </fieldset>
           <br></br>
           <Link
+            
             href="/Tracking"
             style={{
               textDecoration: "none",
