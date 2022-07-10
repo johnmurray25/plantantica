@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import styles from "../../styles/tracking.module.css";
 import { IoWater } from "@react-icons/all-files/io5/IoWater";
 import { IoMenu } from "@react-icons/all-files/io5/IoMenu";
@@ -6,30 +6,30 @@ import db from '../../firebase/db';
 import auth from '../../firebase/auth';
 import { collection, setDoc, doc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
-
-function formatDate(dateStr) {
-  const date = new Date(dateStr);
-  return date.toLocaleString();
-}
+import Plant from "../domain/Plant";
 
 const MILLIS_IN_DAY = 86400000;
 
-function PlantTrackingDetails(props) {
+interface PTDProps {
+  plants: Array<Plant>;
+}
+
+const PlantTrackingDetails: FC<PTDProps> = (props) => {
 
   const [user] = useAuthState(auth);
   const [plants, setPlants] = useState(props.plants);
 
-  const waterPlant = async (plant) => {
+  const waterPlant = async (plant: Plant) => {
     let today = new Date();
     let daysBetweenWatering = plant.daysBetweenWatering ? plant.daysBetweenWatering : 10;
     // calculate next watering date
-    let newWateringDate = today.getTime() + (daysBetweenWatering * MILLIS_IN_DAY);
+    let newWateringDate: number = today.getTime() + (daysBetweenWatering * MILLIS_IN_DAY);
     // uodate/persist document
     await setDoc(
       doc(
         collection(doc(db, 'users', user.email), 'plantTrackingDetails'),
         plant.id),
-      { dateToWaterNext: newWateringDate, dateLastWatered: today },
+      { dateToWaterNext: newWateringDate, dateLastWatered: today.getTime() },
       { merge: true }
     );
     // return object for UI
@@ -37,17 +37,26 @@ function PlantTrackingDetails(props) {
     console.log(`Updated watering date from ${(plant.dateToWaterNext ? plant.dateToWaterNext : today).toLocaleDateString()} to ${newDate.toLocaleDateString()}`)
     plant.dateToWaterNext = newDate;
     plant.dateLastWatered = today;
-    let filteredPlants = plants.filter(p => p.id !== plant.id);
+    let filteredPlants = plants.filter((p: Plant) => p.id !== plant.id);
     filteredPlants.push(plant);
-    setPlants(filteredPlants);
+    setPlants(filteredPlants
+      .sort((a, b) => {
+        if (a.species.toLocaleLowerCase() < b.species.toLocaleLowerCase()) {
+          return -1;
+        }
+        else if (a.species.toLocaleLowerCase() > b.species.toLocaleLowerCase()) {
+          return 1;
+        }
+        else return 0;
+      }));
   }
 
   return (
     <div className='grid md:grid-rows-2 md:grid-flow-col md:gap-2'>
-      {plants.map((plant) => (
+      {plants.map((plant: Plant) => (
         <div key={plant.id} className={styles.card}>
           <IoMenu className='cursor-pointer' />
-          <a href={'http://wikipedia.org/wiki/'+plant.species.replaceAll(' ', '_')}>
+          <a href={'http://wikipedia.org/wiki/' + plant.species.replaceAll(' ', '_')}>
             <h2>{plant.species}</h2>
           </a>
           {
@@ -58,7 +67,9 @@ function PlantTrackingDetails(props) {
             </p>
           }
           <div className="flex justify-end">
-            <a onClick={() => waterPlant(plant)} className="cursor-pointer inline-block text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow border-yello hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
+            <a onClick={() => waterPlant(plant)}
+              className="cursor-pointer inline-block text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow 
+                          hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
               Water?
             </a>
             <IoWater className="cursor-pointer text-blue" />

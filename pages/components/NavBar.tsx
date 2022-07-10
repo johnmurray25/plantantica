@@ -1,9 +1,13 @@
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { FC, useState } from 'react'
 import firebase from '../../firebase/clientApp'
 import { useAuthState } from 'react-firebase-hooks/auth'
 
-function NavBar(props) {
+interface NavProps {
+  hideUser?: boolean;
+}
+
+const NavBar: FC<NavProps> = (props) => {
 
   const [user, loading, error] = useAuthState(firebase.auth());
   const hideUser = props.hideUser ? true : false;
@@ -19,7 +23,7 @@ function NavBar(props) {
         (
           (!loading && user) ?
             <Link href="profile" passHref>
-              <a className="inline-block text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow border-yellow hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
+              <a className="inline-block text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
                 {user.email}
               </a>
             </Link>
