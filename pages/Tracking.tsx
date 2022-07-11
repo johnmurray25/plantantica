@@ -66,9 +66,7 @@ const Home = () => {
         </div>
         <div className="text-right w-60 hover:underline">
           <Link href="/AddPlantTrackingDetails">
-            <a>
-              Add a plant!
-            </a>
+            Add a plant!
           </Link>
         </div>
         {isLoading && <h1>loading...</h1>}

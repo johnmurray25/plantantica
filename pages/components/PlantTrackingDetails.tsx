@@ -68,11 +68,11 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
           }
           <div className="flex justify-end">
             <a onClick={() => waterPlant(plant)}
-              className="cursor-pointer inline-block text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow 
+              className="flex cursor-pointer text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow 
                           hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
-              Water?
+              Water <IoWater className="cursor-pointer text-blue" /> ?
+            
             </a>
-            <IoWater className="cursor-pointer text-blue" />
           </div>
           species: {plant.species}
           <br></br>
