@@ -4,14 +4,22 @@ import { IoWater } from "@react-icons/all-files/io5/IoWater";
 import { IoMenu } from "@react-icons/all-files/io5/IoMenu";
 import db from '../../firebase/db';
 import auth from '../../firebase/auth';
-import { collection, setDoc, doc } from "firebase/firestore";
+import { collection, setDoc, doc, deleteDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Plant from "../domain/Plant";
+import DropDownOption from "../domain/DropDownOption";
+import DropDownMenu from "./DropDownMenu";
 
 const MILLIS_IN_DAY = 86400000;
 
+const dropDownOptions = [
+  new DropDownOption('edit', '/'),
+  new DropDownOption('remove', null),
+]
 interface PTDProps {
   plants: Array<Plant>;
+  removePlant: any;
+  linkToEdit: any;
 }
 
 const PlantTrackingDetails: FC<PTDProps> = (props) => {
@@ -22,9 +30,9 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
   const waterPlant = async (plant: Plant) => {
     let today = new Date();
     let daysBetweenWatering = plant.daysBetweenWatering ? plant.daysBetweenWatering : 10;
-    // calculate next watering date
+    // Calculate next watering date
     let newWateringDate: number = today.getTime() + (daysBetweenWatering * MILLIS_IN_DAY);
-    // uodate/persist document
+    // Persist changes
     await setDoc(
       doc(
         collection(doc(db, 'users', user.email), 'plantTrackingDetails'),
@@ -32,7 +40,7 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
       { dateToWaterNext: newWateringDate, dateLastWatered: today.getTime() },
       { merge: true }
     );
-    // return object for UI
+    // Update state
     let newDate = new Date(newWateringDate);
     console.log(`Updated watering date from ${(plant.dateToWaterNext ? plant.dateToWaterNext : today).toLocaleDateString()} to ${newDate.toLocaleDateString()}`)
     plant.dateToWaterNext = newDate;
@@ -55,7 +63,7 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
     <div className='grid md:grid-rows-2 md:grid-flow-col md:gap-2'>
       {plants.map((plant: Plant) => (
         <div key={plant.id} className={styles.card}>
-          <IoMenu className='cursor-pointer' />
+          <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)}/>
           <a href={'http://wikipedia.org/wiki/' + plant.species.replaceAll(' ', '_')}>
             <h2>{plant.species}</h2>
           </a>
@@ -71,23 +79,23 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
               className="flex cursor-pointer text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow 
                           hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
               Water <IoWater className="cursor-pointer text-blue" /> ?
-            
+
             </a>
           </div>
-          species: {plant.species}
-          <br></br>
-          days between watering: {plant.daysBetweenWatering}
-          <br></br>
-          date last watered: {plant.dateLastWatered.toLocaleDateString()}
-          <br></br>
-          date to water next: {plant.dateToWaterNext.toLocaleDateString()}
-          <br></br>
-          date last fed: {plant.dateLastFed.toLocaleDateString()}
-          <br></br>
-          date to feed next: {plant.dateToFeedNext.toLocaleDateString()}
-          <br></br>
-          light required: {plant.lightRequired}
-          <br></br>
+          <div className='pt-4'>
+            days between watering: {plant.daysBetweenWatering}
+            <br></br>
+            date last watered: {plant.dateLastWatered.toLocaleDateString()}
+            <br></br>
+            date to water next: {plant.dateToWaterNext.toLocaleDateString()}
+            <br></br>
+            date last fed: {plant.dateLastFed.toLocaleDateString()}
+            <br></br>
+            date to feed next: {plant.dateToFeedNext.toLocaleDateString()}
+            <br></br>
+            light required: {plant.lightRequired}
+            <br></br>
+          </div>
         </div>
       ))}
     </div>

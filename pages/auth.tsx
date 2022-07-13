@@ -34,7 +34,6 @@ function SignInScreen(props) {
 
     const authorize = () => {
         if (!auth.currentUser) {
-            console.error('No user is logged in')
             return auth;
         }
         console.log(`Authorized user with email: ${auth.currentUser.email}`)
@@ -42,7 +41,7 @@ function SignInScreen(props) {
     }
 
     const signOut = () => {
-        firebase.auth().signOut();
+        auth.signOut();
     }
 
     return (
@@ -68,7 +67,7 @@ function SignInScreen(props) {
 }
 
 const classes = {
-    container: 'bg-olive text-yellow min-h-screen text-center pt-10 text-xl',
+    container: 'bg-green text-yellow min-h-screen text-center pt-10 text-xl',
 }
 
 export default SignInScreen;

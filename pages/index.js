@@ -11,10 +11,8 @@ import Link from "next/link";
 
 export default function Home() {
 
-  // Destructure user, loading, and error out of the hook.  
   const [user, loading, error] = useAuthState(auth);
-  // console.log the current user and loading status
-  console.log(`${user ? user.email : 'No one'} is logged in`);
+  // if (!loading) console.log(`${user ? user.email : 'No one'} is logged in`);
 
   return (
     <div className={styles.container}>

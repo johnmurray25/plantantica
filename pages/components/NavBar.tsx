@@ -2,6 +2,7 @@ import Link from 'next/link'
 import React, { FC, useState } from 'react'
 import firebase from '../../firebase/clientApp'
 import { useAuthState } from 'react-firebase-hooks/auth'
+import DropDown from './DropDownMenu';
 
 interface NavProps {
   hideUser?: boolean;

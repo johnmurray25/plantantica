@@ -1,5 +1,4 @@
-export default class Plant {
-
+export default interface Plant {
     id: string;
     species: string;
     dateObtained: Date;
@@ -10,7 +9,4 @@ export default class Plant {
     dateToFeedNext: Date;
     lightRequired: string | number;
     dateCreated?: Date;
-
-    constructor() {}
-
 }
