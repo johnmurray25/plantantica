@@ -71,11 +71,13 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
   return (
     <div className={gridStyles.container}>
       {plants.map((plant: Plant) => (
-        <div key={plant.id} className='border border-yellow rounded-md p-8 m-auto'>
+        <div key={plant.id} className='border border-yellow rounded-md p-5 m-2'>
           <DropDownMenu plantId={plant.id} onClickRemove={() => removePlant(plant)} />
-          <a href={'http://wikipedia.org/wiki/' + plant.species.replaceAll(' ', '_')}>
-            <h2>{plant.species}</h2>
-          </a>
+          <h2>
+            <a className='hover:underline' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`}>
+              {plant.species}
+            </a>
+          </h2>
           {
             plant.dateObtained &&
             <p style={{ fontSize: "0.7rem", textAlign: "left" }}>

@@ -93,7 +93,7 @@ const Home = () => {
       query: { plant: JSON.stringify(p) }
     }, '/AddPlantTrackingDetails')
   }
- 
+
   return (
     <div className={styles.container}>
       <NavBar />
@@ -101,19 +101,21 @@ const Home = () => {
         <div className={styles.title}>
           <a>Tracking</a>
         </div>
-        <div className="text-right w-60 hover:underline">
-          <Link href="/AddPlantTrackingDetails">
-            Add a plant!
-          </Link>
-        </div>
         {isLoading && <h1>loading...</h1>}
         {plants.length > 0 &&
           (
             <div>
-              <p className='text-left'>
-                You are tracking {plants.length} plants
-              </p>
-              <PlantTrackingDetails plants={plants} removePlant={remove} linkToEdit={linkToEdit}/>
+              <div className="flex justify-between pb-3 pt-6">
+                <p>
+                  You are tracking {plants.length} plants
+                </p>
+                <p className='hover:underline cursor-pointer'>
+                  <Link href="/AddPlantTrackingDetails">
+                    Add a plant!
+                  </Link>
+                </p>
+              </div>
+              <PlantTrackingDetails plants={plants} removePlant={remove} linkToEdit={linkToEdit} />
             </div>
           )}
         {plants.length === 0 && !isLoading && user && status === OK &&
