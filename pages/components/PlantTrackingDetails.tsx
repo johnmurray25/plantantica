@@ -69,7 +69,7 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
   }
 
   return (
-    <div className={gridStyles.containerFill}>
+    <div className={gridStyles.container}>
       {plants.map((plant: Plant) => (
         <div key={plant.id} className='border border-yellow rounded-md p-8 m-auto'>
           <DropDownMenu plantId={plant.id} onClickRemove={() => removePlant(plant)} />
