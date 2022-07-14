@@ -1,18 +1,14 @@
 import React from "react";
 import Head from "next/head";
-import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import NavBar from "./components/NavBar";
-import firebase from '../firebase/clientApp';
 import auth from '../firebase/auth';
 import { useAuthState } from "react-firebase-hooks/auth";
-import Main from "./components/Main";
 import Link from "next/link";
 
 export default function Home() {
 
   const [user, loading, error] = useAuthState(auth);
-  // if (!loading) console.log(`${user ? user.email : 'No one'} is logged in`);
 
   return (
     <div className={styles.container}>
@@ -42,7 +38,7 @@ export default function Home() {
             </h1>
 
             <p className={styles.description}>
-                {!user && 'A place to track your plants&apos; maintenance'}
+                {!user && "A place to track your plants' maintenance"}
             </p>
 
             <div className={styles.grid}>
@@ -79,7 +75,7 @@ export default function Home() {
             </div>
         </main>
 
-      <footer className={styles.footer}>
+      {/* <footer className={styles.footer}>
         <a
           href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
           target="_blank"
@@ -90,7 +86,7 @@ export default function Home() {
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
-      </footer>
+      </footer> */}
     </div>
   );
 }

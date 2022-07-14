@@ -1,5 +1,6 @@
 import React, { FC, useState } from "react";
 import styles from "../../styles/tracking.module.css";
+import gridStyles from '../../styles/grid.module.css';
 import { IoWater } from "@react-icons/all-files/io5/IoWater";
 import { IoMenu } from "@react-icons/all-files/io5/IoMenu";
 import db from '../../firebase/db';
@@ -68,9 +69,9 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
   }
 
   return (
-    <div className='grid md:grid-rows-2 md:grid-flow-col md:gap-2'>
+    <div className={gridStyles.containerFill}>
       {plants.map((plant: Plant) => (
-        <div key={plant.id} className={styles.card}>
+        <div key={plant.id} className='border border-yellow rounded-md p-8 m-auto'>
           <DropDownMenu plantId={plant.id} onClickRemove={() => removePlant(plant)} />
           <a href={'http://wikipedia.org/wiki/' + plant.species.replaceAll(' ', '_')}>
             <h2>{plant.species}</h2>
