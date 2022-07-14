@@ -28,6 +28,9 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
   const [plants, setPlants] = useState(props.plants);
 
   const waterPlant = async (plant: Plant) => {
+    if (!confirm(`Do you want to mark your ${plant.species} as watered today?`)) {
+      return;
+    }
     let today = new Date();
     let daysBetweenWatering = plant.daysBetweenWatering ? plant.daysBetweenWatering : 10;
     // Calculate next watering date
@@ -59,11 +62,16 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
       }));
   }
 
+  const removePlant = (plant: Plant) => {
+    props.removePlant(plant)
+      .then(() => setPlants(plants.filter(p => p.id !== plant.id)));
+  }
+
   return (
     <div className='grid md:grid-rows-2 md:grid-flow-col md:gap-2'>
       {plants.map((plant: Plant) => (
         <div key={plant.id} className={styles.card}>
-          <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)}/>
+          <DropDownMenu plantId={plant.id} onClickRemove={() => removePlant(plant)} />
           <a href={'http://wikipedia.org/wiki/' + plant.species.replaceAll(' ', '_')}>
             <h2>{plant.species}</h2>
           </a>

@@ -1,8 +1,8 @@
-import React, { Dispatch, FC, SetStateAction, useState } from "react";
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import auth from '../firebase/auth';
 import db from '../firebase/db';
-import { collection, addDoc, doc } from "firebase/firestore";
+import { collection, addDoc, doc, setDoc, DocumentReference, DocumentData } from "firebase/firestore";
 import styles from "../styles/tracking.module.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -28,6 +28,8 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const [dateToFeedNext, setDateToFeedNext] = useState(plant ? plant.dateToFeedNext : todaysDate);
   const [lightRequired, setLightRequired] = useState(plant ? plant.lightRequired : 2);
 
+  plant ? console.log(`plant: ${plant.species}`) : console.log('No plant ...')
+
   const savePlantTrackingDetails = async (event) => {
     event.preventDefault();
     if (!user) {
@@ -48,9 +50,16 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       dateCreated: (new Date()).getTime(),
     };
     console.log(`Saving plant tracking details for species: ${plantTrackingDetails.species}`)
-    // Add a new document with a generated id.
-    const docRef = await addDoc(collection(doc(db, 'users', user.email), 'plantTrackingDetails'), plantTrackingDetails);
-    console.log(`Document written with ID: ${docRef.id}`);
+    let docRef: DocumentReference<DocumentData> = null;
+    if (plant) {
+      // Update an existing document
+      await setDoc(doc(collection(doc(db, 'users', user.email), 'plantTrackingDetails'), plant.id), plantTrackingDetails); 
+      console.log('Updated existing plant tracking details');
+    } else {
+      // Add a new document with a generated id.
+      docRef = await addDoc(collection(doc(db, 'users', user.email), 'plantTrackingDetails'), plantTrackingDetails);
+      console.log(`Document written with ID: ${docRef.id}`);
+    }
     // Redirect back to tracking page
     router.push('/Tracking');
   };
@@ -58,7 +67,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   return (
     <div className={styles.container}>
       <div className={styles.title}>
-        <a>ADD PLANT TRACKING DETAILS</a>
+        <a>{plant ? 'EDIT' : 'ADD'} PLANT TRACKING DETAILS</a>
       </div>
       <div className={styles.main}>
         <form className={styles.form}>
@@ -76,7 +85,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
               name="species"
               id="species"
               placeholder="Enter a species..."
-              selected={species}
+              value={species}
               onChange={(e) => setSpecies(e.target.value)}
             />
             <br></br>

@@ -14,7 +14,7 @@ const getPlantDetails = async (id: string | any, user: User) => {
     console.log(`Id: ${id}`);
     try {
         let collectionRef = collection(doc(db, 'users', user.email), 'plantTrackingDetails');
-        if (!collectionRef) { console.error('NO COLLECTION FOUND')}
+        if (!collectionRef) { console.error('NO COLLECTION FOUND') }
         docRef = doc(collectionRef, id);
     } catch (e) { console.error(e); }
     if (!docRef) {
@@ -22,6 +22,7 @@ const getPlantDetails = async (id: string | any, user: User) => {
     }
     try {
         let d = await getDoc(docRef);
+        console.log(`document id: ${d.id}`);
         return {
             id: d.id,
             species: d.get('species'),
@@ -58,7 +59,17 @@ const Home = () => {
     }, [user, plantId])
 
     return (
-        <AddPlantTrackingDetails plant={plant} />
+        plant ?
+            (
+                <div>
+                    <AddPlantTrackingDetails plant={plant} />
+                </div>
+            )
+            :
+            (
+                <div>
+                </div>
+            )
     )
 }
 

@@ -44,6 +44,7 @@ const getPlants = async (user: User) => {
 };
 
 const deletePlant = async (plant: Plant, user: User) => {
+  confirm(`Are you sure you want to delete tracking details for your ${plant.species}?`);
   await deleteDoc(doc(collection(doc(db, 'users', user.email), 'plantTrackingDetails'), plant.id));
   console.log('deleted plant');
 }
