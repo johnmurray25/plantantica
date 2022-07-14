@@ -2,7 +2,7 @@ export default interface Plant {
     id: string;
     species: string;
     dateObtained: Date;
-    daysBetweenWatering: number;
+    daysBetweenWatering: number | string;
     dateLastWatered: Date;
     dateToWaterNext: Date;
     dateLastFed: Date;

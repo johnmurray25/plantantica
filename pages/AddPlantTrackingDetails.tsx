@@ -32,6 +32,10 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
 
   const savePlantTrackingDetails = async (event) => {
     event.preventDefault();
+    if (!species) {
+      alert('You must enter a species. It can be anything :)');
+      return;
+    }
     if (!user) {
       console.error('No user is logged in');
       return;
@@ -87,6 +91,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
               placeholder="Enter a species..."
               value={species}
               onChange={(e) => setSpecies(e.target.value)}
+              required = {true}
             />
             <br></br>
             <label htmlFor="lightReq">
@@ -113,10 +118,10 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
             <Input
               className={styles.input}
               type="number"
-              defaultValue={7}
               name="minDays"
               id="minDays"
-              min="0"
+              value={daysBetweenWatering}
+              onChange={(e) => setDaysBetweenWatering(e.target.value)}
             />
             <br></br>
             <div className="flex">
