@@ -42,16 +42,16 @@ export default function Home() {
             </h1>
 
             <p className={styles.description}>
-                A place to track your plants&apos; maintenance
+                {!user && 'A place to track your plants&apos; maintenance'}
             </p>
 
             <div className={styles.grid}>
-                <Link href="/Blog">
+                {/* <Link href="/Blog">
                     <a className={styles.card}>
                         <h2>Blog &rarr;</h2>
                         <p>Ask a question, or see what other users have to say.</p>
                     </a>
-                </Link>
+                </Link> */}
 
                 <Link href="/Tracking">
                     <a className={styles.card}>
@@ -60,14 +60,14 @@ export default function Home() {
                     </a>
                 </Link>
 
-                <Link href="/Cube">
+                {/* <Link href="/Cube">
                     <a className={styles.card}>
                         <h2>Cube &rarr;</h2>
                         <p>Look at this cube</p>
                     </a>
-                </Link>
+                </Link> */}
 
-                <a
+                {/* <a
                     href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
                     className={styles.card}
                 >
@@ -75,7 +75,7 @@ export default function Home() {
                     <p>
                         Instantly deploy your Next.js site to a public URL with Vercel.
                     </p>
-                </a>
+                </a> */}
             </div>
         </main>
 
