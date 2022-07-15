@@ -3,12 +3,12 @@ import { useRouter } from "next/router";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import db from '../firebase/db';
 import auth from '../firebase/auth';
-import { collection, query, doc, getDocs, setDoc, deleteDoc } from "firebase/firestore";
+import { collection, query, doc, getDocs, deleteDoc } from "firebase/firestore";
 import styles from "../styles/tracking.module.css";
 import NavBar from "./components/NavBar";
 import PlantTrackingDetails from "./components/PlantTrackingDetails";
 import { useAuthState } from "react-firebase-hooks/auth";
-import Plant from "./domain/Plant";
+import Plant from "../domain/Plant";
 import { User } from "firebase/auth";
 
 const OK = 200;
@@ -87,12 +87,12 @@ const Home = () => {
     }
   }
 
-  const linkToEdit = (p: Plant) => {
-    router.push({
-      pathname: '/AddPlantTrackingDetails',
-      query: { plant: JSON.stringify(p) }
-    }, '/AddPlantTrackingDetails')
-  }
+  // const linkToEdit = (p: Plant) => {
+  //   router.push({
+  //     pathname: '/AddPlantTrackingDetails',
+  //     query: { plant: JSON.stringify(p) }
+  //   }, '/AddPlantTrackingDetails')
+  // }
 
   return (
     <div className={styles.container}>
@@ -115,7 +115,7 @@ const Home = () => {
                   </Link>
                 </p>
               </div>
-              <PlantTrackingDetails plants={plants} removePlant={remove} linkToEdit={linkToEdit} />
+              <PlantTrackingDetails plants={plants} removePlant={remove}/>
             </div>
           )}
         {plants.length === 0 && !isLoading && user && status === OK &&

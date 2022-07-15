@@ -7,7 +7,7 @@ import styles from "../styles/tracking.module.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Input, Button, Link, Select, MenuItem } from "@mui/material";
-import Plant from "./domain/Plant";
+import Plant from "../domain/Plant";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 interface Props {
@@ -16,7 +16,7 @@ interface Props {
 
 const AddPlantTrackingDetails: FC<Props> = (props) => {
   const router = useRouter();
-  const [user, loading, error] = useAuthState(auth);
+  const [user] = useAuthState(auth);
   const todaysDate = new Date();
   const [plant, setPlant]: [Plant, Dispatch<SetStateAction<Plant>>] = useState(props.plant);
   const [species, setSpecies] = useState(plant ? plant.species : "");
@@ -121,7 +121,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
               name="minDays"
               id="minDays"
               value={daysBetweenWatering}
-              onChange={(e) => setDaysBetweenWatering(e.target.value)}
+              onChange={(e) => setDaysBetweenWatering(parseInt(e.target.value))}
             />
             <br></br>
             <div className="flex">

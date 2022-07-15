@@ -2,7 +2,7 @@ import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import db from '../../firebase/db';
 import auth from '../../firebase/auth';
 import AddPlantTrackingDetails from '../AddPlantTrackingDetails';
-import Plant from '../domain/Plant';
+import Plant from '../../domain/Plant';
 import { collection, doc, DocumentData, DocumentReference, getDoc } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { User } from 'firebase/auth';
@@ -43,7 +43,7 @@ const getPlantDetails = async (id: string | any, user: User) => {
 
 const Home = () => {
     const [plant, setPlant]: [Plant, Dispatch<SetStateAction<Plant>>] = useState();
-    const [user, loading, error] = useAuthState(auth);
+    const [user] = useAuthState(auth);
     const router = useRouter();
     const plantId = router.query.id;
 

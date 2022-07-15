@@ -1,8 +1,7 @@
 import Link from 'next/link'
-import React, { FC, useState } from 'react'
-import firebase from '../../firebase/clientApp'
+import React, { FC } from 'react'
+import auth from '../../firebase/auth'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import DropDown from './DropDownMenu';
 
 interface NavProps {
   hideUser?: boolean;
@@ -10,7 +9,7 @@ interface NavProps {
 
 const NavBar: FC<NavProps> = (props) => {
 
-  const [user, loading, error] = useAuthState(firebase.auth());
+  const [user, loading, error] = useAuthState(auth);
   const hideUser = props.hideUser ? true : false;
 
   return (

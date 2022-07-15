@@ -1,26 +1,18 @@
 import React, { FC, useState } from "react";
-import styles from "../../styles/tracking.module.css";
 import gridStyles from '../../styles/grid.module.css';
 import { IoWater } from "@react-icons/all-files/io5/IoWater";
-import { IoMenu } from "@react-icons/all-files/io5/IoMenu";
 import db from '../../firebase/db';
 import auth from '../../firebase/auth';
-import { collection, setDoc, doc, deleteDoc } from "firebase/firestore";
+import { collection, setDoc, doc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
-import Plant from "../domain/Plant";
-import DropDownOption from "../domain/DropDownOption";
+import Plant from "../../domain/Plant";
 import DropDownMenu from "./DropDownMenu";
 
 const MILLIS_IN_DAY = 86400000;
 
-const dropDownOptions = [
-  new DropDownOption('edit', '/'),
-  new DropDownOption('remove', null),
-]
 interface PTDProps {
   plants: Array<Plant>;
   removePlant: any;
-  linkToEdit: any;
 }
 
 const PlantTrackingDetails: FC<PTDProps> = (props) => {
@@ -35,8 +27,8 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
     let today = new Date();
     let daysBetweenWatering = plant.daysBetweenWatering ? plant.daysBetweenWatering : 10;
     // Calculate next watering date
-    let newWateringDate: number = today.getTime() + (daysBetweenWatering * MILLIS_IN_DAY);
-    // Persist changes
+    let newWateringDate = today.getTime() + (daysBetweenWatering * MILLIS_IN_DAY);
+    // Update DB
     await setDoc(
       doc(
         collection(doc(db, 'users', user.email), 'plantTrackingDetails'),
@@ -49,9 +41,9 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
     console.log(`Updated watering date from ${(plant.dateToWaterNext ? plant.dateToWaterNext : today).toLocaleDateString()} to ${newDate.toLocaleDateString()}`)
     plant.dateToWaterNext = newDate;
     plant.dateLastWatered = today;
-    let filteredPlants = plants.filter((p: Plant) => p.id !== plant.id);
+    let filteredPlants = plants.filter((p) => p.id !== plant.id);
     filteredPlants.push(plant);
-    setPlants(filteredPlants
+    let results = filteredPlants
       .sort((a, b) => {
         if (a.species.toLocaleLowerCase() < b.species.toLocaleLowerCase()) {
           return -1;
@@ -60,7 +52,8 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
           return 1;
         }
         else return 0;
-      }));
+      });
+      if (results && results.length > 0) setPlants(results);
   }
 
   const removePlant = (plant: Plant) => {
@@ -70,7 +63,8 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
 
   return (
     <div className={gridStyles.container}>
-      {plants.map((plant: Plant) => (
+      {plants && 
+      plants.map((plant) => (
         <div key={plant.id} className='border border-yellow rounded-md p-5 m-2'>
           <DropDownMenu plantId={plant.id} onClickRemove={() => removePlant(plant)} />
           <h2>

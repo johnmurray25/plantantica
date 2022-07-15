@@ -14,7 +14,7 @@ const config = {
 }
 
 // Initialize app
-firebase.initializeApp(config);
+const app = firebase.initializeApp(config);
 
 // Reference this object, containing app-specific configuration, throughout the codebase
-export default firebase;
+export default app;
