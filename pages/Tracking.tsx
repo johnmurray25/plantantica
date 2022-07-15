@@ -54,7 +54,6 @@ const Home = () => {
   const [status, setStatus]: [number, any] = useState(OK);
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
-  const router = useRouter();
 
   // if (!loading) console.log(`${user ? user.email : 'No one'} is logged in`);
 
@@ -86,13 +85,6 @@ const Home = () => {
       setStatus(ERR_STATUS);
     }
   }
-
-  // const linkToEdit = (p: Plant) => {
-  //   router.push({
-  //     pathname: '/AddPlantTrackingDetails',
-  //     query: { plant: JSON.stringify(p) }
-  //   }, '/AddPlantTrackingDetails')
-  // }
 
   return (
     <div className={styles.container}>

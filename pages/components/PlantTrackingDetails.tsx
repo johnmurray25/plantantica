@@ -1,12 +1,14 @@
 import React, { FC, useState } from "react";
 import gridStyles from '../../styles/grid.module.css';
 import { IoWater } from "@react-icons/all-files/io5/IoWater";
+import { IoSunny } from "@react-icons/all-files/io5/IoSunny";
 import db from '../../firebase/db';
 import auth from '../../firebase/auth';
 import { collection, setDoc, doc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Plant from "../../domain/Plant";
 import DropDownMenu from "./DropDownMenu";
+import PlantCard from "./PlantCard";
 
 const MILLIS_IN_DAY = 86400000;
 
@@ -53,7 +55,7 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
         }
         else return 0;
       });
-      if (results && results.length > 0) setPlants(results);
+    if (results && results.length > 0) setPlants(results);
   }
 
   const removePlant = (plant: Plant) => {
@@ -63,46 +65,10 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
 
   return (
     <div className={gridStyles.container}>
-      {plants && 
-      plants.map((plant) => (
-        <div key={plant.id} className='border border-yellow rounded-md p-5 m-2'>
-          <DropDownMenu plantId={plant.id} onClickRemove={() => removePlant(plant)} />
-          <h2>
-            <a className='hover:underline' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`}>
-              {plant.species}
-            </a>
-          </h2>
-          {
-            plant.dateObtained &&
-            <p style={{ fontSize: "0.7rem", textAlign: "left" }}>
-              had since&nbsp;
-              {plant.dateObtained.toLocaleDateString()}
-            </p>
-          }
-          <div className="flex justify-end">
-            <a onClick={() => waterPlant(plant)}
-              className="flex cursor-pointer text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow 
-                          hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
-              Water <IoWater className="cursor-pointer text-blue" /> ?
-
-            </a>
-          </div>
-          <div className='pt-4'>
-            days between watering: {plant.daysBetweenWatering}
-            <br></br>
-            date last watered: {plant.dateLastWatered.toLocaleDateString()}
-            <br></br>
-            date to water next: {plant.dateToWaterNext.toLocaleDateString()}
-            <br></br>
-            date last fed: {plant.dateLastFed.toLocaleDateString()}
-            <br></br>
-            date to feed next: {plant.dateToFeedNext.toLocaleDateString()}
-            <br></br>
-            light required: {plant.lightRequired}
-            <br></br>
-          </div>
-        </div>
-      ))}
+      {plants &&
+        plants.map((plant) => (
+          <PlantCard key={plant.id} plant={plant} waterPlant={waterPlant} removePlant={removePlant} />
+        ))}
     </div>
   );
 }
