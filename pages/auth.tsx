@@ -5,6 +5,7 @@ import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import TreeLogo from './components/TreeLogo';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import firebase from 'firebase/compat/app';
+import Link from 'next/link';
 
 function SignInScreen(props) {
     // const [isSignedIn, setIsSignedIn] = useState(auth.currentUser ? true : false); 
@@ -13,7 +14,7 @@ function SignInScreen(props) {
     const redirectRef = props.href ? props.href : '';
 
     const uiConfig = {
-        signInSuccessUrl: "/"+redirectRef,
+        signInSuccessUrl: "/" + redirectRef,
         // Popup signin flow rather than redirect flow.
         //signInFlow: 'popup',
         signInOptions: [
@@ -40,7 +41,9 @@ function SignInScreen(props) {
 
     return (
         <div className='bg-green text-yellow min-h-screen text-center pt-10 text-xl'>
-            <TreeLogo />
+            <Link href='/' passHref>
+                <TreeLogo />
+            </Link>
             {user ?
                 <div>
                     <p>
