@@ -27,11 +27,6 @@
   margin: auto;
 }
 
-.form {
-  border: 4px;
-  border-color: rgb(248, 245, 240);
-}
-
 .footer {
   display: flex;
   flex: 1;
