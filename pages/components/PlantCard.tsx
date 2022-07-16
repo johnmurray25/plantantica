@@ -67,7 +67,9 @@ const PlantCard: FC<Props> = (props) => {
 
     return plant ? (
         <div key={plant.id} className={getBgStyle()}>
-            <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
+            <div className='flex justify-end'>
+                <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
+            </div>
             <h1>
                 <a className='hover:underline' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`}
                 style={{ fontSize: "1.4rem", }}>
@@ -84,7 +86,7 @@ const PlantCard: FC<Props> = (props) => {
                 <a onClick={() => waterPlant(plant)}
                     className={getWtrBtnStyle()}>
                     <IoWater className="cursor-pointer text-blue" />
-                    Water ?
+                    Water?
                     <IoWater className="cursor-pointer text-blue" />
                 </a>
             </div>
