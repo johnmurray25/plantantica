@@ -99,7 +99,7 @@ const PlantCard: FC<Props> = (props) => {
                 <br></br>
                 feed next on {plant.dateToFeedNext.toLocaleDateString()}
                 <br></br>
-                <div className='flex justify-start'>
+                <div className='flex justify-evenly'>
                     {plant.lightRequired < 5 ?
                         <IoPartlySunny className={getIconStyle()} />
                     :

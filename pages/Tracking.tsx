@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import db from '../firebase/db';
 import auth from '../firebase/auth';
 import { collection, query, doc, getDocs, deleteDoc } from "firebase/firestore";
@@ -10,6 +10,7 @@ import PlantTrackingDetails from "./components/PlantTrackingDetails";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Plant from "../domain/Plant";
 import { User } from "firebase/auth";
+import { IoRefresh } from '@react-icons/all-files/io5/IoRefresh';
 
 const OK = 200;
 const UNAUTHORIZED = 403;
@@ -55,9 +56,7 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
 
-  // if (!loading) console.log(`${user ? user.email : 'No one'} is logged in`);
-
-  useEffect(() => {
+  const refresh = useCallback(() => {
     if (loading && !user) {
       return;
     }
@@ -74,7 +73,11 @@ const Home = () => {
         setStatus(ERR_STATUS);
         // setIsLoading(false);
       });
-  }, [user, loading]);
+   }, [user, loading])
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   const remove = async (plant: Plant) => {
     try {
@@ -101,13 +104,18 @@ const Home = () => {
                 <p>
                   You are tracking {plants.length} plants
                 </p>
-                <p className='hover:underline cursor-pointer'>
-                  <Link href="/AddPlantTrackingDetails">
-                    Add a plant!
-                  </Link>
-                </p>
+                <div className="flex justify-between w-1/5">
+                  <p className='hover:text-green hover:bg-yellow hover:underline cursor-pointer border border-yellow p-2'>
+                    <Link href="/AddPlantTrackingDetails">
+                      Add a plant!
+                    </Link>
+                  </p>
+                  <a onClick={refresh} className='hover:text-green hover:bg-yellow hover:underline cursor-pointer border border-yellow p-2'>
+                    <IoRefresh />
+                  </a>
+                </div>
               </div>
-              <PlantTrackingDetails plants={plants} removePlant={remove}/>
+              <PlantTrackingDetails plants={plants} removePlant={remove} />
             </div>
           )}
         {plants.length === 0 && !isLoading && user && status === OK &&
@@ -124,7 +132,7 @@ const Home = () => {
           <div>No user is logged in.</div>
         )}
       </div>
-    </div>
+    </div >
   );
 };
 
