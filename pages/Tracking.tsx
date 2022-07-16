@@ -100,17 +100,17 @@ const Home = () => {
         {plants.length > 0 &&
           (
             <div>
-              <div className="flex justify-between pb-3 pt-6">
+              <div className="flex justify-between items-center text-center pb-3 pt-6">
                 <p>
                   You are tracking {plants.length} plants
                 </p>
-                <div className="flex justify-between w-1/5">
-                  <p className='hover:text-green hover:bg-yellow hover:underline cursor-pointer border border-yellow p-2'>
+                <div className="flex justify-between md:w-1/5">
+                  <p className='hover:text-green hover:bg-yellow cursor-pointer border border-yellow p-2 m-2'>
                     <Link href="/AddPlantTrackingDetails">
                       Add a plant!
                     </Link>
                   </p>
-                  <a onClick={refresh} className='hover:text-green hover:bg-yellow hover:underline cursor-pointer border border-yellow p-2'>
+                  <a onClick={refresh} className='hover:text-green hover:bg-yellow cursor-pointer border border-yellow p-2 m-auto'>
                     <IoRefresh />
                   </a>
                 </div>
