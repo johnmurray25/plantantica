@@ -42,7 +42,9 @@ function SignInScreen(props) {
     return (
         <div className='bg-green text-yellow min-h-screen text-center pt-10 text-xl'>
             <Link href='/' passHref>
-                <TreeLogo />
+                <div>
+                    <TreeLogo/>
+                </div>
             </Link>
             {user ?
                 <div>
