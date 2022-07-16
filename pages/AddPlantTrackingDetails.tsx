@@ -10,6 +10,7 @@ import { Input, Button, Link, Select, MenuItem } from "@mui/material";
 import Plant from "../domain/Plant";
 import { useAuthState } from "react-firebase-hooks/auth";
 
+const MILLIS_IN_DAY = 86400000;
 interface Props {
   plant?: Plant,
 }
@@ -23,12 +24,10 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const [dateObtained, setDateObtained] = useState(plant ? plant.dateObtained : todaysDate);
   const [daysBetweenWatering, setDaysBetweenWatering] = useState(plant ? plant.daysBetweenWatering : 7);
   const [dateLastWatered, setDateLastWatered] = useState(plant ? plant.dateLastWatered : todaysDate);
-  const [dateToWaterNext, setDateToWaterNext] = useState(plant ? plant.dateToWaterNext : todaysDate);
+  const [dateToWaterNext, setDateToWaterNext] = useState(plant ? plant.dateToWaterNext : new Date(todaysDate.getTime()+daysBetweenWatering*MILLIS_IN_DAY));
   const [dateLastFed, setDateLastFed] = useState(plant ? plant.dateLastFed : todaysDate);
   const [dateToFeedNext, setDateToFeedNext] = useState(plant ? plant.dateToFeedNext : todaysDate);
   const [lightRequired, setLightRequired] = useState(plant ? plant.lightRequired : 2);
-
-  plant ? console.log(`plant: ${plant.species}`) : console.log('No plant ...')
 
   const savePlantTrackingDetails = async (event) => {
     event.preventDefault();
@@ -121,7 +120,14 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
               name="minDays"
               id="minDays"
               value={daysBetweenWatering}
-              onChange={(e) => setDaysBetweenWatering(parseInt(e.target.value))}
+              onChange={(e) => {
+                if (!e.target.value) {
+                  return;
+                }
+                setDaysBetweenWatering(parseInt(e.target.value));
+                let newWaterDate = new Date(dateLastWatered.getTime()+daysBetweenWatering*MILLIS_IN_DAY);
+                setDateToWaterNext(newWaterDate);
+              }}
             />
             <br></br>
             <div className="flex">
@@ -134,7 +140,10 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                 className={styles.input}
                 id="nextWater"
                 selected={dateLastWatered}
-                onChange={(d) => setDateLastWatered(d)}
+                onChange={(d: Date) => {
+                  setDateLastWatered(d);
+                  setDateToWaterNext(new Date(d.getTime()+daysBetweenWatering*MILLIS_IN_DAY));
+                }}
               />
             </div>
             <br></br>

@@ -73,7 +73,7 @@ const Home = () => {
         setStatus(ERR_STATUS);
         // setIsLoading(false);
       });
-   }, [user, loading])
+  }, [user, loading])
 
   useEffect(() => {
     refresh();
@@ -96,6 +96,11 @@ const Home = () => {
         <div className={styles.title}>
           <a>Tracking</a>
         </div>
+        <div className="flex justify-end w-10/12 mb-4">
+          <a onClick={refresh} className='hover:text-green hover:bg-yellow cursor-pointer border rounded border-yellow p-2 m-auto absolute'>
+            <IoRefresh />
+          </a>
+        </div>
         {isLoading && <h1>loading...</h1>}
         {plants.length > 0 &&
           (
@@ -104,16 +109,11 @@ const Home = () => {
                 <p>
                   You are tracking {plants.length} plants
                 </p>
-                <div className="flex justify-between md:w-1/5">
-                  <p className='hover:text-green hover:bg-yellow cursor-pointer border border-yellow p-2 m-2'>
-                    <Link href="/AddPlantTrackingDetails">
-                      Add a plant!
-                    </Link>
-                  </p>
-                  <a onClick={refresh} className='hover:text-green hover:bg-yellow cursor-pointer border border-yellow p-2 m-auto'>
-                    <IoRefresh />
-                  </a>
-                </div>
+                <p className='hover:text-green hover:bg-yellow cursor-pointer border border-yellow p-2 m-2'>
+                  <Link href="/AddPlantTrackingDetails">
+                    Add a plant!
+                  </Link>
+                </p>
               </div>
               <PlantTrackingDetails plants={plants} removePlant={remove} />
             </div>
