@@ -15,8 +15,6 @@ interface Props {
   plant?: Plant,
 }
 
-const row = 'flex justify-between items-center '
-
 const AddPlantTrackingDetails: FC<Props> = (props) => {
   const router = useRouter();
   const [user] = useAuthState(auth);
@@ -41,8 +39,6 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       console.error('No user is logged in');
       return;
     }
-    console.log(`species: ${species}`);
-    console.log(`days between watering: ${daysBetweenWatering}`);
     let plantTrackingDetails = {
       species: species,
       dateObtained: dateObtained.getTime(),
@@ -67,6 +63,14 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
     // Redirect back to tracking page
     router.push('/Tracking');
   };
+
+  const onChangeDaysBetweenWatering = (e: React.ChangeEvent<HTMLInputElement>) => {
+      let s = e.target.value.replace(/\D/g, '');
+      let val = Number(s);
+      setDaysBetweenWatering(val);
+      let newWaterDate = new Date(dateLastWatered.getTime() + val * MILLIS_IN_DAY);
+      setDateToWaterNext(newWaterDate);
+  }  
 
   return (
     <div className={styles.container}>
@@ -105,20 +109,13 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
             <label htmlFor="minDays">
               Days between watering:
             </label>
-            <Input
-              className={styles.input}
-              type="number"
+            <input
+              className='bg-lightGrayGreen p-2 mb-2 text-slate text-center'
+              type="text"
               name="minDays"
               id="minDays"
-              value={daysBetweenWatering}
-              onChange={(e) => {
-                if (!e.target.value) {
-                  return;
-                }
-                setDaysBetweenWatering(parseInt(e.target.value));
-                let newWaterDate = new Date(dateLastWatered.getTime() + daysBetweenWatering * MILLIS_IN_DAY);
-                setDateToWaterNext(newWaterDate);
-              }}
+              value={String(daysBetweenWatering)}
+              onChange={onChangeDaysBetweenWatering}
             />
             <label htmlFor="nextWater">Last watered on</label>
             <DatePicker

@@ -13,6 +13,7 @@ module.exports = {
         'lighterYellow': 'rgb(248, 245, 240)',
         'lightGrayGreen': '#e8ffec',
         'blue': '#7ed6df',
+        'slate': 'darkslategrey'
       },
       backgroundImage: {
         'blue-tree': 'url(../img/blue-tree.png)'
