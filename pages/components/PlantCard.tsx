@@ -12,34 +12,36 @@ interface Props {
 }
 
 const MILLIS_IN_DAY = 86400000;
-const wateringStates = ['good', 'check', 'bad']
+// const wateringStates = ['good', 'check', 'bad']
 
 const PlantCard: FC<Props> = (props) => {
 
     // dereference props
     const [plant] = useState(props.plant);
+    const [dateToWaterNext] = useState(plant ? plant.dateToWaterNext : new Date(new Date().getTime()+MILLIS_IN_DAY));
     const waterPlant = props.waterPlant;
 
-    const [wateringState, setWateringState] = useState('');
-    console.log(`wateringState: ${wateringState}`)
+    const [wateringState, setWateringState] = useState('good');
 
     useEffect(() => {
+        if (!plant) {
+            return;
+        }
         let today = new Date();
-        let waterDate = plant.dateToWaterNext;
         // GOOD state
-        if (today.toLocaleDateString() == waterDate.toLocaleDateString()
-            || today.getTime() <= waterDate.getTime()) {
+        if (today.toLocaleDateString() == dateToWaterNext.toLocaleDateString()
+            || today.getTime() <= dateToWaterNext.getTime()) {
             setWateringState('good');
             return;
         }
         // BAD state
-        if ((today.getTime() - waterDate.getTime()) > (3 * MILLIS_IN_DAY)) {
+        if ((today.getTime() - dateToWaterNext.getTime()) > (3 * MILLIS_IN_DAY)) {
             setWateringState('bad');
             return;
         }
         // CHECK SOIL state
         setWateringState('check');
-    }, [plant.dateToWaterNext]);
+    }, [dateToWaterNext, plant]);
 
     const getBgStyle = () => {
         let sharedStyle = 'border rounded-md p-5 m-2 '
@@ -63,7 +65,7 @@ const PlantCard: FC<Props> = (props) => {
         return 'text-yellow';
     }
 
-    return (
+    return plant ? (
         <div key={plant.id} className={getBgStyle()}>
             <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
             <h1>
@@ -72,8 +74,7 @@ const PlantCard: FC<Props> = (props) => {
                     {plant.species}
                 </a>
             </h1>
-            {
-                plant.dateObtained &&
+            {plant.dateObtained &&
                 <p style={{ fontSize: "0.7rem", textAlign: "left" }}>
                     had since&nbsp;
                     {plant.dateObtained.toLocaleDateString()}
@@ -117,7 +118,10 @@ const PlantCard: FC<Props> = (props) => {
                 <br></br>
             </div>
         </div>
-    )
+    ) : 
+    <div>
+        
+    </div>
 }
 
 export default PlantCard
