@@ -9,4 +9,5 @@ export default interface Plant {
     dateToFeedNext: Date;
     lightRequired: string | number;
     dateCreated?: Date;
+    picture?: string;
 }

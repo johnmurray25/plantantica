@@ -57,11 +57,14 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
 
-  const refresh = useCallback(() => {
+  const refresh = useCallback(async () => {
     if (!user) {
       if (!loading) setStatus(UNAUTHORIZED);
       return
     }
+    // force refresh if user's token has expired
+    await user.getIdToken();
+    console.log('re-authenticated user')
     setIsLoading(true);
     getPlants(user)
       .then(results => setPlants(results))

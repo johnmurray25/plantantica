@@ -28,9 +28,13 @@ const PlantCard: FC<Props> = (props) => {
             return;
         }
         let today = new Date();
+        // CHECK state
+        if (today.toLocaleDateString() == dateToWaterNext.toLocaleDateString()) {
+            setWateringState('check');
+            return;
+        }
         // GOOD state
-        if (today.toLocaleDateString() == dateToWaterNext.toLocaleDateString()
-            || today.getTime() <= dateToWaterNext.getTime()) {
+        if (today.getTime() < dateToWaterNext.getTime()) {
             setWateringState('good');
             return;
         }
@@ -39,7 +43,7 @@ const PlantCard: FC<Props> = (props) => {
             setWateringState('bad');
             return;
         }
-        // CHECK SOIL state
+        // CHECK state
         setWateringState('check');
     }, [dateToWaterNext, plant]);
 
