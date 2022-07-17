@@ -70,11 +70,12 @@ const Home = () => {
     setIsLoading(true);
     getPlants(user)
       .then(results => setPlants(results))
+      .then(() => setIsLoading(false))
       .catch((e) => {
-        console.error(e);
-        setStatus(ERR_STATUS);
+        console.error(e)
+        setStatus(ERR_STATUS)
+        setIsLoading(false)
       })
-      .finally(() => setIsLoading(false));
   }, [refreshToggle, user, loading, plants]);
 
   const remove = async (plant: Plant) => {
