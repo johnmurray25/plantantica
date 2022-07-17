@@ -18,7 +18,7 @@ const PlantCard: FC<Props> = (props) => {
 
     // dereference props
     const [plant] = useState(props.plant);
-    const [dateToWaterNext] = useState(plant ? plant.dateToWaterNext : new Date(new Date().getTime()+MILLIS_IN_DAY));
+    const [dateToWaterNext] = useState(plant ? plant.dateToWaterNext : new Date(new Date().getTime() + MILLIS_IN_DAY));
     const waterPlant = props.waterPlant;
 
     const [wateringState, setWateringState] = useState('good');
@@ -53,7 +53,7 @@ const PlantCard: FC<Props> = (props) => {
             return 'border border-yellow rounded-md p-5 m-2 bg-red-900';
     }
     const getWtrBtnStyle = () => {
-        let sharedStyle = "flex cursor-pointer text-sm px-4 py-2 leading-none border rounded hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0 "
+        let sharedStyle = "flex cursor-pointer text-sm px-4 py-2 leading-none border rounded hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-2 "
         if (wateringState == 'good' || wateringState == 'bad')
             return sharedStyle + "border-yellow text-yellow ";
         if (wateringState == 'check')
@@ -72,7 +72,7 @@ const PlantCard: FC<Props> = (props) => {
             </div>
             <h1>
                 <a className='hover:underline' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`}
-                style={{ fontSize: "1.4rem", }}>
+                    style={{ fontSize: "1.4rem", }}>
                     {plant.species}
                 </a>
             </h1>
@@ -83,10 +83,11 @@ const PlantCard: FC<Props> = (props) => {
                 </p>
             }
             <div className="flex justify-end">
-                <a onClick={() => waterPlant(plant)}
-                    className={getWtrBtnStyle()}>
+                <a onClick={() => waterPlant(plant)} className={getWtrBtnStyle()}>
                     <IoWater className="cursor-pointer text-blue" />
+                    &nbsp;&nbsp;
                     Water?
+                    &nbsp;&nbsp;
                     <IoWater className="cursor-pointer text-blue" />
                 </a>
             </div>
@@ -104,7 +105,7 @@ const PlantCard: FC<Props> = (props) => {
                 <div className='flex justify-evenly'>
                     {plant.lightRequired < 5 ?
                         <IoPartlySunny className={getIconStyle()} />
-                    :
+                        :
                         <IoSunny className={getIconStyle()} />
                     }
                     &nbsp;&nbsp;
@@ -113,17 +114,17 @@ const PlantCard: FC<Props> = (props) => {
                     &nbsp;&nbsp;
                     {plant.lightRequired < 5 ?
                         <IoPartlySunny className={getIconStyle()} />
-                    :
+                        :
                         <IoSunny className={getIconStyle()} />
                     }
                 </div>
                 <br></br>
             </div>
         </div>
-    ) : 
-    <div>
-        
-    </div>
+    ) :
+        <div>
+
+        </div>
 }
 
 export default PlantCard
