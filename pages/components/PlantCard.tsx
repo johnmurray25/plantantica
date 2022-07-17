@@ -110,7 +110,7 @@ const PlantCard: FC<Props> = (props) => {
                     }
                     &nbsp;&nbsp;
                     {plant.lightRequired == 2 && 'Bright indirect light'}
-                    {plant.lightRequired == 10 && 'Full sun'}
+                    {plant.lightRequired == 10 && 'Bright light'}
                     &nbsp;&nbsp;
                     {plant.lightRequired < 5 ?
                         <IoPartlySunny className={getIconStyle()} />

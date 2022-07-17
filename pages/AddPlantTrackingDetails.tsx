@@ -104,7 +104,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
               onChange={(e) => setLightRequired(e.target.value)}
             >
               <MenuItem value={2}>Bright indirect light</MenuItem>
-              <MenuItem value={10}>Full sun</MenuItem>
+              <MenuItem value={10}>Bright light</MenuItem>
             </Select>
             <label htmlFor="minDays">
               Days between watering:
