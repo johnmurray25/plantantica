@@ -8,6 +8,6 @@ export default interface Plant {
     dateLastFed: Date;
     dateToFeedNext: Date;
     lightRequired: string | number;
-    dateCreated?: Date;
     picture?: string;
+    dateCreated?: Date;
 }

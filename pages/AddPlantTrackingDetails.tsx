@@ -8,9 +8,9 @@ import styles from "../styles/tracking.module.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Input, Link, Select, MenuItem } from "@mui/material";
-import Plant from "../domain/Plant";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { ref, uploadBytes } from "firebase/storage";
+import Plant from "../domain/Plant";
 
 const MILLIS_IN_DAY = 86400000;
 interface Props {
@@ -43,9 +43,9 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       return;
     }
     // save image to firebase storage
-    let imageRef: string = null;
+    let imageRef: string;
     if (selectedFile) {
-      let storageRef = ref(storage, 'plant-images');
+      let storageRef = ref(storage, `plant-images/${selectedFile.name}`);
       let bytes = await selectedFile.arrayBuffer();
       let fileRef = await uploadBytes(storageRef, bytes);
       imageRef = fileRef.ref.fullPath;
@@ -61,13 +61,8 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       dateToFeedNext: dateToFeedNext.getTime(),
       lightRequired: lightRequired,
       dateCreated: (new Date()).getTime(),
+      picture: imageRef,
     };
-    if (imageRef) {
-      plantTrackingDetails = {
-        ...plantTrackingDetails,
-        picture: imageRef
-      }
-    }
     console.log('image ref: '+imageRef);
     let docRef: DocumentReference<DocumentData> = null;
     if (plant) {

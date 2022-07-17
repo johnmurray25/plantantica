@@ -1,9 +1,12 @@
+import storage from '../../firebase/storage';
 import { IoSunny } from '@react-icons/all-files/io5/IoSunny';
 import { IoPartlySunny } from '@react-icons/all-files/io5/IoPartlySunny';
 import { IoWater } from '@react-icons/all-files/io5/IoWater';
 import React, { FC, useEffect, useState } from 'react'
 import Plant from '../../domain/Plant';
 import DropDownMenu from './DropDownMenu';
+import Image from 'next/image';
+import { getDownloadURL, ref } from 'firebase/storage';
 
 interface Props {
     plant: Plant;
@@ -22,10 +25,15 @@ const PlantCard: FC<Props> = (props) => {
     const waterPlant = props.waterPlant;
 
     const [wateringState, setWateringState] = useState('good');
+    const [imageURL, setImageURL] = useState();
 
     useEffect(() => {
         if (!plant) {
             return;
+        }
+        if (plant.picture) {
+            getDownloadURL(ref(storage, plant.picture))
+                .then(s => setImageURL(s));
         }
         let today = new Date();
         // CHECK state
@@ -74,6 +82,9 @@ const PlantCard: FC<Props> = (props) => {
             <div className='flex justify-end'>
                 <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
             </div>
+            {plant.picture && imageURL &&
+                <Image src={imageURL} alt='photo of plant' width='150' height='150'/>
+            }
             <h1>
                 <a className='hover:underline' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`}
                     style={{ fontSize: "1.4rem", }}>

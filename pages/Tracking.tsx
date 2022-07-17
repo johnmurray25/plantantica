@@ -35,7 +35,8 @@ const getPlants = async (user: User) => {
           dateLastFed: new Date(doc.get('dateLastFed')),
           dateToFeedNext: new Date(doc.get('dateToFeedNext')),
           lightRequired: doc.get('lightRequired'),
-          dateCreated: new Date(doc.get('dateCreated'))
+          dateCreated: new Date(doc.get('dateCreated')),
+          picture: doc.get('picture'),
         }
       });
   } catch (error) {
