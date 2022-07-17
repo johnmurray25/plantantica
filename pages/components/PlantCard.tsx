@@ -31,14 +31,14 @@ const PlantCard: FC<Props> = (props) => {
         if (!plant) {
             return;
         }
-        if (plant.picture && plant.picture !== '') {
-            getDownloadURL(ref(storage, `plant-images/${plant.picture}`))
-                .then(s => {
-                    console.log(`image url: ${s}`);
-                    setImageURL(s)
-                })
-                .catch(e => console.error(e));//'failed to fetch image'));
-        }
+        // if (plant.picture && plant.picture !== '') {
+        //     getDownloadURL(ref(storage, `plant-images/${plant.picture}`))
+        //         .then(s => {
+        //             console.log(`image url: ${s}`);
+        //             setImageURL(s)
+        //         })
+        //         .catch(e => console.error(e));//'failed to fetch image'));
+        // }
         let today = new Date();
         // CHECK state
         if (today.toLocaleDateString() == dateToWaterNext.toLocaleDateString()) {
@@ -86,7 +86,7 @@ const PlantCard: FC<Props> = (props) => {
             <div className='flex justify-end'>
                 <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
             </div>
-            {plant.picture && imageURL &&
+            {plant.picture && imageURL && imageURL !== '' &&
                 <Image src={imageURL} alt='photo of plant' width='150' height='150'/>
             }
             <h1>
