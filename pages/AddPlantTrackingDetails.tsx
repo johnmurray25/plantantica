@@ -2,6 +2,7 @@ import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import { useRouter } from 'next/router';
 import auth from '../firebase/auth';
 import db from '../firebase/db';
+import storage from "../firebase/storage";
 import { collection, addDoc, doc, setDoc, DocumentReference, DocumentData } from "firebase/firestore";
 import styles from "../styles/tracking.module.css";
 import DatePicker from "react-datepicker";
@@ -9,6 +10,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Input, Link, Select, MenuItem } from "@mui/material";
 import Plant from "../domain/Plant";
 import { useAuthState } from "react-firebase-hooks/auth";
+import { ref, uploadBytes } from "firebase/storage";
 
 const MILLIS_IN_DAY = 86400000;
 interface Props {
@@ -28,6 +30,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const [dateLastFed, setDateLastFed] = useState(plant ? plant.dateLastFed : todaysDate);
   const [dateToFeedNext, setDateToFeedNext] = useState(plant ? plant.dateToFeedNext : todaysDate);
   const [lightRequired, setLightRequired] = useState(plant ? plant.lightRequired : 2);
+  const [selectedFile, setSelectedFile]: [File, Dispatch<SetStateAction<File>>] = useState();
 
   const savePlantTrackingDetails = async (event) => {
     event.preventDefault();
@@ -39,6 +42,15 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       console.error('No user is logged in');
       return;
     }
+    // save image to firebase storage
+    let imageRef: string = null;
+    if (selectedFile) {
+      let storageRef = ref(storage, 'plant-images');
+      let bytes = await selectedFile.arrayBuffer();
+      let fileRef = await uploadBytes(storageRef, bytes);
+      imageRef = fileRef.ref.fullPath;
+    }
+    // save document to firestore db
     let plantTrackingDetails = {
       species: species,
       dateObtained: dateObtained.getTime(),
@@ -50,6 +62,13 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       lightRequired: lightRequired,
       dateCreated: (new Date()).getTime(),
     };
+    if (imageRef) {
+      plantTrackingDetails = {
+        ...plantTrackingDetails,
+        picture: imageRef
+      }
+    }
+    console.log('image ref: '+imageRef);
     let docRef: DocumentReference<DocumentData> = null;
     if (plant) {
       // Update an existing document
@@ -65,12 +84,12 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   };
 
   const onChangeDaysBetweenWatering = (e: React.ChangeEvent<HTMLInputElement>) => {
-      let s = e.target.value.replace(/\D/g, '');
-      let val = Number(s);
-      setDaysBetweenWatering(val);
-      let newWaterDate = new Date(dateLastWatered.getTime() + val * MILLIS_IN_DAY);
-      setDateToWaterNext(newWaterDate);
-  }  
+    let s = e.target.value.replace(/\D/g, '');
+    let val = Number(s);
+    setDaysBetweenWatering(val);
+    let newWaterDate = new Date(dateLastWatered.getTime() + val * MILLIS_IN_DAY);
+    setDateToWaterNext(newWaterDate);
+  }
 
   return (
     <div className={styles.container}>
@@ -92,6 +111,14 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
               value={species}
               onChange={(e) => setSpecies(e.target.value)}
               required={true}
+            />
+            <label htmlFor="selectedFile">
+              Image
+            </label>
+            <input
+              id='selectedFile'
+              type='file'
+              onChange={(e) => setSelectedFile(e.target.files[0])}
             />
             <label htmlFor="lightReq">
               Requires
