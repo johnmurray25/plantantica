@@ -48,7 +48,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       let storageRef = ref(storage, `plant-images/${selectedFile.name}`);
       let bytes = await selectedFile.arrayBuffer();
       let fileRef = await uploadBytes(storageRef, bytes);
-      imageRef = fileRef.ref.fullPath;
+      imageRef = fileRef.ref.name;
     }
     // save document to firestore db
     let plantTrackingDetails = {
