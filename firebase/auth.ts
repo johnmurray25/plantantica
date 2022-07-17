@@ -1,7 +1,7 @@
 import { getAuth } from 'firebase/auth';
-import firebase from './clientApp';
+import app from './clientApp';
 
 // Initialize Auth object to be referenced within app
-const auth = getAuth(firebase);
+const auth = getAuth(app);
 
 export default auth;

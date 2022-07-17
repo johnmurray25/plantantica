@@ -1,7 +1,7 @@
 import { getFirestore } from "firebase/firestore";
-import firebase from './clientApp';
+import app from './clientApp';
 
 // Initialize Cloud Firestore and get a reference to the service
-const db = getFirestore(firebase);
+const db = getFirestore(app);
 
 export default db;

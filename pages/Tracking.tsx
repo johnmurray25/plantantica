@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import db from '../firebase/db';
 import auth from '../firebase/auth';
@@ -18,6 +17,7 @@ const ERR_STATUS = 500;
 
 const getPlants = async (user: User) => {
   try {
+    if (!user) return;
     // Load all plant tracking data for current user
     const collectionRef = collection(doc(db, 'users', user.email), 'plantTrackingDetails');
     const queryRef = query(collectionRef);
@@ -55,13 +55,18 @@ const Home = () => {
   const [status, setStatus]: [number, any] = useState(OK);
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
+  // const [refreshToggle, setRefreshToggle] = useState(false);
 
+  //
   const refresh = useCallback(() => {
     if (loading && !user) {
       return;
     }
     if (!loading && !user) {
       setStatus(UNAUTHORIZED);
+      return;
+    }
+    if (plants && !user) {
       return;
     }
     setIsLoading(true);
@@ -73,7 +78,7 @@ const Home = () => {
         setStatus(ERR_STATUS);
         // setIsLoading(false);
       });
-  }, [user, loading])
+  }, [user, loading, plants])
 
   useEffect(() => {
     refresh();
@@ -109,7 +114,7 @@ const Home = () => {
                 <p>
                   You are tracking {plants.length} plants
                 </p>
-                <p className='hover:text-green hover:bg-yellow cursor-pointer border border-yellow p-2 m-2'>
+                <p className='hover:text-green hover:bg-yellow cursor-pointer border rounded-sm border-yellow p-2 m-2'>
                   <Link href="/AddPlantTrackingDetails">
                     Add a plant!
                   </Link>
