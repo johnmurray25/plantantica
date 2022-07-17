@@ -25,13 +25,13 @@ const PlantCard: FC<Props> = (props) => {
     const waterPlant = props.waterPlant;
 
     const [wateringState, setWateringState] = useState('good');
-    const [imageURL, setImageURL] = useState();
+    const [imageURL, setImageURL] = useState('');
 
     useEffect(() => {
         if (!plant) {
             return;
         }
-        if (plant.picture) {
+        if (plant.picture !== '') {
             getDownloadURL(ref(storage, plant.picture))
                 .then(s => setImageURL(s));
         }
