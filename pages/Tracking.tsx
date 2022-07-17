@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import db from '../firebase/db';
 import auth from '../firebase/auth';
@@ -55,28 +56,26 @@ const Home = () => {
   const [status, setStatus]: [number, any] = useState(OK);
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
-  const [refreshToggle, setRefreshToggle] = useState(false);
 
-  useEffect(() => {
+  const refresh = useCallback(() => {
     if (!user) {
-      if (!loading) {
-        setStatus(UNAUTHORIZED);
-        return;
-      }
-      if (plants) {
-        return;
-      } 
+      if (!loading) setStatus(UNAUTHORIZED);
+      return
     }
     setIsLoading(true);
     getPlants(user)
       .then(results => setPlants(results))
       .then(() => setIsLoading(false))
       .catch((e) => {
-        console.error(e)
-        setStatus(ERR_STATUS)
-        setIsLoading(false)
-      })
-  }, [refreshToggle, user, loading, plants]);
+        console.error(e);
+        setStatus(ERR_STATUS);
+        setIsLoading(false);
+      });
+  }, [user, loading])
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
   const remove = async (plant: Plant) => {
     try {
@@ -96,7 +95,7 @@ const Home = () => {
           <a>Tracking</a>
         </div>
         <div className="flex justify-end w-10/12 mb-4">
-          <a onClick={()=>setRefreshToggle(!refreshToggle)} className='hover:text-green hover:bg-yellow cursor-pointer border rounded border-yellow p-2 m-auto absolute'>
+          <a onClick={refresh} className='hover:text-green hover:bg-yellow cursor-pointer border rounded border-yellow p-2 m-auto absolute'>
             <IoRefresh />
           </a>
         </div>
