@@ -55,34 +55,27 @@ const Home = () => {
   const [status, setStatus]: [number, any] = useState(OK);
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
-  // const [refreshToggle, setRefreshToggle] = useState(false);
+  const [refreshToggle, setRefreshToggle] = useState(false);
 
-  //
-  const refresh = useCallback(() => {
-    if (loading && !user) {
-      return;
-    }
-    if (!loading && !user) {
-      setStatus(UNAUTHORIZED);
-      return;
-    }
-    if (plants && !user) {
-      return;
+  useEffect(() => {
+    if (!user) {
+      if (!loading) {
+        setStatus(UNAUTHORIZED);
+        return;
+      }
+      if (plants) {
+        return;
+      } 
     }
     setIsLoading(true);
     getPlants(user)
       .then(results => setPlants(results))
-      .then(() => setIsLoading(false))
       .catch((e) => {
         console.error(e);
         setStatus(ERR_STATUS);
-        // setIsLoading(false);
-      });
-  }, [user, loading, plants])
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
+      })
+      .finally(() => setIsLoading(false));
+  }, [refreshToggle, user, loading, plants]);
 
   const remove = async (plant: Plant) => {
     try {
@@ -102,7 +95,7 @@ const Home = () => {
           <a>Tracking</a>
         </div>
         <div className="flex justify-end w-10/12 mb-4">
-          <a onClick={refresh} className='hover:text-green hover:bg-yellow cursor-pointer border rounded border-yellow p-2 m-auto absolute'>
+          <a onClick={()=>setRefreshToggle(!refreshToggle)} className='hover:text-green hover:bg-yellow cursor-pointer border rounded border-yellow p-2 m-auto absolute'>
             <IoRefresh />
           </a>
         </div>
