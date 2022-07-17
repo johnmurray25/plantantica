@@ -33,7 +33,8 @@ const PlantCard: FC<Props> = (props) => {
         }
         if (plant.picture !== '') {
             getDownloadURL(ref(storage, plant.picture))
-                .then(s => setImageURL(s));
+                .then(s => setImageURL(s))
+                .catch(e => console.error(e));//'failed to fetch image'));
         }
         let today = new Date();
         // CHECK state
