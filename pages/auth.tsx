@@ -14,7 +14,7 @@ function SignInScreen(props) {
     const redirectRef = props.href ? props.href : '';
 
     const uiConfig = {
-        signInSuccessUrl: "/" + redirectRef,
+        signInSuccessUrl: "/index",
         // Popup signin flow rather than redirect flow.
         //signInFlow: 'popup',
         signInOptions: [

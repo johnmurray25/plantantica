@@ -3,7 +3,6 @@ import app from './clientApp';
 
 // Initialize Auth object to be referenced within app
 const auth = getAuth(app);
-// setPersistence(auth, browserLocalPersistence)
-    // .then(() => console.log('using local storage persistence'));
+setPersistence(auth, browserLocalPersistence);
 
 export default auth;

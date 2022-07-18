@@ -31,14 +31,14 @@ const PlantCard: FC<Props> = (props) => {
         if (!plant) {
             return;
         }
-        // if (plant.picture && plant.picture !== '') {
-        //     getDownloadURL(ref(storage, `plant-images/${plant.picture}`))
-        //         .then(s => {
-        //             console.log(`image url: ${s}`);
-        //             setImageURL(s)
-        //         })
-        //         .catch(e => console.error(e));//'failed to fetch image'));
-        // }
+        if (plant.picture && plant.picture !== '') {
+            getDownloadURL(ref(storage, `plant-images/${plant.picture}`))
+                .then(s => {
+                    console.log(`image url: ${s}`);
+                    setImageURL(s)
+                })
+                .catch(e => console.error(e));//'failed to fetch image'));
+        }
         let today = new Date();
         // CHECK state
         if (today.toLocaleDateString() == dateToWaterNext.toLocaleDateString()) {
