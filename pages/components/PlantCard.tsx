@@ -1,12 +1,14 @@
-import storage from '../../firebase/storage';
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import Image from 'next/image';
+
 import { IoSunny } from '@react-icons/all-files/io5/IoSunny';
 import { IoPartlySunny } from '@react-icons/all-files/io5/IoPartlySunny';
 import { IoWater } from '@react-icons/all-files/io5/IoWater';
-import React, { FC, useEffect, useState } from 'react'
+import { getDownloadURL, ref } from 'firebase/storage';
+
+import storage from '../../firebase/storage';
 import Plant from '../../domain/Plant';
 import DropDownMenu from './DropDownMenu';
-import Image from 'next/image';
-import { getDownloadURL, ref } from 'firebase/storage';
 
 interface Props {
     plant: Plant;
@@ -26,18 +28,33 @@ const PlantCard: FC<Props> = (props) => {
 
     const [wateringState, setWateringState] = useState('good');
     const [imageURL, setImageURL] = useState('');
+    // const [unzippedFile, setUnzippedFile]: [File, Dispatch<SetStateAction<File>>] = useState(null);
 
     useEffect(() => {
         if (!plant) {
             return;
         }
-        if (plant.picture && plant.picture !== '') {
-            getDownloadURL(ref(storage, `plant-images/${plant.picture}`))
-                .then(s => {
-                    console.log(`image url: ${s}`);
-                    setImageURL(s)
-                })
-                .catch(e => console.error(e));//'failed to fetch image'));
+        if (imageURL == '' && plant.picture && plant.picture !== '') {
+            getDownloadURL(ref(storage, plant.picture))
+                .then(downloadUrl =>
+                    setImageURL(downloadUrl))
+                    // request(
+                    //     {
+                    //         method: "GET",
+                    //         url: downloadUrl,
+                    //         encoding: null, // <- this one is important !
+                    //     },
+                    //     (error, response, body) => {
+                    //         if (error || response.statusCode !== 200) {
+                    //             console.error(error);
+                    //             return;
+                    //         }
+                    //         JSZip.loadAsync(body)
+                    //             .then((zip) => {
+                    //                 return zip.file(plant.picture).async("blob");
+                    //             }).then((content) => setUnzippedFile(new File(content.arrayBuffer(), plant.picture)));
+                    //     }))
+                .catch(e => console.error('Failed to load image from storage bucket'));
         }
         let today = new Date();
         // CHECK state
@@ -57,7 +74,7 @@ const PlantCard: FC<Props> = (props) => {
         }
         // CHECK state
         setWateringState('check');
-    }, [dateToWaterNext, plant]);
+    }, [dateToWaterNext, plant, imageURL]);
 
     const getBgStyle = () => {
         let sharedStyle = 'border rounded-md p-5 m-2 '
@@ -87,7 +104,7 @@ const PlantCard: FC<Props> = (props) => {
                 <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
             </div>
             {plant.picture && imageURL && imageURL !== '' &&
-                <Image src={imageURL} alt='photo of plant' width='150' height='150'/>
+                <Image src={imageURL} alt='photo of plant' width='150' height='150' blurDataURL='plantantica.vercel.app' placeholder='blur'/>
             }
             <h1>
                 <a className='hover:underline' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`}

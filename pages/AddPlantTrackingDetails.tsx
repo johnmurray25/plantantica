@@ -16,7 +16,7 @@ import Plant from "../domain/Plant";
 import styles from "../styles/tracking.module.css";
 
 // Compress and save image file to Firebase storage
-const uploadFile = async (file, fileName: string) => {
+const compressAndUploadFile = async (file, fileName: string) => {
   let storageRef = ref(storage, `plant/${fileName}`);
   if (typeof file === 'string') {
     // convert to blob
@@ -27,6 +27,13 @@ const uploadFile = async (file, fileName: string) => {
   let path = fileRef.ref.fullPath;
   console.log(`image uploaded: ${path}`);
   return path;
+}
+
+const uploadFile = async (file: File) => {
+  let storageRef = ref(storage, `plant/${file.name}`);
+  let bytes = await file.arrayBuffer();
+  let fileRef = await uploadBytes(storageRef, bytes);
+  return fileRef.ref.name;
 }
 
 const MILLIS_IN_DAY = 86400000;
@@ -61,17 +68,18 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
     }
     let imagePath: string = '';
     if (selectedFile) {
-      // compress file (zip)
-      let zip = new JSZip();
-      let zipFile = zip.file(selectedFile.name, selectedFile);
-      var promise: Promise<Uint8Array | string> = null;
-      if (JSZip.support.uint8array) {
-        promise = zip.generateAsync({ type: "uint8array" });
-      } else {
-        promise = zip.generateAsync({ type: "string" });
-      }
-      let content = await promise;
-      imagePath = await uploadFile(content, selectedFile.name);
+      imagePath = await uploadFile(selectedFile);
+      // compress file
+      // let zip = new JSZip();
+      // let zipFile = zip.file(selectedFile.name, selectedFile);
+      // var promise: Promise<Uint8Array | string> = null;
+      // if (JSZip.support.uint8array) {
+      //   promise = zip.generateAsync({ type: "uint8array" });
+      // } else {
+      //   promise = zip.generateAsync({ type: "string" });
+      // }
+      // let content = await promise;
+      // imagePath = await uploadFile(content, selectedFile.name);
     }
     // save document to firestore db
     let plantTrackingDetails = {
