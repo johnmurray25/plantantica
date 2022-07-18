@@ -35,7 +35,7 @@ const PlantCard: FC<Props> = (props) => {
             return;
         }
         if (imageURL == '' && plant.picture && plant.picture !== '') {
-            getDownloadURL(ref(storage, plant.picture))
+            getDownloadURL(ref(storage, `plant/${plant.picture}`))
                 .then(downloadUrl =>
                     setImageURL(downloadUrl))
                     // request(
@@ -104,7 +104,7 @@ const PlantCard: FC<Props> = (props) => {
                 <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
             </div>
             {plant.picture && imageURL && imageURL !== '' &&
-                <Image src={imageURL} alt='photo of plant' width='150' height='150' blurDataURL='plantantica.vercel.app' placeholder='blur'/>
+                <Image src={imageURL} alt='photo of plant' width='150' height='150' />
             }
             <h1>
                 <a className='hover:underline' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`}
