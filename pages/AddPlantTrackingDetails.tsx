@@ -1,16 +1,33 @@
 import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import { useRouter } from 'next/router';
-import auth from '../firebase/auth';
-import db from '../firebase/db';
-import storage from "../firebase/storage";
+
 import { collection, addDoc, doc, setDoc, DocumentReference, DocumentData } from "firebase/firestore";
-import styles from "../styles/tracking.module.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Input, Link, Select, MenuItem } from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { ref, uploadBytes } from "firebase/storage";
+import JSZip from 'jszip';
+
+import auth from '../firebase/auth';
+import db from '../firebase/db';
+import storage from "../firebase/storage";
 import Plant from "../domain/Plant";
+import styles from "../styles/tracking.module.css";
+
+// Compress and save image file to Firebase storage
+const uploadFile = async (file, fileName: string) => {
+  let storageRef = ref(storage, `plant/${fileName}`);
+  if (typeof file === 'string') {
+    // convert to blob
+    let enc = new TextEncoder();
+    file = enc.encode(file);
+  }
+  let fileRef = await uploadBytes(storageRef, file);
+  let path = fileRef.ref.fullPath;
+  console.log(`image uploaded: ${path}`);
+  return path;
+}
 
 const MILLIS_IN_DAY = 86400000;
 interface Props {
@@ -42,13 +59,19 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       console.error('No user is logged in');
       return;
     }
-    // save image to firebase storage
-    let imageRef: string;
+    let imagePath: string = '';
     if (selectedFile) {
-      let storageRef = ref(storage, `plant-images/${selectedFile.name}`);
-      let bytes = await selectedFile.arrayBuffer();
-      let fileRef = await uploadBytes(storageRef, bytes);
-      imageRef = fileRef.ref.name;
+      // compress file (zip)
+      let zip = new JSZip();
+      let zipFile = zip.file(selectedFile.name, selectedFile);
+      var promise: Promise<Uint8Array | string> = null;
+      if (JSZip.support.uint8array) {
+        promise = zip.generateAsync({ type: "uint8array" });
+      } else {
+        promise = zip.generateAsync({ type: "string" });
+      }
+      let content = await promise;
+      imagePath = await uploadFile(content, selectedFile.name);
     }
     // save document to firestore db
     let plantTrackingDetails = {
@@ -61,9 +84,9 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       dateToFeedNext: dateToFeedNext.getTime(),
       lightRequired: lightRequired,
       dateCreated: (new Date()).getTime(),
-      picture: imageRef,
+      picture: imagePath,
     };
-    console.log('image ref: '+imageRef);
+    console.log('image ref: ' + imagePath);
     let docRef: DocumentReference<DocumentData> = null;
     if (plant) {
       // Update an existing document
