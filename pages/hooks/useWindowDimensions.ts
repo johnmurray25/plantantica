@@ -23,7 +23,9 @@ export default function useWindowDimensions() {
       window.addEventListener('resize', handleResize);
     }
     return () => {
-      if (window) window.removeEventListener('resize', handleResize);
+      if (window) {
+        window.removeEventListener('resize', handleResize);
+      }
     }
   }, []);
 
