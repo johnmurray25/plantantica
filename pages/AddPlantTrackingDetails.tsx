@@ -17,6 +17,7 @@ import styles from "../styles/tracking.module.css";
 import FileInput from "./components/FileInput";
 import Image from "next/image";
 import { User } from "firebase/auth";
+import { getImageUrl, uploadFile } from "../service/PlantService";
 
 // Compress and save image file to Firebase storage
 // const compressAndUploadFile = async (file, fileName: string) => {
@@ -31,25 +32,6 @@ import { User } from "firebase/auth";
 //   console.log(`image uploaded: ${path}`);
 //   return path;
 // }
-
-const uploadFile = async (file: File, user: User) => {
-  let storageRef = ref(storage, `${user.email}/${file.name}`);
-  let bytes = await file.arrayBuffer();
-  let fileRef = await uploadBytes(storageRef, bytes);
-  console.log(`uploaded image: ${fileRef.ref.fullPath}`)
-  return fileRef.ref.name;
-}
-
-const getImageUrl = async (fileName: string, user: User): Promise<string> => {
-  let imageUrl = getDownloadURL(ref(storage, `${user.email}/${fileName}`))
-    .then(downloadUrl => { return downloadUrl })
-    .catch(e => {
-      console.debug(e);
-      console.error('Failed to load image from storage bucket');
-      return '';
-    });
-  return imageUrl;
-}
 
 const MILLIS_IN_DAY = 86400000;
 interface Props {
@@ -129,6 +111,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   }
 
   const onRemoveFile = async () => {
+    if (!confirm('Are you sure you want to remove the image?')) return;
     if (plant && plant.picture) {
       try {
         const imgRef = ref(storage, `${user.email}/${plant.picture}`);
