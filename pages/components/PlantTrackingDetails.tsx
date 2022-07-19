@@ -67,7 +67,7 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
     <div className={gridStyles.container}>
       {plants &&
         plants.map((plant) => (
-          <PlantCard key={plant.id} plant={plant} waterPlant={waterPlant} removePlant={removePlant} />
+          <PlantCard key={plant.id} plant={plant} waterPlant={waterPlant} removePlant={removePlant} userEmail={user.email} />
         ))}
     </div>
   );

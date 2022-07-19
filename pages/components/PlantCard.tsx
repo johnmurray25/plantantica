@@ -14,6 +14,7 @@ interface Props {
     plant: Plant;
     waterPlant;
     removePlant;
+    userEmail: string;
 }
 
 const MILLIS_IN_DAY = 86400000;
@@ -22,6 +23,7 @@ const MILLIS_IN_DAY = 86400000;
 const PlantCard: FC<Props> = (props) => {
 
     // dereference props
+    const [userEmail] = useState(props.userEmail);
     const [plant] = useState(props.plant);
     const [dateToWaterNext] = useState(plant ? plant.dateToWaterNext : new Date(new Date().getTime() + MILLIS_IN_DAY));
     const waterPlant = props.waterPlant;
@@ -34,26 +36,9 @@ const PlantCard: FC<Props> = (props) => {
         if (!plant) {
             return;
         }
-        if (imageURL == '' && plant.picture && plant.picture !== '') {
-            getDownloadURL(ref(storage, `plant/${plant.picture}`))
-                .then(downloadUrl =>
-                    setImageURL(downloadUrl))
-                    // request(
-                    //     {
-                    //         method: "GET",
-                    //         url: downloadUrl,
-                    //         encoding: null, // <- this one is important !
-                    //     },
-                    //     (error, response, body) => {
-                    //         if (error || response.statusCode !== 200) {
-                    //             console.error(error);
-                    //             return;
-                    //         }
-                    //         JSZip.loadAsync(body)
-                    //             .then((zip) => {
-                    //                 return zip.file(plant.picture).async("blob");
-                    //             }).then((content) => setUnzippedFile(new File(content.arrayBuffer(), plant.picture)));
-                    //     }))
+        if (imageURL == '' && userEmail && plant.picture && plant.picture !== '') {
+            getDownloadURL(ref(storage, `${userEmail}/${plant.picture}`))
+                .then(downloadUrl => setImageURL(downloadUrl))
                 .catch(e => {
                     console.debug(e);
                     console.error('Failed to load image from storage bucket')
@@ -77,7 +62,7 @@ const PlantCard: FC<Props> = (props) => {
         }
         // CHECK state
         setWateringState('check');
-    }, [dateToWaterNext, plant, imageURL]);
+    }, [userEmail, dateToWaterNext, plant, imageURL,]);
 
     const getBgStyle = () => {
         let sharedStyle = 'border rounded-md p-5 m-2 '
