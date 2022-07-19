@@ -98,7 +98,7 @@ const PlantCard: FC<Props> = (props) => {
             </div>
             {plant.picture && imageURL && imageURL !== '' &&
                 <div className='flex justify-start p-1 w-fit rounded'>
-                    <div className={borderStyles.radialRepeating}>
+                    <div className={borderStyles.magical}>
                         <Image src={imageURL} alt='photo of plant' width={width * 0.7} height={width * 0.8} />
                     </div>
                 </div>
