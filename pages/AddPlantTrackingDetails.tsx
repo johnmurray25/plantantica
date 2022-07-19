@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useState } from "react";
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 
 import { collection, addDoc, doc, setDoc, DocumentReference, DocumentData } from "firebase/firestore";
@@ -6,7 +6,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Input, Link, Select, MenuItem } from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { ref, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import JSZip from 'jszip';
 
 import auth from '../firebase/auth';
@@ -15,26 +15,40 @@ import storage from "../firebase/storage";
 import Plant from "../domain/Plant";
 import styles from "../styles/tracking.module.css";
 import FileInput from "./components/FileInput";
+import Image from "next/image";
+import { User } from "firebase/auth";
 
 // Compress and save image file to Firebase storage
-const compressAndUploadFile = async (file, fileName: string) => {
-  let storageRef = ref(storage, `plant/${fileName}`);
-  if (typeof file === 'string') {
-    // convert to blob
-    let enc = new TextEncoder();
-    file = enc.encode(file);
-  }
-  let fileRef = await uploadBytes(storageRef, file);
-  let path = fileRef.ref.fullPath;
-  console.log(`image uploaded: ${path}`);
-  return path;
-}
+// const compressAndUploadFile = async (file, fileName: string) => {
+//   let storageRef = ref(storage, `plant/${fileName}`);
+//   if (typeof file === 'string') {
+//     // convert to blob
+//     let enc = new TextEncoder();
+//     file = enc.encode(file);
+//   }
+//   let fileRef = await uploadBytes(storageRef, file);
+//   let path = fileRef.ref.fullPath;
+//   console.log(`image uploaded: ${path}`);
+//   return path;
+// }
 
-const uploadFile = async (file: File) => {
-  let storageRef = ref(storage, `plant/${file.name}`);
+const uploadFile = async (file: File, user: User) => {
+  let storageRef = ref(storage, `${user.email}/${file.name}`);
   let bytes = await file.arrayBuffer();
   let fileRef = await uploadBytes(storageRef, bytes);
+  console.log(`uploaded image: ${fileRef.ref.fullPath}`)
   return fileRef.ref.name;
+}
+
+const getImageUrl = async (fileName: string, user: User): Promise<string> => {
+  let imageUrl = getDownloadURL(ref(storage, `${user.email}/${fileName}`))
+    .then(downloadUrl => { return downloadUrl })
+    .catch(e => {
+      console.debug(e);
+      console.error('Failed to load image from storage bucket');
+      return '';
+    });
+  return imageUrl;
 }
 
 const MILLIS_IN_DAY = 86400000;
@@ -56,6 +70,14 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const [dateToFeedNext, setDateToFeedNext] = useState(plant ? plant.dateToFeedNext : todaysDate);
   const [lightRequired, setLightRequired] = useState(plant ? plant.lightRequired : 2);
   const [selectedFile, setSelectedFile]: [File, Dispatch<SetStateAction<File>>] = useState(null);
+  const [imageUrl, setImageUrl] = useState('');
+
+  useEffect(() => {
+    if (imageUrl === '' && user && plant && plant.picture) {
+      getImageUrl(plant.picture, user)
+        .then(s => setImageUrl(s))
+    }
+  }, [plant, imageUrl, selectedFile, user])
 
   const savePlantTrackingDetails = async (event) => {
     event.preventDefault();
@@ -67,20 +89,9 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       console.error('No user is logged in');
       return;
     }
-    let imagePath: string = '';
+    let savedFileName = '';
     if (selectedFile) {
-      imagePath = await uploadFile(selectedFile);
-      // compress file
-      // let zip = new JSZip();
-      // let zipFile = zip.file(selectedFile.name, selectedFile);
-      // var promise: Promise<Uint8Array | string> = null;
-      // if (JSZip.support.uint8array) {
-      //   promise = zip.generateAsync({ type: "uint8array" });
-      // } else {
-      //   promise = zip.generateAsync({ type: "string" });
-      // }
-      // let content = await promise;
-      // imagePath = await uploadFile(content, selectedFile.name);
+      savedFileName = await uploadFile(selectedFile, user);
     }
     // save document to firestore db
     let plantTrackingDetails = {
@@ -93,7 +104,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       dateToFeedNext: dateToFeedNext.getTime(),
       lightRequired: lightRequired,
       dateCreated: (new Date()).getTime(),
-      picture: imagePath,
+      picture: savedFileName,
     };
     let docRef: DocumentReference<DocumentData> = null;
     if (plant) {
@@ -117,6 +128,20 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
     setDateToWaterNext(newWaterDate);
   }
 
+  const onRemoveFile = async () => {
+    if (plant && plant.picture) {
+      try {
+        const imgRef = ref(storage, `${user.email}/${plant.picture}`);
+        await deleteObject(imgRef);
+        console.log('Deleted image from bucket')
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    setSelectedFile(null)
+    setImageUrl('')
+  }
+
   return (
     <div className={styles.container}>
       <div className={styles.title}>
@@ -125,11 +150,25 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       <div className={styles.main}>
         <form>
           <fieldset>
-            <div className="flex justify-center m-auto mt-9 w-4/5 h-48 border border-yellow rounded">
-              <FileInput
-                onAttachFile={(e) => setSelectedFile(e.target.files[0])}
-                onRemoveFile={() => setSelectedFile(null)}
-              />
+            <div className="flex justify-center m-auto mt-9">
+              {imageUrl ?
+                <div>
+                  <Image src={imageUrl} alt='photo of plant' width='150' height='190' />
+                  <a className='bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24'
+                    onClick={onRemoveFile} >
+                    Remove &#10060;
+                  </a>
+                </div>
+                :
+                <FileInput
+                  onAttachFile={(e) => {
+                    let f = e.target.files[0]
+                    setSelectedFile(f);
+                    setImageUrl(URL.createObjectURL(f))
+                  }}
+                  onRemoveFile={onRemoveFile}
+                />
+              }
             </div>
             <div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center' >
               <label htmlFor='species'>
@@ -210,11 +249,9 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
             </div>
           </fieldset>
           <div className='flex justify-evenly'>
-            <Link href="/Tracking">
-              <button className='border border-yellow rounded text-yellow py-2.5 px-7 mt-4'>
-                Cancel
-              </button>
-            </Link>
+            <button onClick={() => router.back()} className='border border-yellow rounded text-yellow py-2.5 px-7 mt-4'>
+              Cancel
+            </button>
             <button
               type="submit"
               className="bg-yellow text-green py-2.5 rounded px-7 mt-4"

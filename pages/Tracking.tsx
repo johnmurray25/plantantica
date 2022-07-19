@@ -111,11 +111,11 @@ const Home = () => {
                 <p>
                   You are tracking {plants.length} plants
                 </p>
-                <p className='hover:text-green hover:bg-yellow cursor-pointer border rounded-sm border-yellow p-2 m-2'>
-                  <Link href="/AddPlantTrackingDetails">
+                <Link href="/AddPlantTrackingDetails" passHref>
+                  <a className='hover:text-green hover:bg-yellow cursor-pointer border rounded-sm border-yellow p-2 m-2'>
                     Add a plant!
-                  </Link>
-                </p>
+                  </a>
+                </Link>
               </div>
               <PlantTrackingDetails plants={plants} removePlant={remove} />
             </div>

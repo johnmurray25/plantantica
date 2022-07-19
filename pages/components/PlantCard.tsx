@@ -54,7 +54,10 @@ const PlantCard: FC<Props> = (props) => {
                     //                 return zip.file(plant.picture).async("blob");
                     //             }).then((content) => setUnzippedFile(new File(content.arrayBuffer(), plant.picture)));
                     //     }))
-                .catch(e => console.error('Failed to load image from storage bucket'));
+                .catch(e => {
+                    console.debug(e);
+                    console.error('Failed to load image from storage bucket')
+                });
         }
         let today = new Date();
         // CHECK state
