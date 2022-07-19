@@ -9,6 +9,8 @@ import { getDownloadURL, ref } from 'firebase/storage';
 import storage from '../../firebase/storage';
 import Plant from '../../domain/Plant';
 import DropDownMenu from './DropDownMenu';
+import useWindowDimensions from '../../hooks/useWindowDimensions';
+import borderStyles from '../../styles/border.module.css';
 
 interface Props {
     plant: Plant;
@@ -22,15 +24,18 @@ const MILLIS_IN_DAY = 86400000;
 
 const PlantCard: FC<Props> = (props) => {
 
-    // dereference props
+    // dimensions
+    const { width, height } = useWindowDimensions();
+
+    // props
     const [userEmail] = useState(props.userEmail);
     const [plant] = useState(props.plant);
     const [dateToWaterNext] = useState(plant ? plant.dateToWaterNext : new Date(new Date().getTime() + MILLIS_IN_DAY));
     const waterPlant = props.waterPlant;
 
+    // state
     const [wateringState, setWateringState] = useState('good');
     const [imageURL, setImageURL] = useState('');
-    // const [unzippedFile, setUnzippedFile]: [File, Dispatch<SetStateAction<File>>] = useState(null);
 
     useEffect(() => {
         if (!plant) {
@@ -92,7 +97,11 @@ const PlantCard: FC<Props> = (props) => {
                 <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
             </div>
             {plant.picture && imageURL && imageURL !== '' &&
-                <Image src={imageURL} alt='photo of plant' width='150' height='150' />
+                <div className='flex justify-start p-1 w-fit rounded'>
+                    <div className={borderStyles.radialRepeating}>
+                        <Image src={imageURL} alt='photo of plant' width={width * 0.7} height={width * 0.8} />
+                    </div>
+                </div>
             }
             <h1>
                 <a className='hover:underline' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`}

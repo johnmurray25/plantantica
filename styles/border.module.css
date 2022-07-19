@@ -1,0 +1,16 @@
+
+
+.radialRepeating {
+    font-size: 1.6rem;
+    display: grid;
+    place-items: center;
+    /* min-height: 200px; */
+    border: 3px solid;
+    padding: 0.3rem;
+    border-width: 15px;
+    border-image: repeating-radial-gradient(circle at 10px,
+            rgb(64, 192, 224),
+            brown 2px,
+            rgb(42, 155, 42) 4px,
+            rgb(110, 74, 80) 2px) 1;
+}

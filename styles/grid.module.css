@@ -18,7 +18,7 @@
 @media (max-width: 650px) {
     .container {
         display: flex;
-        width: 100%;
+        width: 97vw;
         flex-direction: column;
     }
 }
