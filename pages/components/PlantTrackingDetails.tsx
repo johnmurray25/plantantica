@@ -66,8 +66,10 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
   return (
     <div className={gridStyles.container}>
       {plants &&
-        plants.map((plant) => (
-          <PlantCard key={plant.id} plant={plant} waterPlant={waterPlant} removePlant={removePlant} userEmail={user.email} />
+        [].concat(plants)
+        .sort((a:Plant,b:Plant) => a.dateToWaterNext <= b.dateToWaterNext ? -1 : 1)
+        .map((plant, i) => (
+          <PlantCard key={i} plant={plant} waterPlant={waterPlant} removePlant={removePlant} userEmail={user.email} />
         ))}
     </div>
   );
