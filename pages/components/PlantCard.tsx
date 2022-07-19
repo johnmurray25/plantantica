@@ -9,7 +9,7 @@ import { getDownloadURL, ref } from 'firebase/storage';
 import storage from '../../firebase/storage';
 import Plant from '../../domain/Plant';
 import DropDownMenu from './DropDownMenu';
-import useWindowDimensions from '../../hooks/useWindowDimensions';
+import useWindowDimensions from '../hooks/useWindowDimensions';
 import borderStyles from '../../styles/border.module.css';
 
 interface Props {
