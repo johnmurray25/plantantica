@@ -1,31 +1,32 @@
 /**
- * Thanks to StackOverflow user QoP :^)
+ * Thanks to StackOverflow users QoP and Darryl RN 
  */
 import { useState, useEffect } from 'react';
 
-function getWindowDimensions() {
-  const { innerWidth: width, innerHeight: height } = window ? window : { innerWidth: 480, innerHeight: 720 };
-  return {
-    width,
-    height
-  };
-}
-
 export default function useWindowDimensions() {
-  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+  // state
+  const [windowDimensions, setWindowDimensions] = useState({
+    width: undefined,
+    height: undefined,
+  });
 
+  // effect
   useEffect(() => {
-    function handleResize() {
-      setWindowDimensions(getWindowDimensions());
-    }
+    // only execute all the code below in client side
+    if (typeof window !== 'undefined') {
 
-    if (window) {
-      window.addEventListener('resize', handleResize);
-    }
-    return () => {
-      if (window) {
-        window.removeEventListener('resize', handleResize);
-      }
+      const handleResize = () => setWindowDimensions({
+        width: window.innerWidth,
+        height: window.innerHeight,
+      });
+
+      window.addEventListener("resize", handleResize);
+
+      // Call handler right away so state gets updated with initial window size
+      handleResize();
+
+      // Remove event listener on cleanup
+      return () => window.removeEventListener("resize", handleResize);
     }
   }, []);
 
