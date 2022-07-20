@@ -9,7 +9,7 @@ import { getDownloadURL, ref } from 'firebase/storage';
 import storage from '../../firebase/storage';
 import Plant from '../../domain/Plant';
 import DropDownMenu from './DropDownMenu';
-import useWindowDimensions from '../hooks/useWindowDimensions';
+import useWindowDimensions from '../../hooks/useWindowDimensions';
 import borderStyles from '../../styles/border.module.css';
 
 interface Props {
@@ -99,7 +99,7 @@ const PlantCard: FC<Props> = (props) => {
             {plant.picture && imageURL && imageURL !== '' &&
                 <div className='flex justify-start p-1 w-fit rounded'>
                     <div className={borderStyles.magical}>
-                        <Image src={imageURL} alt='photo of plant' width={width * 0.7} height={width * 0.8} />
+                        <Image src={imageURL} alt='photo of plant' width={width ? width * 0.7 : 480} height={width ? width * 0.8 : 720} />
                     </div>
                 </div>
             }
