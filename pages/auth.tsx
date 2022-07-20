@@ -1,65 +1,71 @@
-// Import FirebaseAuth and firebase.
-import React from 'react';
-import auth from '../firebase/auth';
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import TreeLogo from './components/TreeLogo';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import firebase from 'firebase/compat/app';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { browserLocalPersistence } from 'firebase/auth';
 
-function SignInScreen(props) {
-    // const [isSignedIn, setIsSignedIn] = useState(auth.currentUser ? true : false); 
-    const [user] = useAuthState(auth);
+import { useAuthState } from 'react-firebase-hooks/auth';
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
+import { browserLocalPersistence, EmailAuthProvider, FacebookAuthProvider, GoogleAuthProvider } from 'firebase/auth';
+import ReactLoading from "react-loading";
 
-    const redirectRef = props.href ? props.href : '';
+import auth from '../firebase/auth';
+import TreeLogo from './components/TreeLogo';
+import useWindowDimensions from '../hooks/useWindowDimensions';
+
+function SignInScreen() {
+    const [user, loading, error] = useAuthState(auth);
+    const { width } = useWindowDimensions();
+    const [isLoading, setIsLoading] = useState(false)
+
+    useEffect(() => {
+        setIsLoading(true);
+        auth.setPersistence(browserLocalPersistence)
+            .then(() => setIsLoading(false));
+    }, [loading, user])
 
     const uiConfig = {
-        signInSuccessUrl: "/index",
-        // Popup signin flow rather than redirect flow.
-        //signInFlow: 'popup',
+        signInSuccessUrl: "/",
+        signInFlow: width <= 650 ? 'redirect' : 'popup',
         signInOptions: [
-            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-            //firebase.auth.FacebookAuthProvider.PROVIDER_ID
+            GoogleAuthProvider.PROVIDER_ID,
+            FacebookAuthProvider.PROVIDER_ID,
         ],
-        callbacks: {
-            // // Avoid redirects after sign-in.
-            // signInSuccessWithAuthResult: () => false,
-        },
     };
-
-    const authorize = async () => {
-        await auth.setPersistence(browserLocalPersistence);
-        return auth;
-    }
 
     const signOut = () => {
         auth.signOut();
     }
 
     return (
-        <div className='bg-green text-yellow min-h-screen text-center pt-10 text-xl'>
-            <Link href='/' passHref>
-                <div>
-                    <TreeLogo />
-                </div>
-            </Link>
-            {user ?
-                <div>
-                    <p>
-                        Welcome {user.displayName}! You are now signed in.
-                    </p>
-                    <a onClick={signOut}>
-                        Sign out
-                    </a>
+        <div className='bg-green text-yellow min-h-screen text-center pt-10 text-xl' id='firebaseui-auth-container' >
+            {isLoading || loading ?
+                <div className='flex justify-center items-center'>
+                    <ReactLoading type='bars' color="#fff" />
                 </div>
                 :
-                <div >
-                    <p>Please sign in:</p>
-                    <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={authorize()} />
-                </div>
+                (<div>
+                    <Link href='/' passHref>
+                        <div>
+                            <TreeLogo />
+                        </div>
+                    </Link>
+
+                    {user && uiConfig ?
+                        <div>
+                            <p>
+                                Welcome {user.displayName}! You are now signed in.
+                            </p>
+                            <a onClick={signOut}>
+                                Sign out
+                            </a>
+                        </div>
+                        :
+                        <div>
+                            <p>Please sign in:</p>
+                            <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
+                        </div>
+                    }
+                </div>)
             }
-        </div>
+        </div >
     );
 }
 

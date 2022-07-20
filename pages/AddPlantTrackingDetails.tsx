@@ -7,7 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { Input, Link, Select, MenuItem } from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import JSZip from 'jszip';
+import ReactLoading from 'react-loading'
 
 import auth from '../firebase/auth';
 import db from '../firebase/db';
@@ -53,6 +53,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const [lightRequired, setLightRequired] = useState(plant ? plant.lightRequired : 2);
   const [selectedFile, setSelectedFile]: [File, Dispatch<SetStateAction<File>>] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (imageUrl === '' && user && plant && plant.picture) {
@@ -63,12 +64,15 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
 
   const savePlantTrackingDetails = async (event) => {
     event.preventDefault();
+    setIsLoading(true);
     if (!species) {
       alert('You must enter a species. It can be anything :)');
+      setIsLoading(false);
       return;
     }
     if (!user) {
-      console.error('No user is logged in');
+      alert('No user is logged in');
+      setIsLoading(false);
       return;
     }
     let savedFileName = '';
@@ -126,124 +130,132 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.title}>
-        <a>{plant ? 'EDIT' : 'ADD'} PLANT TRACKING DETAILS</a>
-      </div>
-      <div className={styles.main}>
-        <form>
-          <fieldset>
-            <div className="flex justify-center m-auto mt-9">
-              {imageUrl ?
-                <div>
-                  <Image src={imageUrl} alt='photo of plant' width='150' height='190' />
-                  <a className='bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24'
-                    onClick={onRemoveFile} >
-                    Remove &#10060;
-                  </a>
-                </div>
-                :
-                <FileInput
-                  onAttachFile={(e) => {
-                    let f = e.target.files[0]
-                    setSelectedFile(f);
-                    setImageUrl(URL.createObjectURL(f))
-                  }}
-                  onRemoveFile={onRemoveFile}
-                />
-              }
-            </div>
-            <div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center' >
-              <label htmlFor='species'>
-                Species:
-              </label>
-              <Input
-                className={styles.input}
-                type="text"
-                name="species"
-                id="species"
-                placeholder="Enter a species..."
-                value={species}
-                onChange={(e) => setSpecies(e.target.value)}
-                required={true}
-              />
-              <label htmlFor="lightReq">
-                Requires
-              </label>
-              <Select
-                id="lightReq"
-                className="bg-lightGrayGreen"
-                value={lightRequired}
-                label="light required"
-                onChange={(e) => setLightRequired(e.target.value)}
-              >
-                <MenuItem value={2}>Bright indirect light</MenuItem>
-                <MenuItem value={10}>Bright light</MenuItem>
-              </Select>
-              <label htmlFor="minDays">
-                Days between watering:
-              </label>
-              <input
-                className='bg-lightGrayGreen p-2 mb-2 text-slate text-center'
-                type="text"
-                name="minDays"
-                id="minDays"
-                value={String(daysBetweenWatering)}
-                onChange={onChangeDaysBetweenWatering}
-              />
-              <label htmlFor="nextWater">Last watered on</label>
-              <DatePicker
-                className={styles.input}
-                id="nextWater"
-                selected={dateLastWatered}
-                onChange={(d: Date) => {
-                  setDateLastWatered(d);
-                  setDateToWaterNext(new Date(d.getTime() + daysBetweenWatering * MILLIS_IN_DAY));
-                }}
-              />
-              <label htmlFor="nextWater">Water next on</label>
-              <DatePicker
-                className={styles.input}
-                id="nextWater"
-                selected={dateToWaterNext}
-                onChange={(d: Date) => setDateToWaterNext(d)}
-              />
-              <label htmlFor="nextFeeding">Last fed on</label>
-              <DatePicker
-                className={styles.input}
-                id="nextFeeding"
-                selected={dateLastFed}
-                onChange={(d: Date) => setDateLastFed(d)}
-              />
-              <label htmlFor="nextFeeding">Feed next on</label>
-              <DatePicker
-                className={styles.input}
-                id="nextFeeding"
-                selected={dateToFeedNext}
-                onChange={(d: Date) => setDateToFeedNext(d)}
-              />
-              <label htmlFor="dateObtained">Obtained plant on (or around)</label>
-              <DatePicker
-                className={styles.input}
-                id="dateObtained"
-                selected={dateObtained}
-                onChange={(d: Date) => setDateObtained(d)}
-              />
-            </div>
-          </fieldset>
-          <div className='flex justify-evenly'>
-            <button onClick={() => router.back()} className='border border-yellow rounded text-yellow py-2.5 px-7 mt-4'>
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="bg-yellow text-green py-2.5 rounded px-7 mt-4"
-              onClick={savePlantTrackingDetails}>
-              Save
-            </button>
+    < div className={styles.container + ' ' + 'min-h-screen'} >
+      {isLoading ?
+        <div className='flex justify-center items-center' >
+          < ReactLoading type='bars' color="#fff" />
+        </div >
+        :
+        <div>
+          <div className={styles.title}>
+            <a>{plant ? 'EDIT' : 'ADD'} PLANT TRACKING DETAILS</a>
           </div>
-        </form>
-      </div>
+          <div className={styles.main}>
+            <form>
+              <fieldset>
+                <div className="flex justify-center m-auto mt-9">
+                  {imageUrl ?
+                    <div>
+                      <Image src={imageUrl} alt='photo of plant' width='150' height='190' />
+                      <a className='bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24'
+                        onClick={onRemoveFile} >
+                        Remove &#10060;
+                      </a>
+                    </div>
+                    :
+                    <FileInput
+                      onAttachFile={(e) => {
+                        let f = e.target.files[0]
+                        setSelectedFile(f);
+                        setImageUrl(URL.createObjectURL(f))
+                      }}
+                      onRemoveFile={onRemoveFile}
+                    />
+                  }
+                </div>
+                <div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center' >
+                  <label htmlFor='species'>
+                    Species:
+                  </label>
+                  <Input
+                    className={styles.input}
+                    type="text"
+                    name="species"
+                    id="species"
+                    placeholder="Enter a species..."
+                    value={species}
+                    onChange={(e) => setSpecies(e.target.value)}
+                    required={true}
+                  />
+                  <label htmlFor="lightReq">
+                    Requires
+                  </label>
+                  <Select
+                    id="lightReq"
+                    className="bg-lightGrayGreen"
+                    value={lightRequired}
+                    label="light required"
+                    onChange={(e) => setLightRequired(e.target.value)}
+                  >
+                    <MenuItem value={2}>Bright indirect light</MenuItem>
+                    <MenuItem value={10}>Bright light</MenuItem>
+                  </Select>
+                  <label htmlFor="minDays">
+                    Days between watering:
+                  </label>
+                  <input
+                    className='bg-lightGrayGreen p-2 mb-2 text-slate text-center'
+                    type="text"
+                    name="minDays"
+                    id="minDays"
+                    value={String(daysBetweenWatering)}
+                    onChange={onChangeDaysBetweenWatering}
+                  />
+                  <label htmlFor="nextWater">Last watered on</label>
+                  <DatePicker
+                    className={styles.input}
+                    id="nextWater"
+                    selected={dateLastWatered}
+                    onChange={(d: Date) => {
+                      setDateLastWatered(d);
+                      setDateToWaterNext(new Date(d.getTime() + daysBetweenWatering * MILLIS_IN_DAY));
+                    }}
+                  />
+                  <label htmlFor="nextWater">Water next on</label>
+                  <DatePicker
+                    className={styles.input}
+                    id="nextWater"
+                    selected={dateToWaterNext}
+                    onChange={(d: Date) => setDateToWaterNext(d)}
+                  />
+                  <label htmlFor="nextFeeding">Last fed on</label>
+                  <DatePicker
+                    className={styles.input}
+                    id="nextFeeding"
+                    selected={dateLastFed}
+                    onChange={(d: Date) => setDateLastFed(d)}
+                  />
+                  <label htmlFor="nextFeeding">Feed next on</label>
+                  <DatePicker
+                    className={styles.input}
+                    id="nextFeeding"
+                    selected={dateToFeedNext}
+                    onChange={(d: Date) => setDateToFeedNext(d)}
+                  />
+                  <label htmlFor="dateObtained">Obtained plant on (or around)</label>
+                  <DatePicker
+                    className={styles.input}
+                    id="dateObtained"
+                    selected={dateObtained}
+                    onChange={(d: Date) => setDateObtained(d)}
+                  />
+                </div>
+              </fieldset>
+              <div className='flex justify-evenly'>
+                <button onClick={() => router.back()} className='border border-yellow rounded text-yellow py-2.5 px-7 mt-4'>
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="bg-yellow text-green py-2.5 rounded px-7 mt-4"
+                  onClick={savePlantTrackingDetails}>
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      }
     </div >
   );
 }

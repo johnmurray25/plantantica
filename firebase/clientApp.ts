@@ -1,6 +1,4 @@
-import firebase from 'firebase/compat/app';
 import { initializeApp } from "firebase/app";
-import 'firebase/compat/auth';
 
 // Configure Firebase
 const config = {
@@ -14,7 +12,9 @@ const config = {
 }
 
 // Initialize app
-const app = firebase.initializeApp(config);
+const app = initializeApp(config);
+
+console.log('initialized firebase app')
 
 // Reference this object, containing app-specific configuration, throughout the codebase
 export default app;
