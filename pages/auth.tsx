@@ -6,6 +6,7 @@ import TreeLogo from './components/TreeLogo';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import firebase from 'firebase/compat/app';
 import Link from 'next/link';
+import { browserLocalPersistence } from 'firebase/auth';
 
 function SignInScreen(props) {
     // const [isSignedIn, setIsSignedIn] = useState(auth.currentUser ? true : false); 
@@ -27,11 +28,8 @@ function SignInScreen(props) {
         },
     };
 
-    const authorize = () => {
-        if (!user) {
-            return auth;
-        }
-        console.log(`Authorized user with email: ${user.email}`)
+    const authorize = async () => {
+        await auth.setPersistence(browserLocalPersistence);
         return auth;
     }
 
@@ -43,7 +41,7 @@ function SignInScreen(props) {
         <div className='bg-green text-yellow min-h-screen text-center pt-10 text-xl'>
             <Link href='/' passHref>
                 <div>
-                    <TreeLogo/>
+                    <TreeLogo />
                 </div>
             </Link>
             {user ?

@@ -91,16 +91,26 @@ const PlantCard: FC<Props> = (props) => {
         return 'text-yellow';
     }
 
+    const getImageWidth = () => {
+        if (!width) return 480;
+        if (width <= 650) return width;
+        return 0.97 * width / 4;
+    }
+
+    const getImageHeight = () => {
+        if (!width) return 500;
+        if (width <= 650) return width * 1.2;
+        return height / 2;
+    }
+
     return plant ? (
         <div key={plant.id} className={getBgStyle()}>
             <div className='flex justify-end'>
                 <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
             </div>
             {plant.picture && imageURL && imageURL !== '' &&
-                <div className='flex justify-start p-1 w-fit rounded'>
-                    <div className={borderStyles.magical}>
-                        <Image src={imageURL} alt='photo of plant' width={width ? width * 0.7 : 480} height={width ? width * 0.8 : 720} />
-                    </div>
+                <div className='flex justify-start px-0 mx-0 py-3 w-full'>
+                    <Image src={imageURL} alt='photo of plant' width={getImageWidth()} height={getImageHeight()} />
                 </div>
             }
             <h1>
