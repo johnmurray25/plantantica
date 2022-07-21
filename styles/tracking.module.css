@@ -2,6 +2,7 @@
   padding: 0 2rem;
   color: rgb(248, 245, 240);
   background: rgb(39, 47, 39);
+  width: 100vw;
 }
 
 @keyframes gradient {
