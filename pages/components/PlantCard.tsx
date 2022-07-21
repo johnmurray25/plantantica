@@ -70,7 +70,7 @@ const PlantCard: FC<Props> = (props) => {
     }, [userEmail, dateToWaterNext, plant, imageURL,]);
 
     const getBgStyle = () => {
-        let sharedStyle = 'border rounded-md p-5 m-2 '
+        let sharedStyle = width > 650 ? 'border rounded-md p-5 m-2 ' : 'border rounded p-5 '
         if (wateringState == 'good')
             return sharedStyle + 'border-yellow';
         if (wateringState == 'check')
@@ -105,12 +105,12 @@ const PlantCard: FC<Props> = (props) => {
 
     return plant ? (
         <div key={plant.id} className={getBgStyle()}>
-            <div className='flex justify-end'>
+            <div className={'flex justify-end '}>
                 <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
             </div>
             {plant.picture && imageURL && imageURL !== '' &&
                 <div className='flex justify-start px-0 mx-0 py-3 w-full'>
-                    <Image src={imageURL} alt='photo of plant' width={getImageWidth()} height={getImageHeight()} />
+                    <Image src={imageURL} alt='photo of plant' width={getImageWidth()} height={Math.min(getImageHeight(), width)} />
                 </div>
             }
             <h1>
@@ -121,8 +121,7 @@ const PlantCard: FC<Props> = (props) => {
             </h1>
             {plant.dateObtained &&
                 <p style={{ fontSize: "0.7rem", textAlign: "left" }}>
-                    had since&nbsp;
-                    {plant.dateObtained.toLocaleDateString()}
+                    had since {plant.dateObtained.toLocaleDateString()}
                 </p>
             }
             <div className="flex justify-end">
@@ -137,13 +136,13 @@ const PlantCard: FC<Props> = (props) => {
             <div className='pt-4'>
                 {/* days between watering: {plant.daysBetweenWatering}
             <br></br> */}
-                last watered on {plant.dateLastWatered.toLocaleDateString()}
+                last watered {plant.dateLastWatered.toLocaleDateString()}
                 <br></br>
-                water next on {plant.dateToWaterNext.toLocaleDateString()}
+                water next {plant.dateToWaterNext.toLocaleDateString()}
                 <br></br>
-                last fed on {plant.dateLastFed.toLocaleDateString()}
+                last fed {plant.dateLastFed.toLocaleDateString()}
                 <br></br>
-                feed next on {plant.dateToFeedNext.toLocaleDateString()}
+                feed next {plant.dateToFeedNext.toLocaleDateString()}
                 <br></br>
                 <div className='flex justify-evenly'>
                     {plant.lightRequired < 5 ?

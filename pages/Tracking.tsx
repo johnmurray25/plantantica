@@ -102,9 +102,9 @@ const Home = () => {
           <a>Tracking</a>
         </div>
         <div className="flex justify-end w-10/12 mb-4">
-          <a onClick={refresh} className='hover:text-green hover:bg-yellow cursor-pointer border rounded border-yellow p-2 m-auto absolute'>
+          {/* <a onClick={refresh} className='hover:text-green hover:bg-yellow cursor-pointer border rounded border-yellow p-2 m-auto absolute'>
             <IoRefresh />
-          </a>
+          </a> */}
         </div>
         {isLoading && <ReactLoading type='bars' color="#fff" />}
         {plants.length > 0 &&
