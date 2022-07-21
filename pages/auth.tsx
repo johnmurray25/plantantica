@@ -37,7 +37,7 @@ function SignInScreen() {
     return (
         <div className='bg-green text-yellow min-h-screen text-center pt-10 text-xl' id='firebaseui-auth-container' >
             {isLoading || loading ?
-                <div className='flex justify-center items-center pt-20'>
+                <div className='flex justify-center items-center pt-40'>
                     <ReactLoading type='bars' color="#fff" />
                 </div>
                 :

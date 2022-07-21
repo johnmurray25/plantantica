@@ -132,7 +132,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   return (
     < div className={styles.container + ' ' + 'min-h-screen'} >
       {isLoading ?
-        <div className='flex justify-center items-center pt-20' >
+        <div className='flex justify-center items-center pt-60' >
           < ReactLoading type='bars' color="#fff" />
         </div >
         :
