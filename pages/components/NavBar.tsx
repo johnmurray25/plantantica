@@ -16,7 +16,7 @@ const NavBar: FC<NavProps> = (props) => {
   const hideUser = props.hideUser ? true : false;
 
   return (
-    <nav className="flex items-center justify-between flex-wrap px-8 py-5">
+    <nav className="flex items-center justify-between flex-wrap px-8 py-5 ">
       <Link href="/" passHref>
         <div className="flex items-center flex-shrink-0 mr-6 cursor-pointer">
           <span className="font-semibold text-xl tracking-tight">Plantantica</span>
