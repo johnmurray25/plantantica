@@ -23,7 +23,7 @@ const PlantTrackingDetails: FC<PTDProps> = (props) => {
   const [plants, setPlants] = useState(props.plants);
 
   const waterPlant = async (plant: Plant) => {
-    if (!confirm(`Do you want to mark your ${plant.species} as watered today?`)) {
+    if (!confirm('Mark as watered today?')) {
       return;
     }
     let today = new Date();

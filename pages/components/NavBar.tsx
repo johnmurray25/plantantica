@@ -1,7 +1,10 @@
-import Link from 'next/link'
 import React, { FC } from 'react'
-import auth from '../../firebase/auth'
+import Link from 'next/link'
+
 import { useAuthState } from 'react-firebase-hooks/auth'
+import ReactLoading from 'react-loading'
+
+import auth from '../../firebase/auth'
 
 interface NavProps {
   hideUser?: boolean;
@@ -19,20 +22,27 @@ const NavBar: FC<NavProps> = (props) => {
           <span className="font-semibold text-xl tracking-tight">Plantantica</span>
         </div>
       </Link>
-      { !hideUser &&
+      {!hideUser &&
         (
-          (!loading && user) ?
-            <Link href="profile" passHref>
-              <a className="inline-block text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
-                {user.email}
-              </a>
-            </Link>
+          loading ?
+            <div className='flex w-full pr-16 justify-end absolute'>
+              <ReactLoading type='cylon' color="#fff" />
+            </div>
             :
-            <Link href="/auth" passHref>
-              <a className="inline-block text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow border-yello hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
-                Login / Sign up
-              </a>
-            </Link>
+            (
+              user ?
+                <Link href="profile" passHref>
+                  <a className="inline-block text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
+                    {user.email}
+                  </a>
+                </Link>
+                :
+                <Link href="/auth" passHref>
+                  <a className="inline-block text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow border-yello hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
+                    Login / Sign up
+                  </a>
+                </Link>
+            )
         )
       }
     </nav>

@@ -1,16 +1,18 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
 import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
-import db from '../firebase/db';
-import auth from '../firebase/auth';
+import Link from "next/link";
+
+import { User } from "firebase/auth";
 import { collection, query, doc, getDocs, deleteDoc } from "firebase/firestore";
-import styles from "../styles/tracking.module.css";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { IoRefresh } from '@react-icons/all-files/io5/IoRefresh';
+import ReactLoading from 'react-loading';
+
+import auth from '../firebase/auth';
+import db from '../firebase/db';
 import NavBar from "./components/NavBar";
 import PlantTrackingDetails from "./components/PlantTrackingDetails";
-import { useAuthState } from "react-firebase-hooks/auth";
+import styles from "../styles/tracking.module.css";
 import Plant from "../domain/Plant";
-import { User } from "firebase/auth";
-import { IoRefresh } from '@react-icons/all-files/io5/IoRefresh';
 
 const OK = 200;
 const UNAUTHORIZED = 403;
@@ -47,7 +49,7 @@ const getPlants = async (user: User) => {
 };
 
 const deletePlant = async (plant: Plant, user: User) => {
-  confirm(`Delete tracking details for ${plant.species}?`);
+  confirm(`Delete ${plant.species}?`);
   await deleteDoc(doc(collection(doc(db, 'users', user.email), 'plantTrackingDetails'), plant.id));
   console.log('deleted plant');
 }
@@ -63,11 +65,11 @@ const Home = () => {
       if (!loading) setStatus(UNAUTHORIZED);
       return
     }
+    setIsLoading(true);
     // reload in case user's token has expired
     await user.reload();
     await user.getIdToken();
     console.log('re-authenticated user')
-    setIsLoading(true);
     getPlants(user)
       .then(results => setPlants(results))
       .then(() => setIsLoading(false))
@@ -104,7 +106,7 @@ const Home = () => {
             <IoRefresh />
           </a>
         </div>
-        {isLoading && <h1>loading...</h1>}
+        {isLoading && <ReactLoading type='bars' color="#fff" />}
         {plants.length > 0 &&
           (
             <div>
