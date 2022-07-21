@@ -29,7 +29,7 @@ const Home = () => {
     }
     setIsLoading(true);
     // reload in case user's token has expired
-    await user.reload();
+    // await user.reload();
     await user.getIdToken();
     console.log('re-authenticated user')
     getPlants(user)
