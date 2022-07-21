@@ -47,7 +47,7 @@ const getPlants = async (user: User) => {
 };
 
 const deletePlant = async (plant: Plant, user: User) => {
-  confirm(`Are you sure you want to delete tracking details for your ${plant.species}?`);
+  confirm(`Delete tracking details for ${plant.species}?`);
   await deleteDoc(doc(collection(doc(db, 'users', user.email), 'plantTrackingDetails'), plant.id));
   console.log('deleted plant');
 }
@@ -63,7 +63,8 @@ const Home = () => {
       if (!loading) setStatus(UNAUTHORIZED);
       return
     }
-    // force refresh if user's token has expired
+    // reload in case user's token has expired
+    await user.reload();
     await user.getIdToken();
     console.log('re-authenticated user')
     setIsLoading(true);
