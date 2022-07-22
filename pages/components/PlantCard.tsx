@@ -125,7 +125,7 @@ const PlantCard: FC<Props> = (props) => {
                         <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
                     </div>
                     <h1>
-                        <a className='hover:underline italic text-2xl leading-loose pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
+                        <a className='hover:underline text-2xl leading-loose pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
                             {plant.species}
                         </a>
                     </h1>
