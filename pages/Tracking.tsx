@@ -76,7 +76,7 @@ const Home = () => {
         {plants.length > 0 &&
           (
             <div>
-              <div className="flex justify-between items-center text-center pb-3 pt-6">
+              <div className="flex justify-between items-center text-center pb-3 pt-6 px-4">
                 <p>
                   You are tracking {plants.length} plants
                 </p>

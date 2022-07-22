@@ -70,9 +70,9 @@ const PlantCard: FC<Props> = (props) => {
     }, [userEmail, dateToWaterNext, plant, imageURL,]);
 
     const getBgStyle = () => {
-        let sharedStyle = width > 650 ? 'border rounded-md p-5 m-2 ' : 'border rounded p-5 '
+        let sharedStyle = width > 650 ? 'border rounded-md p-0 m-2 ' : 'border rounded p-0 '
         if (wateringState == 'good')
-            return sharedStyle + 'border-yellow';
+            return sharedStyle + 'border-yellow ';
         if (wateringState == 'check')
             return sharedStyle + 'bg-[#BDC581] text-black border-none';
         if (wateringState == 'bad')
@@ -105,62 +105,72 @@ const PlantCard: FC<Props> = (props) => {
 
     return plant ? (
         <div key={plant.id} className={getBgStyle()}>
-            <div className={'flex justify-end '}>
-                <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
-            </div>
-            {plant.picture && imageURL && imageURL !== '' &&
-                <div className='flex justify-start px-0 mx-0 py-3 w-full'>
-                    <Image src={imageURL} alt='photo of plant' width={getImageWidth()} height={Math.min(getImageHeight(), width)} />
+            {plant.picture && imageURL && imageURL !== '' ?
+                <div className='flex px-0 mx-0 pt-3 pb-0 w-full relative'>
+                    <Image src={imageURL} alt='photo of plant' width={getImageWidth()} height={Math.min(getImageHeight(), width)} className='rounded' />
+                    <div className="absolute w-full bg-gray-900 text-white italic opacity-70 bottom-0 ">
+                        <h1>
+                            <a className='hover:underline text-2xl leading-loose pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
+                                {plant.species}
+                            </a>
+                        </h1>
+                    </div>
+                    <div className="absolute w-full flex justify-end pt-2 pr-2 ">
+                        <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
+                    </div>
                 </div>
+                :
+                <h1>
+                    <a className='hover:underline text-2xl leading-loose pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
+                        {plant.species}
+                    </a>
+                </h1>
             }
-            <h1>
-                <a className='hover:underline' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`}
-                    style={{ fontSize: "1.4rem", }}>
-                    {plant.species}
-                </a>
-            </h1>
-            {plant.dateObtained &&
-                <p style={{ fontSize: "0.7rem", textAlign: "left" }}>
-                    had since {plant.dateObtained.toLocaleDateString()}
-                </p>
-            }
-            <div className="flex justify-end">
-                <a onClick={() => waterPlant(plant)} className={getWtrBtnStyle()}>
-                    <IoWater className="cursor-pointer text-blue" />
-                    &nbsp;&nbsp;
-                    Water?
-                    &nbsp;&nbsp;
-                    <IoWater className="cursor-pointer text-blue" />
-                </a>
-            </div>
-            <div className='pt-4'>
-                {/* days between watering: {plant.daysBetweenWatering}
+
+            <div className="px-5 py-1 ">
+                {plant.dateObtained &&
+                    <p style={{ fontSize: "0.7rem", textAlign: "left" }}>
+                        had since {plant.dateObtained.toLocaleDateString()}
+                    </p>
+                }
+                <div className="flex justify-end">
+                    <a onClick={() => waterPlant(plant)} className={getWtrBtnStyle()}>
+                        <IoWater className="cursor-pointer text-blue" />
+                        &nbsp;&nbsp;
+                        Water?
+                        &nbsp;&nbsp;
+                        <IoWater className="cursor-pointer text-blue" />
+                    </a>
+                </div>
+                <div className='pt-4'>
+                    {/* days between watering: {plant.daysBetweenWatering}
             <br></br> */}
-                last watered {plant.dateLastWatered.toLocaleDateString()}
-                <br></br>
-                water next {plant.dateToWaterNext.toLocaleDateString()}
-                <br></br>
-                last fed {plant.dateLastFed.toLocaleDateString()}
-                <br></br>
-                feed next {plant.dateToFeedNext.toLocaleDateString()}
-                <br></br>
-                <div className='flex justify-evenly'>
-                    {plant.lightRequired < 5 ?
-                        <IoPartlySunny className={getIconStyle()} />
-                        :
-                        <IoSunny className={getIconStyle()} />
-                    }
-                    &nbsp;&nbsp;
-                    {plant.lightRequired == 2 && 'Bright indirect light'}
-                    {plant.lightRequired == 10 && 'Bright light'}
-                    &nbsp;&nbsp;
-                    {plant.lightRequired < 5 ?
-                        <IoPartlySunny className={getIconStyle()} />
-                        :
-                        <IoSunny className={getIconStyle()} />
-                    }
+                    last watered {plant.dateLastWatered.toLocaleDateString()}
+                    <br></br>
+                    water next {plant.dateToWaterNext.toLocaleDateString()}
+                    <br></br>
+                    last fed {plant.dateLastFed.toLocaleDateString()}
+                    <br></br>
+                    feed next {plant.dateToFeedNext.toLocaleDateString()}
+                    <br></br>
+                    <div className='flex justify-evenly'>
+                        {plant.lightRequired < 5 ?
+                            <IoPartlySunny className={getIconStyle()} />
+                            :
+                            <IoSunny className={getIconStyle()} />
+                        }
+                        &nbsp;&nbsp;
+                        {plant.lightRequired == 2 && 'Bright indirect light'}
+                        {plant.lightRequired == 10 && 'Bright light'}
+                        &nbsp;&nbsp;
+                        {plant.lightRequired < 5 ?
+                            <IoPartlySunny className={getIconStyle()} />
+                            :
+                            <IoSunny className={getIconStyle()} />
+                        }
+                    </div>
+                    <br></br>
                 </div>
-                <br></br>
             </div>
         </div>
     ) :
