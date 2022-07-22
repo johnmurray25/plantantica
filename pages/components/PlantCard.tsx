@@ -144,8 +144,9 @@ const PlantCard: FC<Props> = (props) => {
             <br></br> */}
                         last watered {plant.dateLastWatered.toLocaleDateString()}
                         <br></br>
-                        water next {plant.dateToWaterNext.toLocaleDateString()}
-                        <br></br>
+                        <p className={wateringState != 'good' ? 'font-extrabold' : ''}>
+                            water next {plant.dateToWaterNext.toLocaleDateString()}
+                        </p>
                         last fed {plant.dateLastFed.toLocaleDateString()}
                         <br></br>
                         feed next {plant.dateToFeedNext.toLocaleDateString()}
