@@ -79,7 +79,7 @@ const PlantCard: FC<Props> = (props) => {
             return 'border border-yellow rounded-md p-5 m-2 bg-red-900';
     }
     const getWtrBtnStyle = () => {
-        let sharedStyle = "flex cursor-pointer text-sm px-4 py-2 leading-none border rounded hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-2 "
+        let sharedStyle = "flex absolute top-1 right-1 cursor-pointer text-sm px-4 py-2 leading-none border rounded hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-2 "
         if (wateringState == 'good' || wateringState == 'bad')
             return sharedStyle + "border-yellow text-yellow ";
         if (wateringState == 'check')
@@ -138,7 +138,36 @@ const PlantCard: FC<Props> = (props) => {
                         had since {plant.dateObtained.toLocaleDateString()}
                     </p>
                 }
-                <div className="flex justify-end">
+                <div className="flex justify-start relative">
+                    <div className='pt-4'>
+                        {/* days between watering: {plant.daysBetweenWatering}
+            <br></br> */}
+                        last watered {plant.dateLastWatered.toLocaleDateString()}
+                        <br></br>
+                        water next {plant.dateToWaterNext.toLocaleDateString()}
+                        <br></br>
+                        last fed {plant.dateLastFed.toLocaleDateString()}
+                        <br></br>
+                        feed next {plant.dateToFeedNext.toLocaleDateString()}
+                        <br></br>
+                        <div className='flex justify-evenly'>
+                            {plant.lightRequired < 5 ?
+                                <IoPartlySunny className={getIconStyle()} />
+                                :
+                                <IoSunny className={getIconStyle()} />
+                            }
+                            &nbsp;&nbsp;
+                            {plant.lightRequired == 2 && 'Bright indirect light'}
+                            {plant.lightRequired == 10 && 'Bright light'}
+                            &nbsp;&nbsp;
+                            {plant.lightRequired < 5 ?
+                                <IoPartlySunny className={getIconStyle()} />
+                                :
+                                <IoSunny className={getIconStyle()} />
+                            }
+                        </div>
+                        <br></br>
+                    </div>
                     <a onClick={() => waterPlant(plant)} className={getWtrBtnStyle()}>
                         <IoWater className="cursor-pointer text-blue" />
                         &nbsp;&nbsp;
@@ -146,35 +175,6 @@ const PlantCard: FC<Props> = (props) => {
                         &nbsp;&nbsp;
                         <IoWater className="cursor-pointer text-blue" />
                     </a>
-                </div>
-                <div className='pt-4'>
-                    {/* days between watering: {plant.daysBetweenWatering}
-            <br></br> */}
-                    last watered {plant.dateLastWatered.toLocaleDateString()}
-                    <br></br>
-                    water next {plant.dateToWaterNext.toLocaleDateString()}
-                    <br></br>
-                    last fed {plant.dateLastFed.toLocaleDateString()}
-                    <br></br>
-                    feed next {plant.dateToFeedNext.toLocaleDateString()}
-                    <br></br>
-                    <div className='flex justify-evenly'>
-                        {plant.lightRequired < 5 ?
-                            <IoPartlySunny className={getIconStyle()} />
-                            :
-                            <IoSunny className={getIconStyle()} />
-                        }
-                        &nbsp;&nbsp;
-                        {plant.lightRequired == 2 && 'Bright indirect light'}
-                        {plant.lightRequired == 10 && 'Bright light'}
-                        &nbsp;&nbsp;
-                        {plant.lightRequired < 5 ?
-                            <IoPartlySunny className={getIconStyle()} />
-                            :
-                            <IoSunny className={getIconStyle()} />
-                        }
-                    </div>
-                    <br></br>
                 </div>
             </div>
         </div>
