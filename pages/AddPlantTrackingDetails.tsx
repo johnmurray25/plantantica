@@ -76,6 +76,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const [selectedFile, setSelectedFile]: [File, Dispatch<SetStateAction<File>>] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState(null);
 
   useEffect(() => {
     if (imageUrl === '' && user && plant && plant.picture) {
@@ -101,11 +102,14 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
     if (selectedFile) {
       try {
         // Compress image
+        setLoadingStatus('Compressing image ')
         let compressedImage = await compressImage(selectedFile);
         // Upload image to storage
+        setLoadingStatus('Uploading image ')
         savedFileName = await uploadFile(compressedImage, user);
       } catch (e) { console.error(e) }
     }
+    setLoadingStatus('Saving ')
     // save document to firestore db
     let plantTrackingDetails = {
       species: species,
@@ -158,9 +162,9 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
 
   return (
     < div className={styles.container + ' ' + 'min-h-screen'} >
-      {isLoading ?
+      {loadingStatus ?
         <div className='flex justify-center items-center pt-60' >
-          Saving < ReactLoading type='bars' color="#fff" />
+          {loadingStatus} < ReactLoading type='bars' color="#fff" />
         </div >
         :
         <div>
