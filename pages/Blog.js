@@ -2,7 +2,6 @@ import { Container } from "@mui/material";
 import { React, useState, useEffect } from "react";
 import styles from "../styles/blog.module.css";
 import BlogPosts from "./components/BlogPosts";
-import Nav from "./components/Nav";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -14,7 +13,7 @@ const Home = () => {
 
   const getPosts = () => {
     setIsLoading(true);
-    const response = fetch("http://localhost:8080/blog-posts/all")
+    fetch("http://localhost:8080/blog-posts/all")
       .then((response) => {
         if (response.ok) return response.json();
         else throw new Error("Failed to fetch blog posts");
@@ -27,7 +26,6 @@ const Home = () => {
 
   return (
     <div className={styles.container}>
-      <Nav />
       <div className={styles.main}>
         <div className={styles.title}>
           <a>Posts</a>
