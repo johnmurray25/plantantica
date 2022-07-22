@@ -18,7 +18,7 @@ const NavBar: FC<NavProps> = (props) => {
   const hideUser = props.hideUser ? true : false;
 
   return (
-    <nav className="flex justify-between px-4 py-5 items-center">
+    <nav className="flex justify-between px-4 flex-wrap py-5 items-center">
       <Link href="/" passHref>
         <div className="flex items-center flex-shrink-0  cursor-pointer">
           <Image src={logo} alt='Tree logo' width={55} height={55}/>

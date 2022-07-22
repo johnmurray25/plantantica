@@ -79,7 +79,7 @@ const PlantCard: FC<Props> = (props) => {
             return 'border border-yellow rounded-md p-5 m-2 bg-red-900';
     }
     const getWtrBtnStyle = () => {
-        let sharedStyle = "flex absolute top-1 right-1 cursor-pointer text-sm px-4 py-2 leading-none border rounded hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-2 "
+        let sharedStyle = "flex cursor-pointer text-sm px-4 py-2 leading-none border rounded hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-2 " + (width <= 650 ? "absolute top-1 right-1 " : "h-8 ")
         if (wateringState == 'good' || wateringState == 'bad')
             return sharedStyle + "border-yellow text-yellow ";
         if (wateringState == 'check')
@@ -139,6 +139,13 @@ const PlantCard: FC<Props> = (props) => {
                     </p>
                 }
                 <div className="flex justify-start relative">
+                <a onClick={() => waterPlant(plant)} className={getWtrBtnStyle()}>
+                        <IoWater className="cursor-pointer text-blue" />
+                        &nbsp;&nbsp;
+                        Water?
+                        &nbsp;&nbsp;
+                        <IoWater className="cursor-pointer text-blue" />
+                    </a>
                     <div className='pt-4'>
                         {/* days between watering: {plant.daysBetweenWatering}
             <br></br> */}
@@ -169,13 +176,7 @@ const PlantCard: FC<Props> = (props) => {
                         </div>
                         <br></br>
                     </div>
-                    <a onClick={() => waterPlant(plant)} className={getWtrBtnStyle()}>
-                        <IoWater className="cursor-pointer text-blue" />
-                        &nbsp;&nbsp;
-                        Water?
-                        &nbsp;&nbsp;
-                        <IoWater className="cursor-pointer text-blue" />
-                    </a>
+                    
                 </div>
             </div>
         </div>

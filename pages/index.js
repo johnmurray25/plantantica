@@ -11,7 +11,7 @@ export default function Home() {
   const [user, loading, error] = useAuthState(auth);
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container + " bg-green "}>
       <Head>
         <title>Plantantica</title>
         <meta
@@ -23,7 +23,7 @@ export default function Home() {
 
       <NavBar />
 
-      <main className={styles.main}>
+      <main className={styles.main + " bg-green "}>
             <h1 className={styles.title}>
                 {
                     user ?
