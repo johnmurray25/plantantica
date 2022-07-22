@@ -5,6 +5,8 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import ReactLoading from 'react-loading'
 
 import auth from '../../firebase/auth'
+import Image from 'next/image'
+import logo from '../../public/tree-logo.png'
 
 interface NavProps {
   hideUser?: boolean;
@@ -16,10 +18,11 @@ const NavBar: FC<NavProps> = (props) => {
   const hideUser = props.hideUser ? true : false;
 
   return (
-    <nav className="flex justify-between px-4 py-5 ">
+    <nav className="flex justify-between px-4 py-5 items-center">
       <Link href="/" passHref>
-        <div className="flex items-center flex-shrink-0 mr-6 cursor-pointer">
-          <span className="font-semibold text-xl tracking-tight">Plantantica</span>
+        <div className="flex items-center flex-shrink-0  cursor-pointer">
+          <Image src={logo} alt='Tree logo' width={55} height={55}/>
+          <span className="font-semibold text-xl tracking-tight pl-3">Plantantica</span>
         </div>
       </Link>
       {!hideUser &&

@@ -106,7 +106,7 @@ const PlantCard: FC<Props> = (props) => {
     return plant ? (
         <div key={plant.id} className={getBgStyle()}>
             {plant.picture && imageURL && imageURL !== '' ?
-                <div className='flex px-0 mx-0 pt-3 pb-0 w-full relative'>
+                <div className='flex px-0 mx-0 pt-5 pb-0 w-full relative'>
                     <Image src={imageURL} alt='photo of plant' width={getImageWidth()} height={Math.min(getImageHeight(), width)} className='rounded' />
                     <div className="absolute w-full bg-gray-900 text-white italic opacity-70 bottom-0 ">
                         <h1>

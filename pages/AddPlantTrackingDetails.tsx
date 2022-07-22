@@ -8,6 +8,7 @@ import { Input, Link, Select, MenuItem } from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import ReactLoading from 'react-loading'
+import imageCompression from "browser-image-compression";
 
 import auth from '../firebase/auth';
 import db from '../firebase/db';
@@ -32,6 +33,27 @@ import { getImageUrl, uploadFile } from "../service/PlantService";
 //   console.log(`image uploaded: ${path}`);
 //   return path;
 // }
+
+const compressImage = async (imageFile: File) => {
+  console.log('originalFile instanceof Blob', imageFile instanceof Blob); // true
+  console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
+
+  const options = {
+    maxSizeMB: 1,
+    maxWidthOrHeight: 1920,
+    useWebWorker: true
+  }
+
+  try {
+    const compressedFile = await imageCompression(imageFile, options);
+    console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
+    console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
+    return compressedFile;
+  }
+  catch (error) {
+    console.log(error);
+  }
+}
 
 const MILLIS_IN_DAY = 86400000;
 interface Props {
@@ -60,13 +82,13 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       getImageUrl(plant.picture, user)
         .then(s => setImageUrl(s))
     }
-  }, [plant, imageUrl, selectedFile, user])
+  }, [plant, imageUrl, selectedFile, user]);
 
   const savePlantTrackingDetails = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     if (!species) {
-      alert('You must enter a species. It can be anything :)');
+      alert('You must enter a species 🙂');
       setIsLoading(false);
       return;
     }
@@ -77,7 +99,12 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
     }
     let savedFileName = '';
     if (selectedFile) {
-      savedFileName = await uploadFile(selectedFile, user);
+      try {
+        // Compress image
+        let compressedImage = await compressImage(selectedFile);
+        // Upload image to storage
+        savedFileName = await uploadFile(compressedImage, user);
+      } catch (e) { console.error(e) }
     }
     // save document to firestore db
     let plantTrackingDetails = {
