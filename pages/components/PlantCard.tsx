@@ -120,11 +120,16 @@ const PlantCard: FC<Props> = (props) => {
                     </div>
                 </div>
                 :
-                <h1>
-                    <a className='hover:underline text-2xl leading-loose pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
-                        {plant.species}
-                    </a>
-                </h1>
+                <div>
+                    <div className="absolute w-full flex justify-end pt-2 pr-2 ">
+                        <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
+                    </div>
+                    <h1>
+                        <a className='hover:underline text-2xl leading-loose pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
+                            {plant.species}
+                        </a>
+                    </h1>
+                </div>
             }
 
             <div className="px-5 py-1 ">
