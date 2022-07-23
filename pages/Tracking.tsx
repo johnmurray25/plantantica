@@ -32,6 +32,7 @@ const Home = () => {
     // refresh auth token
     try {
       // await user.reload();
+      // await auth.currentUser.getIdToken();
       await user.getIdToken();
       console.log('re-authenticated user')
     } catch (e) {
@@ -53,7 +54,7 @@ const Home = () => {
 
   useEffect(() => {
     refresh();
-  }, [refresh]);
+  }, [refresh, user, status]);
 
   const remove = async (plant: Plant) => {
     try {
@@ -101,10 +102,10 @@ const Home = () => {
             </div>
           )
         }
-        {status === ERR_STATUS && (
+        {status == ERR_STATUS && (
           <div>Error retrieving plant tracking details. Please try again later</div>
         )}
-        {status === UNAUTHORIZED && (
+        {status == UNAUTHORIZED && (
           <div>No user is logged in.</div>
         )}
       </div>
