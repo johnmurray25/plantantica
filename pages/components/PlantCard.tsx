@@ -76,7 +76,7 @@ const PlantCard: FC<Props> = (props) => {
         if (wateringState == 'check')
             return sharedStyle + 'bg-[#BDC581] text-black border-none';
         if (wateringState == 'bad')
-            return 'border border-yellow rounded-md p-5 m-2 bg-red-900';
+            return 'border border-yellow rounded-md bg-red-900';
     }
     const getWtrBtnStyle = () => {
         let sharedStyle = "flex cursor-pointer text-sm px-4 py-2 leading-none border rounded hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-2 " + (width <= 650 ? "absolute top-1 right-1 " : "h-8 ")
