@@ -28,7 +28,8 @@ const Home = () => {
       return
     }
     setIsLoading(true);
-    // reload in case user's token has expired
+
+    // refresh auth token
     try {
       // await user.reload();
       await user.getIdToken();
@@ -36,14 +37,18 @@ const Home = () => {
     } catch (e) {
       console.error(e);
     }
-    getPlants(user)
-      .then(results => setPlants(results))
-      .then(() => setIsLoading(false))
-      .catch((e) => {
-        console.error(e);
-        setStatus(ERR_STATUS);
-        setIsLoading(false);
-      });
+
+    // get plants from DB 
+    try {
+      let results = await getPlants(user);
+      setPlants(results);
+    } catch (e) {
+      setStatus(ERR_STATUS);
+      console.error(e);
+      console.error('failed to get plants');
+    } finally {
+      setIsLoading(false);
+    }
   }, [user, loading])
 
   useEffect(() => {
