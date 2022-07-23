@@ -4,11 +4,10 @@ import { useRouter } from 'next/router';
 import { collection, addDoc, doc, setDoc, DocumentReference, DocumentData } from "firebase/firestore";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Input, Link, Select, MenuItem } from "@mui/material";
+import { Input, Select, MenuItem } from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { deleteObject, ref } from "firebase/storage";
 import ReactLoading from 'react-loading'
-import imageCompression from "browser-image-compression";
 
 import auth from '../firebase/auth';
 import db from '../firebase/db';
@@ -17,43 +16,8 @@ import Plant from "../domain/Plant";
 import styles from "../styles/tracking.module.css";
 import FileInput from "./components/FileInput";
 import Image from "next/image";
-import { User } from "firebase/auth";
-import { getImageUrl, uploadFile } from "../service/PlantService";
-
-// Compress and save image file to Firebase storage
-// const compressAndUploadFile = async (file, fileName: string) => {
-//   let storageRef = ref(storage, `plant/${fileName}`);
-//   if (typeof file === 'string') {
-//     // convert to blob
-//     let enc = new TextEncoder();
-//     file = enc.encode(file);
-//   }
-//   let fileRef = await uploadBytes(storageRef, file);
-//   let path = fileRef.ref.fullPath;
-//   console.log(`image uploaded: ${path}`);
-//   return path;
-// }
-
-const compressImage = async (imageFile: File) => {
-  console.log('originalFile instanceof Blob', imageFile instanceof Blob); // true
-  console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
-
-  const options = {
-    maxSizeMB: 1,
-    maxWidthOrHeight: 1920,
-    useWebWorker: true
-  }
-
-  try {
-    const compressedFile = await imageCompression(imageFile, options);
-    console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
-    console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
-    return compressedFile;
-  }
-  catch (error) {
-    console.log(error);
-  }
-}
+import { getImageUrl } from "../service/PlantService";
+import { compressImage, createFileFromUrl, uploadFile } from "../service/FileService";
 
 const MILLIS_IN_DAY = 86400000;
 interface Props {
@@ -64,7 +28,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const router = useRouter();
   const [user] = useAuthState(auth);
   const todaysDate = new Date();
-  const [plant, setPlant]: [Plant, Dispatch<SetStateAction<Plant>>] = useState(props.plant);
+  const [plant]: [Plant, Dispatch<SetStateAction<Plant>>] = useState(props.plant);
   const [species, setSpecies] = useState(plant ? plant.species : "");
   const [dateObtained, setDateObtained] = useState(plant ? plant.dateObtained : todaysDate);
   const [daysBetweenWatering, setDaysBetweenWatering] = useState(plant ? plant.daysBetweenWatering : 7);
@@ -75,42 +39,49 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const [lightRequired, setLightRequired] = useState(plant ? plant.lightRequired : 2);
   const [selectedFile, setSelectedFile]: [File, Dispatch<SetStateAction<File>>] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState(null);
 
   useEffect(() => {
     if (imageUrl === '' && user && plant && plant.picture) {
       getImageUrl(plant.picture, user)
-        .then(s => setImageUrl(s))
+        .then(s => {
+          setImageUrl(s);
+        })
     }
   }, [plant, imageUrl, selectedFile, user]);
 
   const savePlantTrackingDetails = async (event) => {
     event.preventDefault();
-    setIsLoading(true);
+    // Validation
     if (!species) {
       alert('You must enter a species 🙂');
-      setIsLoading(false);
       return;
     }
     if (!user) {
       alert('No user is logged in');
-      setIsLoading(false);
       return;
     }
     let savedFileName = '';
-    if (selectedFile) {
-      try {
-        // Compress image
-        setLoadingStatus('Compressing image ')
-        let compressedImage = await compressImage(selectedFile);
-        // Upload image to storage
-        setLoadingStatus('Uploading image ')
-        savedFileName = await uploadFile(compressedImage, user);
-      } catch (e) { console.error(e) }
+    // Check if image to be processed
+    if (imageUrl) {
+      // Image was already saved 
+      if (!selectedFile) {
+        savedFileName = plant.picture;
+      } else {
+        try {
+          // Compress image
+          setLoadingStatus('Compressing image ')
+          let compressedImage = await compressImage(selectedFile);
+          // Upload image to storage
+          setLoadingStatus('Uploading image ')
+          savedFileName = await uploadFile(compressedImage, user);
+        } catch (e) { 
+          console.error(e) 
+        }
+      }
     }
     setLoadingStatus('Saving ')
-    // save document to firestore db
+    // Save document to firestore db
     let plantTrackingDetails = {
       species: species,
       dateObtained: dateObtained.getTime(),
@@ -161,11 +132,11 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   }
 
   return (
-    < div className={styles.container + ' ' + 'min-h-screen'} >
+    <div className={styles.container + ' ' + 'min-h-screen'} >
       {loadingStatus ?
         <div className='flex justify-center items-center pt-60' >
           {loadingStatus} < ReactLoading type='bars' color="#fff" />
-        </div >
+        </div>
         :
         <div>
           <div className={styles.title}>

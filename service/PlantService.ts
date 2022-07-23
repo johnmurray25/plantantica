@@ -1,6 +1,6 @@
 import { User } from "firebase/auth";
 import { collection, deleteDoc, doc, getDocs, query } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { getDownloadURL, ref } from "firebase/storage";
 import Plant from "../domain/Plant";
 
 import db from '../firebase/db';
@@ -15,14 +15,6 @@ export const getImageUrl = async (fileName: string, user: User): Promise<string>
             return '';
         });
     return imageUrl;
-}
-
-export const uploadFile = async (file: File, user: User) => {
-    let storageRef = ref(storage, `${user.email}/${file.name}`);
-    let bytes = await file.arrayBuffer();
-    let fileRef = await uploadBytes(storageRef, bytes);
-    console.log(`uploaded image: ${fileRef.ref.fullPath}`)
-    return fileRef.ref.name;
 }
 
 export const getPlants = async (user: User) => {
