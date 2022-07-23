@@ -21,7 +21,25 @@
         "source": "**",
         "destination": "/index.html"
       }
-    ]
+    ],
+    "headers": [ {
+
+      "source": "**",
+      "headers": [ 
+      {
+        "key": "Access-Control-Allow-Origin",
+        "value": "*"
+      }, 
+      {
+        "key": "Access-Control-Allow-Methods",
+        "value": "DELETE, POST, GET, OPTIONS"
+      },
+      {
+        "key": "Access-Control-Allow-Headers",
+        "value": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+        } 
+      ]
+    }]
   },
   "storage": {
     "rules": "storage.rules"
