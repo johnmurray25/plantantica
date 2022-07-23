@@ -20,7 +20,7 @@ const NavBar: FC<NavProps> = (props) => {
   const { width } = useWindowDimensions();
 
   return (
-    <nav className={"flex justify-between flex-wrap py-5 items-center " + (width > 650 ? "px-4 " : "px-1")}>
+    <nav className="flex justify-between flex-wrap px-4 py-5 items-center ">
       <Link href="/" passHref>
         <div className="flex items-center flex-shrink-0  cursor-pointer">
           <Image src={logo} alt='Tree logo' width={55} height={55}/>
