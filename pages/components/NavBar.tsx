@@ -7,6 +7,7 @@ import ReactLoading from 'react-loading'
 import auth from '../../firebase/auth'
 import Image from 'next/image'
 import logo from '../../public/tree-logo.png'
+import useWindowDimensions from '../../hooks/useWindowDimensions'
 
 interface NavProps {
   hideUser?: boolean;
@@ -16,9 +17,10 @@ const NavBar: FC<NavProps> = (props) => {
 
   const [user, loading, error] = useAuthState(auth);
   const hideUser = props.hideUser ? true : false;
+  const { width } = useWindowDimensions();
 
   return (
-    <nav className="flex justify-between px-4 flex-wrap py-5 items-center">
+    <nav className={"flex justify-between flex-wrap py-5 items-center " + (width > 650 ? "px-4 " : "px-1")}>
       <Link href="/" passHref>
         <div className="flex items-center flex-shrink-0  cursor-pointer">
           <Image src={logo} alt='Tree logo' width={55} height={55}/>
