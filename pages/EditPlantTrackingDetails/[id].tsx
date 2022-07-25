@@ -7,6 +7,7 @@ import { collection, doc, DocumentData, DocumentReference, getDoc } from 'fireba
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { User } from 'firebase/auth';
 import { useRouter } from 'next/router';
+import NextHead from '../components/NextHead';
 
 const getPlantDetails = async (id: string | any, user: User) => {
     let docRef: DocumentReference<DocumentData> = null;
@@ -61,6 +62,7 @@ const Home = () => {
         plant ?
             (
                 <div>
+                    <NextHead />
                     <AddPlantTrackingDetails plant={plant} />
                 </div>
             )

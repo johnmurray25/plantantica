@@ -1,12 +1,22 @@
 import imageCompression from "browser-image-compression";
 import { User } from "firebase/auth";
-import { ref, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 import storage from "../firebase/storage";
 
+export const getImageUrl = async (fileName: string, user: User): Promise<string> => {
+    let imageUrl = getDownloadURL(ref(storage, `${user.email}/${fileName}`))
+        .then(downloadUrl => { return downloadUrl })
+        .catch(e => {
+            console.debug(e);
+            console.error('Failed to load image from storage bucket');
+            return '';
+        });
+    return imageUrl;
+}
+
 export const compressImage = async (imageFile: File) => {
-    console.log('originalFile instanceof Blob', imageFile instanceof Blob); // true
-    console.log(`originalFile size ${imageFile.size / 1024 / 1024} MB`);
+    console.log(`original file size: ${imageFile.size / 1024 / 1024} MB`);
 
     const options = {
         maxSizeMB: 1,
@@ -16,8 +26,7 @@ export const compressImage = async (imageFile: File) => {
 
     try {
         const compressedFile = await imageCompression(imageFile, options);
-        console.log('compressedFile instanceof Blob', compressedFile instanceof Blob); // true
-        console.log(`compressedFile size ${compressedFile.size / 1024 / 1024} MB`); // smaller than maxSizeMB
+        console.log(`compressed file size: ${compressedFile.size / 1024 / 1024} MB`); 
         return compressedFile;
     }
     catch (error) {
@@ -39,4 +48,10 @@ export const uploadFile = async (file: File, user: User) => {
     let fileRef = await uploadBytes(storageRef, bytes);
     console.log(`uploaded image: ${fileRef.ref.fullPath}`)
     return fileRef.ref.name;
+}
+
+export const deleteImage = async (fileName: string, user: User) => {
+    const imgRef = ref(storage, `${user.email}/${fileName}`);
+    await deleteObject(imgRef);
+    console.log('Deleted image from bucket')
 }

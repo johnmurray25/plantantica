@@ -1,10 +1,12 @@
 import React from "react";
-import Head from "next/head";
+import Link from "next/link";
+
+import { useAuthState } from "react-firebase-hooks/auth";
+
 import styles from "../styles/Home.module.css";
 import NavBar from "./components/NavBar";
+import NextHead from './components/NextHead'
 import auth from '../firebase/auth';
-import { useAuthState } from "react-firebase-hooks/auth";
-import Link from "next/link";
 
 export default function Home() {
 
@@ -12,15 +14,7 @@ export default function Home() {
 
   return (
     <div className={styles.container + " bg-green "}>
-      <Head>
-        <title>Plantantica</title>
-        <meta
-          name="description"
-          content="A place to track your plants' maintenance"
-        />
-        <link rel="icon" href="/tree-logo.ico" />
-      </Head>
-
+      <NextHead />
       <NavBar />
 
       <main className={styles.main + " bg-green "}>

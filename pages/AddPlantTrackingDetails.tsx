@@ -16,8 +16,8 @@ import Plant from "../domain/Plant";
 import styles from "../styles/tracking.module.css";
 import FileInput from "./components/FileInput";
 import Image from "next/image";
-import { getImageUrl } from "../service/PlantService";
-import { compressImage, createFileFromUrl, uploadFile } from "../service/FileService";
+import { compressImage, uploadFile, getImageUrl, deleteImage } from "../service/FileService";
+import NextHead from "./components/NextHead";
 
 const MILLIS_IN_DAY = 86400000;
 interface Props {
@@ -75,8 +75,8 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
           // Upload image to storage
           setLoadingStatus('Uploading image ')
           savedFileName = await uploadFile(compressedImage, user);
-        } catch (e) { 
-          console.error(e) 
+        } catch (e) {
+          console.error(e)
         }
       }
     }
@@ -116,23 +116,36 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
     setDateToWaterNext(newWaterDate);
   }
 
-  const onRemoveFile = async () => {
-    if (!confirm('Are you sure you want to remove the image?')) return;
+  const onRemoveFile = () => {
+    if (!confirm('Remove the image?')) return;
+    // if image was previously saved, delete from storage
     if (plant && plant.picture) {
-      try {
-        const imgRef = ref(storage, `${user.email}/${plant.picture}`);
-        await deleteObject(imgRef);
-        console.log('Deleted image from bucket')
-      } catch (e) {
-        console.error(e);
-      }
+      deleteImage(plant.picture, user)
+        .then(() => {
+          plant.picture = '';
+          setSelectedFile(null)
+          setImageUrl('')
+          setDoc(
+            doc(
+              collection(doc(db, 'users', user.email), 'plantTrackingDetails'),
+              plant.id),
+            { picture: '' },
+            { merge: true }
+          )
+          .then(() => console.log('removed image ref from db'))
+        })
+        .catch(console.error);
     }
-    setSelectedFile(null)
-    setImageUrl('')
+    // otherwise just remove from UI
+    else {
+      setSelectedFile(null)
+      setImageUrl('')
+    }
   }
 
   return (
     <div className={styles.container + ' ' + 'min-h-screen'} >
+      <NextHead />
       {loadingStatus ?
         <div className='flex justify-center items-center pt-60' >
           {loadingStatus} < ReactLoading type='bars' color="#fff" />

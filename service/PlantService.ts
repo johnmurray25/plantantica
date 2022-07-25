@@ -1,21 +1,9 @@
 import { User } from "firebase/auth";
 import { collection, deleteDoc, doc, getDocs, query } from "firebase/firestore";
-import { getDownloadURL, ref } from "firebase/storage";
 import Plant from "../domain/Plant";
 
 import db from '../firebase/db';
-import storage from '../firebase/storage';
-
-export const getImageUrl = async (fileName: string, user: User): Promise<string> => {
-    let imageUrl = getDownloadURL(ref(storage, `${user.email}/${fileName}`))
-        .then(downloadUrl => { return downloadUrl })
-        .catch(e => {
-            console.debug(e);
-            console.error('Failed to load image from storage bucket');
-            return '';
-        });
-    return imageUrl;
-}
+import { deleteImage } from "./FileService";
 
 export const getPlants = async (user: User) => {
     try {
@@ -48,7 +36,10 @@ export const getPlants = async (user: User) => {
 };
 
 export const deletePlant = async (plant: Plant, user: User) => {
-    confirm(`Delete ${plant.species}?`);
+    if (plant.picture) {
+        deleteImage(plant.picture, user)
+            .catch(console.error);
+    }
     await deleteDoc(doc(collection(doc(db, 'users', user.email), 'plantTrackingDetails'), plant.id));
     console.log('deleted plant');
 }

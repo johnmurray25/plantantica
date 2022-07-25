@@ -6,8 +6,9 @@ import NavBar from './components/NavBar';
 import styles from '../styles/Home.module.css';
 import { collection, doc, getDocs } from 'firebase/firestore';
 import { User } from 'firebase/auth';
+import NextHead from './components/NextHead';
 
-const getNumPlants = async (user: User) => { 
+const getNumPlants = async (user: User) => {
     if (!user) return;
     let collectionRef = collection(doc(db, 'users', user.email), 'plantTrackingDetails');
     try {
@@ -43,6 +44,7 @@ function Home() {
 
     return (
         <div className='bg-green text-yellow min-h-screen text-left'>
+            <NextHead />
             {
                 user ?
                     <div>

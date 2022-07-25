@@ -41,6 +41,7 @@ const PlantCard: FC<Props> = (props) => {
             return;
         }
         if (imageURL == '' && userEmail && plant.picture && plant.picture !== '') {
+            // console.log('getting download url...')
             getDownloadURL(ref(storage, `${userEmail}/${plant.picture}`))
                 .then(downloadUrl => setImageURL(downloadUrl))
                 .catch(e => {

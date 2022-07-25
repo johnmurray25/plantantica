@@ -14,6 +14,7 @@ import { getPlants, deletePlant } from "../service/PlantService";
 import { User } from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
 import db from "../firebase/db";
+import NextHead from "./components/NextHead";
 
 const OK = 200;
 const UNAUTHORIZED = 403;
@@ -61,6 +62,8 @@ const Home = () => {
   }, [refresh, user, status, refreshToggle]);
 
   const remove = useCallback(async (plant: Plant) => {
+    if (!confirm(`Delete ${plant.species}?`)) return;
+    
     try {
       await deletePlant(plant, user);
       // setPlants(plants.filter(p => p.species !== plant.species));
@@ -109,6 +112,7 @@ const Home = () => {
 
   return (
     <div className={styles.container}>
+      <NextHead />
       <NavBar />
       <div className={styles.main}>
         <div className={styles.title}>

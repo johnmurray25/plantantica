@@ -9,6 +9,7 @@ import ReactLoading from "react-loading";
 import auth from '../firebase/auth';
 import TreeLogo from './components/TreeLogo';
 import useWindowDimensions from '../hooks/useWindowDimensions';
+import NextHead from './components/NextHead';
 
 function SignInScreen() {
     const [user, loading, error] = useAuthState(auth);
@@ -36,6 +37,7 @@ function SignInScreen() {
 
     return (
         <div className='bg-green text-yellow min-h-screen text-center pt-10 text-xl' id='firebaseui-auth-container' >
+            <NextHead />
             {isLoading || loading ?
                 <div className='flex justify-center items-center pt-40'>
                     <ReactLoading type='bars' color="#fff" />
