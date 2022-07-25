@@ -16,6 +16,23 @@ import { collection, doc, setDoc } from "firebase/firestore";
 import db from "../firebase/db";
 import NextHead from "./components/NextHead";
 
+const loadPlantData = async (user: User): Promise<Plant[]> => {
+
+  // // refresh auth token
+  // try {
+  //   // await user.reload();
+  //   // await auth.currentUser.getIdToken();
+  //   await user.getIdToken();
+  //   console.log('re-authenticated user')
+  // } catch (e) {
+  //   console.error(e);
+  // }
+
+  // get plants from DB 
+  let results = await getPlants(user);
+  return results;
+}
+
 const OK = 200;
 const UNAUTHORIZED = 403;
 const ERR_STATUS = 500;
@@ -27,43 +44,26 @@ const Home = () => {
   const [user, loading, error] = useAuthState(auth);
   const [refreshToggle, setRefreshToggle] = useState(false);
 
-  const refresh = useCallback(async () => {
-    if (!user) {
-      if (!loading) setStatus(UNAUTHORIZED);
+  useEffect(() => {
+    if (!user && !loading) {
+      setStatus(UNAUTHORIZED);
       return
     }
     setIsLoading(true);
-
-    // refresh auth token
-    try {
-      // await user.reload();
-      // await auth.currentUser.getIdToken();
-      await user.getIdToken();
-      console.log('re-authenticated user')
-    } catch (e) {
-      console.error(e);
-    }
-
-    // get plants from DB 
-    try {
-      let results = await getPlants(user);
-      setPlants(results);
-    } catch (e) {
-      setStatus(ERR_STATUS);
-      console.error(e);
-      console.error('failed to get plants');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [user, loading])
-
-  useEffect(() => {
-    refresh();
-  }, [refresh, user, status, refreshToggle]);
+    loadPlantData(user)
+      .then(data => {
+        setPlants(data)
+      })
+      .catch(e => {
+        console.error(e);
+        setStatus(ERR_STATUS)
+      })
+      .finally(() => setIsLoading(false))
+  }, [user, loading, refreshToggle]);
 
   const remove = useCallback(async (plant: Plant) => {
     if (!confirm(`Delete ${plant.species}?`)) return;
-    
+
     try {
       await deletePlant(plant, user);
       // setPlants(plants.filter(p => p.species !== plant.species));
@@ -137,7 +137,7 @@ const Home = () => {
                   </a>
                 </Link>
               </div>
-              <PlantTrackingDetails plants={plants} removePlant={remove} waterPlant={waterPlant}/>
+              <PlantTrackingDetails plants={plants} removePlant={remove} waterPlant={waterPlant} />
             </div>
           )}
         {plants.length === 0 && !isLoading && user && status === OK &&
