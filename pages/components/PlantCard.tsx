@@ -141,11 +141,9 @@ const PlantCard: FC<Props> = (props) => {
                 <div className="flex justify-start relative">
                     <a onClick={() => props.waterPlant().then(() => setWateringState('good'))}
                         className={getWtrBtnStyle()}>
-                        <IoWater className="cursor-pointer text-blue" />
-                        &nbsp;&nbsp;
-                        Water?
-                        &nbsp;&nbsp;
-                        <IoWater className="cursor-pointer text-blue" />
+                        {/* <IoWater className="cursor-pointer text-blue" /> */}
+                        &#x1f4a7;&nbsp;&nbsp;Water?&nbsp;&nbsp;&#x1f4a7;
+                        {/* <IoWater className="cursor-pointer text-blue" /> */}
                     </a>
                     <div className='pt-4'>
                         {/* days between watering: {plant.daysBetweenWatering}
@@ -161,18 +159,22 @@ const PlantCard: FC<Props> = (props) => {
                         <br></br>
                         <div className='flex justify-evenly'>
                             {plant.lightRequired < 5 ?
-                                <IoPartlySunny className={getIconStyle()} />
+                                // <IoPartlySunny className={getIconStyle()} />
+                                <span>&#127780;</span>
                                 :
-                                <IoSunny className={getIconStyle()} />
+                                // <IoSunny className={getIconStyle()} />
+                                <span>&#9728;</span>
                             }
                             &nbsp;&nbsp;
                             {plant.lightRequired == 2 && 'Bright indirect light'}
                             {plant.lightRequired == 10 && 'Bright light'}
                             &nbsp;&nbsp;
                             {plant.lightRequired < 5 ?
-                                <IoPartlySunny className={getIconStyle()} />
+                                // <IoPartlySunny className={getIconStyle()} />
+                                <span>&#127780;</span>
                                 :
-                                <IoSunny className={getIconStyle()} />
+                                // <IoSunny className={getIconStyle()} />
+                                <span>&#9728;</span>
                             }
                         </div>
                         <br></br>
