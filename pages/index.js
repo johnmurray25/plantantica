@@ -18,7 +18,7 @@ export default function Home() {
           name="description"
           content="A place to track your plants' maintenance"
         />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/tree-logo.ico" />
       </Head>
 
       <NavBar />
