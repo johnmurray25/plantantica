@@ -124,7 +124,7 @@ const Home = () => {
           </a> */}
         </div>
         {isLoading && <ReactLoading type='bars' color="#fff" />}
-        {plants.length > 0 &&
+        {plants && plants.length > 0 &&
           (
             <div>
               <div className="flex justify-between items-center text-center pb-3 pt-6 px-4">
@@ -140,7 +140,7 @@ const Home = () => {
               <PlantTrackingDetails plants={plants} removePlant={remove} waterPlant={waterPlant} />
             </div>
           )}
-        {plants.length === 0 && !isLoading && user && status === OK &&
+        {(!plants || plants.length === 0) && !isLoading && user && status === OK &&
           (
             <div>
               You aren&apos;t tracking any plants yet
