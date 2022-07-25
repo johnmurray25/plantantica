@@ -11,6 +11,9 @@ import PlantTrackingDetails from "./components/PlantTrackingDetails";
 import styles from "../styles/tracking.module.css";
 import Plant from "../domain/Plant";
 import { getPlants, deletePlant } from "../service/PlantService";
+import { User } from "firebase/auth";
+import { collection, doc, setDoc } from "firebase/firestore";
+import db from "../firebase/db";
 
 const OK = 200;
 const UNAUTHORIZED = 403;
@@ -56,7 +59,7 @@ const Home = () => {
     refresh();
   }, [refresh, user, status]);
 
-  const remove = async (plant: Plant) => {
+  const remove = useCallback(async (plant: Plant) => {
     try {
       await deletePlant(plant, user);
       setPlants(plants.filter((p: Plant) => p.id !== plant.id));
@@ -64,7 +67,42 @@ const Home = () => {
       console.error(e);
       setStatus(ERR_STATUS);
     }
-  }
+  }, [plants, user]);
+
+  const waterPlant = useCallback(async (plant: Plant, user: User) => {
+    if (!confirm('Mark as watered today?')) {
+      return;
+    }
+    let today = new Date();
+    let daysBetweenWatering = plant.daysBetweenWatering ? plant.daysBetweenWatering : 10;
+    // Calculate next watering date
+    let newWateringDate = today.getTime() + (daysBetweenWatering * 86400000);
+    // Update DB
+    await setDoc(
+      doc(
+        collection(doc(db, 'users', user.email), 'plantTrackingDetails'),
+        plant.id),
+      { dateToWaterNext: newWateringDate, dateLastWatered: today.getTime() },
+      { merge: true }
+    );
+    // Update state
+    let newDate = new Date(newWateringDate);
+    plant.dateToWaterNext = newDate;
+    plant.dateLastWatered = today;
+    let filteredPlants = plants.filter((p) => p.id !== plant.id);
+    filteredPlants.push(plant);
+    let results = filteredPlants
+      .sort((a, b) => {
+        if (a.species.toLocaleLowerCase() < b.species.toLocaleLowerCase()) {
+          return -1;
+        }
+        else if (a.species.toLocaleLowerCase() > b.species.toLocaleLowerCase()) {
+          return 1;
+        }
+        else return 0;
+      });
+    if (results && results.length > 0) setPlants(results);
+  }, [plants]);
 
   return (
     <div className={styles.container}>
@@ -92,7 +130,7 @@ const Home = () => {
                   </a>
                 </Link>
               </div>
-              <PlantTrackingDetails plants={plants} removePlant={remove} />
+              <PlantTrackingDetails plants={plants} removePlant={remove} waterPlant={waterPlant}/>
             </div>
           )}
         {plants.length === 0 && !isLoading && user && status === OK &&

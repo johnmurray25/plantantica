@@ -11,7 +11,6 @@ import { useRouter } from 'next/router';
 const getPlantDetails = async (id: string | any, user: User) => {
     let docRef: DocumentReference<DocumentData> = null;
     console.log(`User: ${user.email}`);
-    console.log(`Id: ${id}`);
     try {
         let collectionRef = collection(doc(db, 'users', user.email), 'plantTrackingDetails');
         if (!collectionRef) { console.error('NO COLLECTION FOUND') }
@@ -22,7 +21,6 @@ const getPlantDetails = async (id: string | any, user: User) => {
     }
     try {
         let d = await getDoc(docRef);
-        console.log(`document id: ${d.id}`);
         return {
             id: d.id,
             species: d.get('species'),

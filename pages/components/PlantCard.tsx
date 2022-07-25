@@ -31,7 +31,6 @@ const PlantCard: FC<Props> = (props) => {
     const [userEmail] = useState(props.userEmail);
     const [plant] = useState(props.plant);
     const [dateToWaterNext] = useState(plant ? plant.dateToWaterNext : new Date(new Date().getTime() + MILLIS_IN_DAY));
-    const waterPlant = props.waterPlant;
 
     // state
     const [wateringState, setWateringState] = useState('good');
@@ -139,7 +138,8 @@ const PlantCard: FC<Props> = (props) => {
                     </p>
                 }
                 <div className="flex justify-start relative">
-                <a onClick={() => waterPlant(plant)} className={getWtrBtnStyle()}>
+                    <a onClick={() => props.waterPlant().then(() => setWateringState('good'))}
+                        className={getWtrBtnStyle()}>
                         <IoWater className="cursor-pointer text-blue" />
                         &nbsp;&nbsp;
                         Water?
@@ -176,7 +176,7 @@ const PlantCard: FC<Props> = (props) => {
                         </div>
                         <br></br>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
