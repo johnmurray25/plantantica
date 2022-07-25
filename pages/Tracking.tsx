@@ -24,6 +24,7 @@ const Home = () => {
   const [status, setStatus]: [number, any] = useState(OK);
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
+  const [refreshToggle, setRefreshToggle] = useState(false);
 
   const refresh = useCallback(async () => {
     if (!user) {
@@ -57,17 +58,19 @@ const Home = () => {
 
   useEffect(() => {
     refresh();
-  }, [refresh, user, status]);
+  }, [refresh, user, status, refreshToggle]);
 
   const remove = useCallback(async (plant: Plant) => {
     try {
       await deletePlant(plant, user);
-      setPlants(plants.filter((p: Plant) => p.id !== plant.id));
+      // setPlants(plants.filter(p => p.species !== plant.species));
+      setPlants([]);
+      setRefreshToggle(!refreshToggle);
     } catch (e) {
       console.error(e);
       setStatus(ERR_STATUS);
     }
-  }, [plants, user]);
+  }, [user, refreshToggle]);
 
   const waterPlant = useCallback(async (plant: Plant, user: User) => {
     if (!confirm('Mark as watered today?')) {
