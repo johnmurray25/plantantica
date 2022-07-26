@@ -133,11 +133,21 @@ const PlantCard: FC<Props> = (props) => {
             }
 
             <div className="px-5 py-1 ">
-                {plant.dateObtained &&
-                    <p style={{ fontSize: "0.7rem", textAlign: "left" }}>
-                        had since {plant.dateObtained.toLocaleDateString()}
+                <div className='flex justify-between text-xs '>
+                    {plant.dateObtained &&
+                        <p>
+                            had since {plant.dateObtained.toLocaleDateString()}
+                        </p>
+                    }
+                    {plant.lightRequired < 5 ?
+                        <IoPartlySunnySharp className={getIconStyle()} />
+                        :
+                        <IoSunnySharp className={getIconStyle()} />
+                    }
+                    <p>
+                        water every {plant.daysBetweenWatering} days
                     </p>
-                }
+                </div>
                 <div className="flex justify-start relative">
                     <a onClick={() => {
                         if (!confirm('Mark as watered today?')) {
@@ -161,20 +171,7 @@ const PlantCard: FC<Props> = (props) => {
                         last fed {plant.dateLastFed.toLocaleDateString()}
                         <br></br>
                         feed next {plant.dateToFeedNext.toLocaleDateString()}
-                        <br></br>
-                        <div className='flex justify-start items-center'>
-                            {plant.lightRequired == 2 && 'Bright indirect light'}
-                            {plant.lightRequired == 10 && 'Bright light'}
-                            &nbsp;&nbsp;
-                            {plant.lightRequired < 5 ?
-                                <IoPartlySunnySharp className={getIconStyle()} />
-                                :
-                                <IoSunnySharp className={getIconStyle()} />
-                            }
-                        </div>
-                        <br></br>
                     </div>
-
                 </div>
             </div>
         </div>
