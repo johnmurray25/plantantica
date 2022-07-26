@@ -1,8 +1,8 @@
 import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import Image from 'next/image';
 
-import { IoSunny } from '@react-icons/all-files/io5/IoSunny';
-import { IoPartlySunny } from '@react-icons/all-files/io5/IoPartlySunny';
+import { IoPartlySunnySharp } from '@react-icons/all-files/io5/IoPartlySunnySharp';
+import { IoSunnySharp } from '@react-icons/all-files/io5/IoSunnySharp';
 import { IoWater } from '@react-icons/all-files/io5/IoWater';
 import { getDownloadURL, ref } from 'firebase/storage';
 
@@ -146,13 +146,13 @@ const PlantCard: FC<Props> = (props) => {
                         props.waterPlant().then(() => setWateringState('good'));
                     }}
                         className={getWtrBtnStyle()}>
-                        {/* <IoWater className="cursor-pointer text-blue" /> */}
-                        &#x1f4a7;&nbsp;&nbsp;Water?&nbsp;&nbsp;&#x1f4a7;
-                        {/* <IoWater className="cursor-pointer text-blue" /> */}
+                        <IoWater className="cursor-pointer text-blue" />
+                        &nbsp;&nbsp;
+                        Water?
+                        &nbsp;&nbsp;
+                        <IoWater className="cursor-pointer text-blue" />
                     </a>
                     <div className='pt-4'>
-                        {/* days between watering: {plant.daysBetweenWatering}
-            <br></br> */}
                         last watered {plant.dateLastWatered.toLocaleDateString()}
                         <br></br>
                         <p className={wateringState != 'good' ? 'font-extrabold' : ''}>
@@ -162,24 +162,14 @@ const PlantCard: FC<Props> = (props) => {
                         <br></br>
                         feed next {plant.dateToFeedNext.toLocaleDateString()}
                         <br></br>
-                        <div className='flex justify-evenly'>
-                            {plant.lightRequired < 5 ?
-                                // <IoPartlySunny className={getIconStyle()} />
-                                <span>&#127780;</span>
-                                :
-                                // <IoSunny className={getIconStyle()} />
-                                <span>&#9728;</span>
-                            }
-                            &nbsp;&nbsp;
+                        <div className='flex justify-start items-center'>
                             {plant.lightRequired == 2 && 'Bright indirect light'}
                             {plant.lightRequired == 10 && 'Bright light'}
                             &nbsp;&nbsp;
                             {plant.lightRequired < 5 ?
-                                // <IoPartlySunny className={getIconStyle()} />
-                                <span>&#127780;</span>
+                                <IoPartlySunnySharp className={getIconStyle()} />
                                 :
-                                // <IoSunny className={getIconStyle()} />
-                                <span>&#9728;</span>
+                                <IoSunnySharp className={getIconStyle()} />
                             }
                         </div>
                         <br></br>
