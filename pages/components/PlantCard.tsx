@@ -139,7 +139,12 @@ const PlantCard: FC<Props> = (props) => {
                     </p>
                 }
                 <div className="flex justify-start relative">
-                    <a onClick={() => props.waterPlant().then(() => setWateringState('good'))}
+                    <a onClick={() => {
+                        if (!confirm('Mark as watered today?')) {
+                            return;
+                        }
+                        props.waterPlant().then(() => setWateringState('good'));
+                    }}
                         className={getWtrBtnStyle()}>
                         {/* <IoWater className="cursor-pointer text-blue" /> */}
                         &#x1f4a7;&nbsp;&nbsp;Water?&nbsp;&nbsp;&#x1f4a7;

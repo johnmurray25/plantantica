@@ -76,9 +76,6 @@ const Home = () => {
   }, [user, refreshToggle]);
 
   const waterPlant = useCallback(async (plant: Plant, user: User) => {
-    if (!confirm('Mark as watered today?')) {
-      return;
-    }
     let today = new Date();
     let daysBetweenWatering = plant.daysBetweenWatering ? plant.daysBetweenWatering : 10;
     // Calculate next watering date
