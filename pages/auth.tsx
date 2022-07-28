@@ -2,14 +2,29 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
 import { useAuthState } from 'react-firebase-hooks/auth';
-import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
-import { browserLocalPersistence, EmailAuthProvider, FacebookAuthProvider, GoogleAuthProvider } from 'firebase/auth';
+import { browserLocalPersistence, EmailAuthProvider, FacebookAuthProvider, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth';
 import ReactLoading from "react-loading";
 
 import auth from '../firebase/auth';
 import TreeLogo from './components/TreeLogo';
 import useWindowDimensions from '../hooks/useWindowDimensions';
 import NextHead from './components/NextHead';
+import Image from 'next/image';
+
+const googleAuthProvider = new GoogleAuthProvider();
+const fbAuthProvider = new FacebookAuthProvider();
+
+const signInWithGoogle = (width: number) => { 
+    width <= 650 ? signInWithRedirect(auth, googleAuthProvider) : signInWithPopup(auth, googleAuthProvider);
+}
+
+const signInWithFacebook = (width: number) => {
+    width <= 650 ? signInWithRedirect(auth, fbAuthProvider) : signInWithPopup(auth, fbAuthProvider);
+}
+
+const signOut = () => {
+    auth.signOut();
+}
 
 function SignInScreen() {
     const [user, loading, error] = useAuthState(auth);
@@ -19,21 +34,9 @@ function SignInScreen() {
     useEffect(() => {
         setIsLoading(true);
         auth.setPersistence(browserLocalPersistence)
-            .then(() => setIsLoading(false));
-    }, [loading, user])
-
-    const uiConfig = {
-        signInSuccessUrl: "/",
-        signInFlow: width <= 650 ? 'redirect' : 'popup',
-        signInOptions: [
-            GoogleAuthProvider.PROVIDER_ID,
-            FacebookAuthProvider.PROVIDER_ID,
-        ],
-    };
-
-    const signOut = () => {
-        auth.signOut();
-    }
+            .then(() => setIsLoading(false))
+            .catch(console.error);
+    }, [user])
 
     return (
         <div className='bg-green text-yellow min-h-screen text-center pt-10 text-xl' id='firebaseui-auth-container' >
@@ -50,7 +53,7 @@ function SignInScreen() {
                         </div>
                     </Link>
 
-                    {user && uiConfig ?
+                    {user ?
                         <div>
                             <p>
                                 Welcome {user.displayName}! You are now signed in.
@@ -60,9 +63,17 @@ function SignInScreen() {
                             </a>
                         </div>
                         :
-                        <div>
+                        <div className='flex flex-col items-center justify-center'>
                             <p>Please sign in:</p>
-                            <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
+                            <button className='flex flex-row justify-evenly items-center bg-white text-[#757575] font-sans font-semibold px-2 py-3 m-2 text-sm  w-52 rounded-sm'
+                                onClick={() => signInWithGoogle(width)}>
+                                <Image alt="Google logo" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width={17} height={17} />
+                                Sign in with Google
+                            </button>
+                            <button className='flex flex-row justify-evenly items-center bg-[#3B5998] text-white font-sans font-semibold px-2 py-3 m-2 text-sm  w-52 rounded-sm' >
+                                <Image alt="Google logo" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/facebook.svg" width={17} height={17} />
+                                Sign in with Facebook
+                            </button>
                         </div>
                     }
                 </div>)

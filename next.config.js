@@ -5,6 +5,7 @@ const nextConfig = {
     domains: [
       'firebasestorage.googleapis.com',
       process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+      'www.gstatic.com',
     ],
   },
 }
