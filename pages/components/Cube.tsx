@@ -1,26 +1,32 @@
-import React, { useState } from "react"
-import { Canvas } from '@react-three/fiber'
-import Box from './Box'
+import { createRoot } from 'react-dom/client'
+import React, { useRef, useState } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
 
-const displayBoxes = (num) => {
-    let boxes = []
-    for (let i = 0; i < num; i++) {
-        boxes.push(<Box position={[-1.2, i * 2, i * 2]} key={i} />)
-    }
-    return boxes
+interface Mesh {
+    rotation;
 }
 
-function Home() {
-
-    const [numBoxes, setNumBoxes] = useState(20); 
+function Box(props) {
+    // This reference will give us direct access to the mesh
+    const mesh: React.MutableRefObject<Mesh> = useRef()
+    // Set up state for the hovered and active state
+    const [hovered, setHover] = useState(false)
+    const [active, setActive] = useState(false)
+    // Subscribe this component to the render-loop, rotate the mesh every frame
+    useFrame((state, delta) => mesh.current && mesh.current.rotation ? (mesh.current.rotation.x += 0.01) : {})
 
     return (
-        <Canvas>
-            <ambientLight />
-            <pointLight position={[10, 10, 10]} />
-            {displayBoxes(20)}
-        </Canvas>
+        <mesh
+            {...props}
+            ref={mesh}
+            scale={active ? 1.5 : 1}
+            onClick={(event) => setActive(!active)}
+            onPointerOver={(event) => setHover(true)}
+            onPointerOut={(event) => setHover(false)}>
+            <boxGeometry args={[1, 1, 1]} />
+            <meshStandardMaterial color={hovered ? 'hotpink' : 'lightgreen'} />
+        </mesh>
     )
 }
 
-export default Home
+export default Box 

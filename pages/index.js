@@ -6,70 +6,63 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import styles from "../styles/Home.module.css";
 import NavBar from "./components/NavBar";
 import NextHead from './components/NextHead'
+import Cubes from './components/Cubes'
 import auth from '../firebase/auth';
 
 export default function Home() {
 
-  const [user, loading, error] = useAuthState(auth);
+    const [user, loading, error] = useAuthState(auth);
 
-  return (
-    <div className={styles.container + " bg-green "}>
-      <NextHead />
-      <NavBar />
+    return (
+        <div className={styles.container + " bg-green "}>
+            <NextHead />
+            <NavBar />
 
-      <main className={styles.main + " bg-green "}>
-            <h1 className={styles.title}>
-                {
-                    user ?
-                        <a>
-                            Welcome, {user.displayName}!
-                        </a>
-                        :
-                        <a>
-                            Welcome to Plantantica!
-                        </a>
-                }
-            </h1>
+            <main className={styles.main + " bg-green "}>
+                <Cubes />
+                <h1 className={styles.title}>
+                    {
+                        user ?
+                            <a>
+                                Welcome, {user.displayName}!
+                            </a>
+                            :
+                            <a>
+                                Welcome to Plantantica!
+                            </a>
+                    }
+                </h1>
 
-            <p className={styles.description}>
-                {!user && "A place to track your plants' maintenance"}
-            </p>
+                <p className={styles.description}>
+                    {!user && "A place to track your plants' maintenance"}
+                </p>
 
-            <div className={styles.grid}>
-                {/* <Link href="/Blog">
+                <div className={styles.grid}>
+                    {/* <Link href="/Blog">
                     <a className={styles.card}>
                         <h2>Blog &rarr;</h2>
                         <p>Ask a question, or see what other users have to say.</p>
                     </a>
                 </Link> */}
 
-                <Link href="/Tracking">
-                    <a className={styles.card}>
-                        <h2>Track &rarr;</h2>
-                        <p>Track the watering/feeding of your plants</p>
-                    </a>
-                </Link>
+                    <Link href="/Tracking">
+                        <a className={styles.card}>
+                            <h2>Track &rarr;</h2>
+                            <p>Track the watering/feeding of your plants</p>
+                        </a>
+                    </Link>
 
-                {/* <Link href="/Cube">
-                    <a className={styles.card}>
-                        <h2>Cube &rarr;</h2>
-                        <p>Look at this cube</p>
-                    </a>
-                </Link> */}
+                    <Link href='/Magic'>
+                        <a className={styles.card}>
+                            <h2>Magic &rarr;</h2>
+                            <p>Enter the nature</p>
+                        </a>
+                    </Link>
 
-                {/* <a
-                    href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-                    className={styles.card}
-                >
-                    <h2>Deploy &rarr;</h2>
-                    <p>
-                        Instantly deploy your Next.js site to a public URL with Vercel.
-                    </p>
-                </a> */}
-            </div>
-        </main>
+                </div>
+            </main>
 
-      {/* <footer className={styles.footer}>
+            {/* <footer className={styles.footer}>
         <a
           href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
           target="_blank"
@@ -81,6 +74,6 @@ export default function Home() {
           </span>
         </a>
       </footer> */}
-    </div>
-  );
+        </div>
+    );
 }
