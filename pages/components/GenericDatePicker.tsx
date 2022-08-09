@@ -10,7 +10,7 @@ interface Props {
     onSelect: (date: Date) => void,
 }
 
-export const GenericDatePicker: React.FC<Props> = (props) => {
+const GenericDatePicker: React.FC<Props> = (props) => {
 
     return (
         <div className='bg-lightGrayGreen text-green p-3'>
@@ -26,3 +26,5 @@ export const GenericDatePicker: React.FC<Props> = (props) => {
         </div>
     );
 }
+
+export default GenericDatePicker

@@ -14,7 +14,7 @@ import FileInput from "./components/FileInput";
 import Image from "next/image";
 import { compressImage, uploadFile, getImageUrl, deleteImage } from "../service/FileService";
 import NextHead from "./components/NextHead";
-import { GenericDatePicker } from "./components/GenericDatePicker";
+import GenericDatePicker from "./components/GenericDatePicker";
 
 const MILLIS_IN_DAY = 86400000;
 
@@ -170,7 +170,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                   case 3:
                     return ((plant ? 'EDIT' : 'ADD') + ' FEEDING INFO')
                   case 4:
-                    return ((plant ? 'EDIT' : 'ADD') + ' HISTORY INFO')
+                    return ((plant ? 'EDIT' : 'ADD') + ' PLANT HISTORY')
                 }
               })()}
             </a>

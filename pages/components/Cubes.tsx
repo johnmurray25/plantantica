@@ -1,26 +1,36 @@
-import React, { useState } from "react"
-import { Canvas } from '@react-three/fiber'
-import Box from './Cube'
+import React from 'react'
 
-const displayBoxes = (num) => {
-    let boxes = []
-    for (let i = 0; i < num; i++) {
-        boxes.push(<Box position={[-1.5, i * 4, i * 4]} key={i} />)
-    }
-    return boxes
+const Cubes = () => {
+  return (
+    <div></div>
+  )
 }
 
-function Home() {
+export default Cubes
 
-    const [numBoxes, setNumBoxes] = useState(20); 
+// import React, { useState } from "react"
+// import { Canvas } from '@react-three/fiber'
+// import Box from './Cube'
 
-    return (
-        <Canvas>
-            <ambientLight />
-            <pointLight position={[10, 10, 10]} />
-            {displayBoxes(20)}
-        </Canvas>
-    )
-}
+// const displayBoxes = (num) => {
+//     let boxes = []
+//     for (let i = 0; i < num; i++) {
+//         boxes.push(<Box position={[-1.5, i * 4, i * 4]} key={i} />)
+//     }
+//     return boxes
+// }
 
-export default Home
+// function Home() {
+
+//     const [numBoxes, setNumBoxes] = useState(20); 
+
+//     return (
+//         <Canvas>
+//             <ambientLight />
+//             <pointLight position={[10, 10, 10]} />
+//             {displayBoxes(20)}
+//         </Canvas>
+//     )
+// }
+
+// export default Home

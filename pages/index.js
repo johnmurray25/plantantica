@@ -6,7 +6,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import styles from "../styles/Home.module.css";
 import NavBar from "./components/NavBar";
 import NextHead from './components/NextHead'
-import Cubes from './components/Cubes'
+// import Cubes from './components/Cubes'
 import auth from '../firebase/auth';
 
 export default function Home() {
@@ -19,7 +19,6 @@ export default function Home() {
             <NavBar />
 
             <main className={styles.main + " bg-green "}>
-                <Cubes />
                 <h1 className={styles.title}>
                     {
                         user ?
@@ -52,12 +51,12 @@ export default function Home() {
                         </a>
                     </Link>
 
-                    <Link href='/Magic'>
+                    {/*<Link href='/Magic'>
                         <a className={styles.card}>
                             <h2>Magic &rarr;</h2>
                             <p>Enter the nature</p>
                         </a>
-                    </Link>
+                        </Link>*/}
 
                 </div>
             </main>
