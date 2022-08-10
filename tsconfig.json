@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-  ],
+, "firebaseFunctions.js"  ],
   "exclude": [
     "node_modules"
   ]

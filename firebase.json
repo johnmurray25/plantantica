@@ -4,10 +4,12 @@
     "indexes": "firestore.indexes.json"
   },
   "functions": {
+    "source": ".",
     "predeploy": [
-      "npm --prefix \"$RESOURCE_DIR\" run lint",
-      "npm --prefix \"$RESOURCE_DIR\" run build"
-    ]
+      "npm --prefix \"$PROJECT_DIR\" install",
+      "npm --prefix \"$PROJECT_DIR\" run build"
+    ],
+    "runtime": "nodejs16"
   },
   "hosting": {
     "public": "public",
@@ -19,7 +21,7 @@
     "rewrites": [
       {
         "source": "**",
-        "destination": "/index.html"
+        "function": "nextjsFunc"
       }
     ],
     "headers": [ {
