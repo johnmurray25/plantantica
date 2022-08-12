@@ -8,13 +8,14 @@ import ReactLoading from 'react-loading'
 
 import auth from '../firebase/auth';
 import db from '../firebase/db';
-import Plant from "../domain/Plant";
+import Plant from "../../domain/Plant";
 import styles from "../styles/tracking.module.css";
 import FileInput from "./components/FileInput";
 import Image from "next/image";
-import { compressImage, uploadFile, getImageUrl, deleteImage } from "../service/FileService";
+import { compressImage, uploadFile, getImageUrl, deleteImage } from "../../service/FileService";
 import NextHead from "./components/NextHead";
 import GenericDatePicker from "./components/GenericDatePicker";
+import customImageLoader from "../util/customImageLoader";
 
 const MILLIS_IN_DAY = 86400000;
 
@@ -187,7 +188,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                         <div className="flex justify-center m-auto ">
                           {imageUrl ?
                             <div>
-                              <Image src={imageUrl} alt='photo of plant' width='150' height='190' />
+                              <Image src={imageUrl}  loader={customImageLoader} alt='photo of plant' width='150' height='190' />
                               <a className='absolute top-2 right-32 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1'
                                 onClick={onRemoveFile} >
                                 &#10060;
@@ -240,7 +241,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                         <div className="flex justify-center m-auto text-center">
                           {imageUrl &&
                             <div>
-                              <Image src={imageUrl} alt='photo of plant' width='150' height='190' />
+                              <Image src={imageUrl} loader={customImageLoader} alt='photo of plant' width='150' height='190' />
                               <a className='absolute top-2 right-32 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1'
                                 onClick={onRemoveFile} >
                                 &#10060;
@@ -289,7 +290,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                         <div className="flex justify-center m-auto ">
                           {imageUrl &&
                             <div>
-                              <Image src={imageUrl} alt='photo of plant' width='150' height='190' />
+                              <Image src={imageUrl} loader={customImageLoader} alt='photo of plant' width='150' height='190' />
                               <a className='absolute top-2 right-32 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1'
                                 onClick={onRemoveFile} >
                                 &#10060;
@@ -320,7 +321,13 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                         <div className="flex justify-center m-auto ">
                           {imageUrl &&
                             <div>
-                              <Image src={imageUrl} alt='photo of plant' width='150' height='190' />
+                              <Image
+                                src={imageUrl}
+                                loader={customImageLoader}
+                                alt='photo of plant'
+                                width='150'
+                                height='190'
+                              />
                               <a className='absolute top-2 right-32 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1'
                                 onClick={onRemoveFile} >
                                 &#10060;
@@ -331,10 +338,9 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                         <div className="grid grid-cols-1 gap-x-2 gap-y-6 m-7 items-center px-10">
                           <GenericDatePicker
                             label='Obtained plant on'
-                            value={dateLastFed}
+                            value={dateObtained}
                             onSelect={(d: Date) => {
-                              setDateLastFed(d)
-                              setDateToWaterNext(new Date(d.getTime() + daysBetweenWatering * MILLIS_IN_DAY));
+                              setDateObtained(d)
                             }}
                           />
                         </div>

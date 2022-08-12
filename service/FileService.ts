@@ -2,7 +2,7 @@ import imageCompression from "browser-image-compression";
 import { User } from "firebase/auth";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
-import storage from "../firebase/storage";
+import storage from "../src/firebase/storage";
 
 export const getImageUrl = async (fileName: string, user: User): Promise<string> => {
     let imageUrl = getDownloadURL(ref(storage, `${user.email}/${fileName}`))

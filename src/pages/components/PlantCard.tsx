@@ -7,10 +7,10 @@ import { IoWater } from '@react-icons/all-files/io5/IoWater';
 import { getDownloadURL, ref } from 'firebase/storage';
 
 import storage from '../../firebase/storage';
-import Plant from '../../domain/Plant';
+import Plant from '../../../domain/Plant';
 import DropDownMenu from './DropDownMenu';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
-import borderStyles from '../../styles/border.module.css';
+import customImageLoader from '../../util/customImageLoader';
 
 interface Props {
     plant: Plant;
@@ -107,7 +107,14 @@ const PlantCard: FC<Props> = (props) => {
         <div key={plant.id} className={getBgStyle()}>
             {plant.picture && imageURL && imageURL !== '' ?
                 <div className='flex px-0 mx-0 pt-5 pb-0 w-full relative'>
-                    <Image src={imageURL} alt='photo of plant' width={getImageWidth()} height={Math.min(getImageHeight(), width)} className='rounded' />
+                    <Image
+                        src={imageURL}
+                        alt='photo of plant'
+                        loader={customImageLoader} 
+                        loading='lazy' 
+                        width={getImageWidth()} 
+                        height={Math.min(getImageHeight(), width)} 
+                        className='rounded' />
                     <div className="absolute w-full bg-gray-900 text-white italic opacity-70 bottom-0 ">
                         <h1>
                             <a className='hover:underline text-2xl leading-loose pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >

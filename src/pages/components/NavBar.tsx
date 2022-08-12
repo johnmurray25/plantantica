@@ -8,6 +8,7 @@ import auth from '../../firebase/auth'
 import Image from 'next/image'
 import logo from '../../public/tree-logo.png'
 import useWindowDimensions from '../../hooks/useWindowDimensions'
+import customImageLoader from '../../util/customImageLoader'
 
 interface NavProps {
   hideUser?: boolean;
@@ -23,7 +24,7 @@ const NavBar: FC<NavProps> = (props) => {
     <nav className="flex justify-between flex-wrap px-4 py-5 items-center ">
       <Link href="/" passHref>
         <div className="flex items-center flex-shrink-0  cursor-pointer">
-          <Image src={logo} alt='Tree logo' width={55} height={55}/>
+          <Image src={logo} alt='Tree logo' loader={customImageLoader} width={55} height={55}/>
           <span className="font-semibold text-xl tracking-tight pl-3">Plantantica</span>
         </div>
       </Link>

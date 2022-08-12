@@ -47,7 +47,9 @@ export default function Home() {
                     <Link href="/Tracking">
                         <a className={styles.card}>
                             <h2>Track &rarr;</h2>
-                            <p>Track the watering/feeding of your plants</p>
+                            <p className='text-center'>
+                                Track your plants&apos; watering/feeding
+                            </p>
                         </a>
                     </Link>
 
@@ -75,4 +77,8 @@ export default function Home() {
       </footer> */}
         </div>
     );
+}
+
+export async function getStaticProps() {
+    return { props: { isStatic: true } }
 }

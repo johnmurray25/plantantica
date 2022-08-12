@@ -3,45 +3,12 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "functions": {
-    "source": ".",
-    "predeploy": [
-      "npm --prefix \"$PROJECT_DIR\" install",
-      "npm --prefix \"$PROJECT_DIR\" run build"
-    ],
-    "runtime": "nodejs16"
-  },
   "hosting": {
-    "public": "public",
+    "public": "out",
     "ignore": [
       "firebase.json",
-      "**/.*",
       "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "function": "nextjsFunc"
-      }
-    ],
-    "headers": [ {
-
-      "source": "**",
-      "headers": [ 
-      {
-        "key": "Access-Control-Allow-Origin",
-        "value": "*"
-      }, 
-      {
-        "key": "Access-Control-Allow-Methods",
-        "value": "DELETE, POST, GET, OPTIONS"
-      },
-      {
-        "key": "Access-Control-Allow-Headers",
-        "value": "Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
-        } 
-      ]
-    }]
+    ]
   },
   "storage": {
     "rules": "storage.rules"

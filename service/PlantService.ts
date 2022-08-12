@@ -2,7 +2,7 @@ import { User } from "firebase/auth";
 import { collection, deleteDoc, doc, getDocs, query } from "firebase/firestore";
 import Plant from "../domain/Plant";
 
-import db from '../firebase/db';
+import db from '../src/firebase/db';
 import { deleteImage } from "./FileService";
 
 export const getPlants = async (user: User): Promise<Plant[]> => {

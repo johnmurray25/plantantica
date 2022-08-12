@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { browserLocalPersistence, EmailAuthProvider, FacebookAuthProvider, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth';
@@ -9,7 +10,8 @@ import auth from '../firebase/auth';
 import TreeLogo from './components/TreeLogo';
 import useWindowDimensions from '../hooks/useWindowDimensions';
 import NextHead from './components/NextHead';
-import Image from 'next/image';
+import customImageLoader from '../util/customImageLoader';
+
 
 const googleAuthProvider = new GoogleAuthProvider();
 const fbAuthProvider = new FacebookAuthProvider();
@@ -67,11 +69,11 @@ function SignInScreen() {
                             <p>Please sign in:</p>
                             <button className='flex flex-row justify-evenly items-center bg-white text-[#757575] font-sans font-semibold px-2 py-3 m-2 text-sm  w-52 rounded-sm'
                                 onClick={() => signInWithGoogle(width)}>
-                                <Image alt="Google logo" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width={17} height={17} />
+                                <Image alt="Google logo" loader={customImageLoader} src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width={17} height={17} />
                                 Sign in with Google
                             </button>
                             <button className='flex flex-row justify-evenly items-center bg-[#3B5998] text-white font-sans font-semibold px-2 py-3 m-2 text-sm  w-52 rounded-sm' >
-                                <Image alt="Google logo" src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/facebook.svg" width={17} height={17} />
+                                <Image alt="Google logo" loader={customImageLoader} src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/facebook.svg" width={17} height={17} />
                                 Sign in with Facebook
                             </button>
                         </div>
