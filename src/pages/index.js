@@ -21,9 +21,9 @@ export default function Home() {
             <main className={styles.main + " bg-green "}>
                 <h1 className={styles.title}>
                     {
-                        user ?
+                        user && user.displayName ?
                             <a>
-                                Welcome, {user.displayName}!
+                                Welcome, {user.displayName.split(' ')[0]}!
                             </a>
                             :
                             <a>

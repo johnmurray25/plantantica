@@ -304,7 +304,6 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                             value={dateLastFed}
                             onSelect={(d: Date) => {
                               setDateLastFed(d)
-                              setDateToWaterNext(new Date(d.getTime() + daysBetweenWatering * MILLIS_IN_DAY));
                             }}
                           />
                           <GenericDatePicker

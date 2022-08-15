@@ -175,9 +175,9 @@ const PlantCard: FC<Props> = (props) => {
                         <p className={wateringState != 'good' ? 'font-extrabold' : ''}>
                             water next {plant.dateToWaterNext.toLocaleDateString()}
                         </p>
-                        last fed {plant.dateLastFed.toLocaleDateString()}
+                        {plant.dateLastFed && `last fed ${plant.dateLastFed.toLocaleDateString()}`}
                         <br></br>
-                        feed next {plant.dateToFeedNext.toLocaleDateString()}
+                        {plant.dateToFeedNext && `feed next ${plant.dateToFeedNext.toLocaleDateString()}`}
                     </div>
                 </div>
             </div>

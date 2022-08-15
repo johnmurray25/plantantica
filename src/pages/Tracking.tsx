@@ -8,7 +8,6 @@ import ReactLoading from 'react-loading';
 import auth from '../firebase/auth';
 import NavBar from "./components/NavBar";
 import PlantTrackingDetails from "./components/PlantTrackingDetails";
-import styles from "../styles/tracking.module.css";
 import Plant from "../../domain/Plant";
 import { getPlants, deletePlant } from "../../service/PlantService";
 import { User } from "firebase/auth";
@@ -17,17 +16,6 @@ import db from "../firebase/db";
 import NextHead from "./components/NextHead";
 
 const loadPlantData = async (user: User): Promise<Plant[]> => {
-
-  // // refresh auth token
-  // try {
-  //   // await user.reload();
-  //   // await auth.currentUser.getIdToken();
-  //   await user.getIdToken();
-  //   console.log('re-authenticated user')
-  // } catch (e) {
-  //   console.error(e);
-  // }
-
   // get plants from DB 
   let results = await getPlants(user);
   return results;
@@ -108,40 +96,53 @@ const Home = () => {
   }, [plants]);
 
   return (
-    <div className={styles.container}>
-      <NextHead />
+    <div className='text-yellow bg-green min-w-full' /**Container */>
+      <NextHead /**Header */ />
       <NavBar />
-      <div className={styles.main}>
-        <div className={styles.title}>
+
+      <div className='min-h-screen p-4 flex flex-col items-center m-auto'>
+        <div
+          className='m-0 italic'
+          style={{ lineHeight: 1.15, fontSize: '3.5rem', }}
+        >
           <a>Tracking</a>
-        </div>
-        <div className="flex justify-end w-10/12 mb-4">
-          {/* <a onClick={refresh} className='hover:text-green hover:bg-yellow cursor-pointer border rounded border-yellow p-2 m-auto absolute'>
-            <IoRefresh />
-          </a> */}
+          {!plants &&
+            <div>
+              
+            </div>
+          }
         </div>
         {isLoading && <ReactLoading type='bars' color="#fff" />}
-        {plants && plants.length > 0 &&
-          (
-            <div>
-              <div className="flex justify-between items-center text-center pb-3 pt-6 px-4">
-                <p>
-                  You are tracking {plants.length} plants
-                </p>
-                <Link href="/AddPlantTrackingDetails" passHref>
-                  <a className='hover:text-green hover:bg-yellow cursor-pointer border rounded-sm border-yellow p-2 m-2'>
-                    Add a plant!
-                  </a>
-                </Link>
-              </div>
-              <PlantTrackingDetails plants={plants} removePlant={remove} waterPlant={waterPlant} />
+        {plants && plants.length > 0 ?
+          // If user has plants, show plants
+          <div>
+            <div className="flex justify-between items-center text-center pb-3 pt-6 px-4">
+              <p>
+                You are tracking {plants.length} plants
+              </p>
+              <Link href="/AddPlantTrackingDetails" passHref>
+                <a className='hover:text-green hover:bg-yellow cursor-pointer border rounded-sm border-yellow p-2 m-2'>
+                  Add a plant!
+                </a>
+              </Link>
             </div>
-          )}
-        {(!plants || plants.length === 0) && !isLoading && user && status === OK &&
-          (
-            <div>
-              You aren&apos;t tracking any plants yet
+            <PlantTrackingDetails plants={plants} removePlant={remove} waterPlant={waterPlant} />
+          </div>
+          :
+          // If user doesn't have plants, show message
+          (!isLoading && user && status === OK ?
+            <div className='flex justify-evenly items-center m-10'>
+              <p>
+                You aren&apos;t tracking any plants yet...
+              </p>
+              <Link href="/AddPlantTrackingDetails" passHref>
+                <a className='hover:text-green hover:bg-yellow cursor-pointer border rounded-sm border-yellow p-2 m-2'>
+                  Add a plant!
+                </a>
+              </Link>
             </div>
+            :
+            <div></div>
           )
         }
         {status == ERR_STATUS && (
