@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import auth from '../firebase/auth';
-import db from '../firebase/db';
-import { useAuthState } from 'react-firebase-hooks/auth'
-import NavBar from './components/NavBar';
-import styles from '../styles/Home.module.css';
+import Image from 'next/image';
+
 import { collection, doc, getDocs } from 'firebase/firestore';
 import { User } from 'firebase/auth';
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { IoAddCircleOutline } from '@react-icons/all-files/io5/IoAddCircleOutline';
+
+import auth from '../firebase/auth';
+import db from '../firebase/db';
+import NavBar from './components/NavBar';
+import styles from '../styles/Home.module.css';
 import NextHead from './components/NextHead';
+import customImageLoader from '../util/customImageLoader';
+import sampleProfilePicture from '../public/sample-plant.png'
+import rain from '../public/rain.png'
+import FileInput from './components/FileInput';
 
 const getNumPlants = async (user: User) => {
     if (!user) return;
@@ -24,6 +32,8 @@ function Home() {
 
     const [user] = useAuthState(auth);
     const [trackingMsg, setTrackingMsg] = useState('');
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [imageUrl, setImageUrl] = useState('')
 
     const signOut = () => {
         auth.signOut();
@@ -33,6 +43,7 @@ function Home() {
         getNumPlants(user)
             .then(msg => setTrackingMsg(msg))
             .catch(e => console.error(e));
+        //TODO get profile picture from DB/storage
     }, [user]);
 
     const deleteAccount = () => {
@@ -42,6 +53,33 @@ function Home() {
         }
     }
 
+    const onRemoveFile = () => {
+        if (!confirm('Remove the image?')) return;
+        // if image was previously saved, delete from storage
+        if (plant && plant.picture) {
+          deleteImage(plant.picture, user)
+            .then(() => {
+              plant.picture = '';
+              setSelectedFile(null)
+              setImageUrl('')
+              setDoc(
+                doc(
+                  collection(doc(db, 'users', user.email), 'plantTrackingDetails'),
+                  plant.id),
+                { picture: '' },
+                { merge: true }
+              )
+                .then(() => console.log('removed image ref from db'))
+            })
+            .catch(console.error);
+        }
+        // otherwise just remove from UI
+        else {
+          setSelectedFile(null)
+          setImageUrl('')
+        }
+      }
+
     return (
         <div className='bg-green text-yellow min-h-screen text-left'>
             <NextHead />
@@ -49,7 +87,34 @@ function Home() {
                 user ?
                     <div>
                         <NavBar hideUser />
-                        <div className='w-3/6 m-auto text-center pt-10 pb-14'>
+                        <div className='w-3/6 m-auto text-center justify-center pt-10 pb-14'>
+                            {profilePicture ?
+                                <Image
+                                    src={profilePicture}
+                                    loader={customImageLoader}
+                                    alt='photo of plant'
+                                    width='150' height='190'
+                                />
+                                :
+                                <div className='relative m-auto pt-6 h-32 w-32 rounded-3xl bg-yellow '>
+                                    <Image
+                                        src={sampleProfilePicture}
+                                        alt='Sample profile picture'
+                                        loader={customImageLoader}
+                                        className='absolute z-30 bottom-0 left-0'
+                                    />
+                                    <div className='absolute flex items-center cursor-pointer mt-2 top-0 right-3 text-green text-xs'>
+                                        <FileInput 
+                                            onAttachFile={(e) => {
+                                                let f = e.target.files[0]
+                                                setProfilePicture(URL.createObjectURL(f))
+                                                on
+                                            }}
+                                        />
+                                        Add picture &#10133;
+                                    </div>
+                                </div>
+                            }
                             <h1 className={styles.title}>
                                 {user.displayName}
                             </h1>

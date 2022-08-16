@@ -3,6 +3,7 @@ import React, { FC, useState } from 'react';
 interface Props {
     onAttachFile;
     onRemoveFile;
+    message: string;
 }
 
 const FileInput: FC<Props> = (props) => {
@@ -30,7 +31,7 @@ const FileInput: FC<Props> = (props) => {
                             setFileName(e.target.files[0].name);
                         }}
                         className='hidden' />
-                    Add image? &nbsp; &#128247;
+                    {props.message}
                 </label>
             }
         </div>

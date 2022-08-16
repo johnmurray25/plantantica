@@ -188,7 +188,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                         <div className="flex justify-center m-auto ">
                           {imageUrl ?
                             <div>
-                              <Image src={imageUrl}  loader={customImageLoader} alt='photo of plant' width='150' height='190' />
+                              <Image src={imageUrl} loader={customImageLoader} alt='photo of plant' width='150' height='190' />
                               <a className='absolute top-2 right-32 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1'
                                 onClick={onRemoveFile} >
                                 &#10060;
@@ -202,6 +202,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                                 setImageUrl(URL.createObjectURL(f))
                               }}
                               onRemoveFile={onRemoveFile}
+                              message='Add image? &nbsp; &#128247;'
                             />
                           }
                         </div>
@@ -298,19 +299,43 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                             </div>
                           }
                         </div>
+                        <h3 className="text-center">(This page is optional)</h3>
                         <div className="grid grid-cols-1 gap-x-2 gap-y-6 m-7 items-center px-10">
-                          <GenericDatePicker
-                            label='Last fed on'
-                            value={dateLastFed}
-                            onSelect={(d: Date) => {
-                              setDateLastFed(d)
-                            }}
-                          />
-                          <GenericDatePicker
-                            label='Feed next on'
-                            value={dateToFeedNext}
-                            onSelect={(d: Date) => setDateToFeedNext(d)}
-                          />
+                          <div className='flex justify-center items-center '>
+                            <GenericDatePicker
+                              label='Last fed on'
+                              value={dateLastFed}
+                              onSelect={(d: Date) => {
+                                setDateLastFed(d)
+                              }}
+                            />
+                            {dateLastFed &&
+                              <a className='bg-yellow text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit'
+                                onClick={() => {
+                                  if (confirm('Remove date last fed?')) {
+                                    setDateLastFed(null);
+                                  }
+                                }} >
+                                &#10060;
+                              </a>}
+                          </div>
+                          <div className='flex justify-center items-center '>
+                            <GenericDatePicker
+                              label='Feed next on'
+                              value={dateToFeedNext}
+                              onSelect={(d: Date) => setDateToFeedNext(d)}
+                            />
+                            {dateToFeedNext &&
+                              <a className='bg-yellow text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit'
+                                onClick={() => {
+                                  if (confirm('Remove date to feed next?')) {
+                                    setDateToFeedNext(null);
+                                  }
+                                }} >
+                                &#10060;
+                              </a>
+                            }
+                          </div>
                         </div>
                       </div>)
                   case 4:

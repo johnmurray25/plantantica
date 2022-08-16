@@ -55,3 +55,7 @@ export const deleteImage = async (fileName: string, user: User) => {
     await deleteObject(imgRef);
     console.log('Deleted image from bucket')
 }
+
+export const getProfilePictureUrl = async (user: User) => {
+    const imgRef = ref(storage, `${user.email}/`)
+}
