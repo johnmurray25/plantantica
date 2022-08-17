@@ -44,9 +44,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   useEffect(() => {
     if (imageUrl === '' && user && plant && plant.picture) {
       getImageUrl(plant.picture, user)
-        .then(s => {
-          setImageUrl(s);
-        })
+        .then(s => setImageUrl(s))
     }
     if (dateLastWatered) {
       setDateToWaterNext(new Date(dateLastWatered.getTime() + daysBetweenWatering * MILLIS_IN_DAY));

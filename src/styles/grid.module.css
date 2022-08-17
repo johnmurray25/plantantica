@@ -39,7 +39,7 @@
   * A LITTLE BIGGER
   *    Display three columns
 */
-@media (min-width: 1140px) and (max-width: 1250px) {
+@media (min-width: 1140px) and (max-width: 1530px) {
     .container {
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
