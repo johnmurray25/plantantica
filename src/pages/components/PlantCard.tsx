@@ -22,6 +22,10 @@ interface Props {
 const MILLIS_IN_DAY = 86400000;
 // const wateringStates = ['good', 'check', 'bad']
 
+const SM_WIDTH = 650; // most phones are less than this width
+const MD_WIDTH = 1140;
+const LG_WIDTH = 1530; // computers will be larger than this
+
 const PlantCard: FC<Props> = (props) => {
 
     // dimensions
@@ -70,7 +74,7 @@ const PlantCard: FC<Props> = (props) => {
     }, [userEmail, dateToWaterNext, plant, imageURL,]);
 
     const getBgStyle = () => {
-        let sharedStyle = width > 650 ? 'border rounded-md p-0 m-2 ' : 'border rounded p-0 '
+        let sharedStyle = width > SM_WIDTH ? 'border rounded-md p-0 m-2 ' : 'border rounded p-0 '
         if (wateringState == 'good')
             return sharedStyle + 'border-yellow ';
         if (wateringState == 'check')
@@ -79,11 +83,19 @@ const PlantCard: FC<Props> = (props) => {
             return 'border border-yellow rounded-md bg-red-900';
     }
     const getWtrBtnStyle = () => {
-        let sharedStyle = "flex cursor-pointer text-sm px-4 py-2 leading-none border rounded hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-2 " + (width <= 650 ? "absolute top-1 right-1 " : "h-8 ")
+        let classNames = "flex cursor-pointer text-sm px-4 py-2 leading-none border rounded hover:border-transparent " +
+            "hover:text-green hover:bg-yellow mt-4 lg:mt-2 ";
         if (wateringState == 'good' || wateringState == 'bad')
-            return sharedStyle + "border-yellow text-yellow ";
-        if (wateringState == 'check')
-            return sharedStyle + "border-black text-black";
+            classNames += " border-yellow text-yellow ";
+        else if (wateringState == 'check')
+            classNames += " border-black text-black ";
+        // when running 'next build' etc.
+        if (!width) return classNames;
+        // 1 column
+        else if (width <= SM_WIDTH) classNames += " absolute top-1 right-1 ";
+        // 2-4 columns
+        else classNames += " absolute top-1 right-1 h-8 ";
+        return classNames;
     }
     const getIconStyle = () => {
         if (wateringState == 'check')
@@ -92,14 +104,21 @@ const PlantCard: FC<Props> = (props) => {
     }
 
     const getImageWidth = () => {
+        // when running 'next build' etc.
         if (!width) return 480;
-        if (width <= 650) return width;
+        // single column
+        else if (width <= SM_WIDTH) return width;
+        // two columns
+        else if (width <= MD_WIDTH) return 0.97 * width / 2;
+        // three columns
+        else if (width <= LG_WIDTH) return 0.97 * width / 3;
+        // four columns (full size)
         return 0.97 * width / 4;
     }
 
     const getImageHeight = () => {
         if (!width) return 500;
-        if (width <= 650) return width * 1.2;
+        if (width <= SM_WIDTH) return width * 1.2;
         return height / 2;
     }
 
@@ -110,10 +129,10 @@ const PlantCard: FC<Props> = (props) => {
                     <Image
                         src={imageURL}
                         alt='photo of plant'
-                        loader={customImageLoader} 
-                        loading='lazy' 
-                        width={getImageWidth()} 
-                        height={Math.min(getImageHeight(), width)} 
+                        loader={customImageLoader}
+                        loading='lazy'
+                        width={getImageWidth()}
+                        height={Math.min(getImageHeight(), getImageWidth())}
                         className='rounded' />
                     <div className="absolute w-full bg-gray-900 text-white italic opacity-70 bottom-0 ">
                         <h1>
@@ -127,7 +146,7 @@ const PlantCard: FC<Props> = (props) => {
                     </div>
                 </div>
                 :
-                <div>
+                <div className='relative'>
                     <div className="absolute w-full flex justify-end pt-2 pr-2 ">
                         <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
                     </div>

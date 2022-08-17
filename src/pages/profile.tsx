@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 
-import { collection, doc, getDocs } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { IoAddCircleOutline } from '@react-icons/all-files/io5/IoAddCircleOutline';
+import ReactLoading from 'react-loading'
 
 import auth from '../firebase/auth';
 import db from '../firebase/db';
@@ -13,8 +14,9 @@ import styles from '../styles/Home.module.css';
 import NextHead from './components/NextHead';
 import customImageLoader from '../util/customImageLoader';
 import sampleProfilePicture from '../public/sample-plant.png'
-import rain from '../public/rain.png'
 import FileInput from './components/FileInput';
+import { deleteImage, getProfilePictureUrl, updateProfilePicture, uploadFile } from '../../service/FileService';
+import useWindowDimensions from '../hooks/useWindowDimensions';
 
 const getNumPlants = async (user: User) => {
     if (!user) return;
@@ -32,19 +34,36 @@ function Home() {
 
     const [user] = useAuthState(auth);
     const [trackingMsg, setTrackingMsg] = useState('');
-    const [selectedFile, setSelectedFile] = useState(null);
-    const [imageUrl, setImageUrl] = useState('')
+    const [profPicUrl, setProfPicUrl] = useState('')
+    const [fileName, setFileName] = useState('')
+    const [isProfPicLoading, setIsProfPicLoading] = useState(false);
+
+    const { width, height } = useWindowDimensions()
 
     const signOut = () => {
         auth.signOut();
     }
 
     useEffect(() => {
+        if (!user) {
+            return
+        }
+
+        if (!profPicUrl) {
+            setIsProfPicLoading(true);
+            getProfilePictureUrl(user.email)
+                .then(data => {
+                    setFileName(data.fileName)
+                    data.url.then(setProfPicUrl)
+                })
+                .catch(console.error)
+                .finally(() => setIsProfPicLoading(false))
+        }
+
         getNumPlants(user)
             .then(msg => setTrackingMsg(msg))
-            .catch(e => console.error(e));
-        //TODO get profile picture from DB/storage
-    }, [user]);
+            .catch(console.error);
+    }, [user, profPicUrl]);
 
     const deleteAccount = () => {
         if (confirm('Are you sure you want to delete your account?')
@@ -54,31 +73,26 @@ function Home() {
     }
 
     const onRemoveFile = () => {
-        if (!confirm('Remove the image?')) return;
+        if (!confirm('Delete profile picture?')) return;
         // if image was previously saved, delete from storage
-        if (plant && plant.picture) {
-          deleteImage(plant.picture, user)
-            .then(() => {
-              plant.picture = '';
-              setSelectedFile(null)
-              setImageUrl('')
-              setDoc(
-                doc(
-                  collection(doc(db, 'users', user.email), 'plantTrackingDetails'),
-                  plant.id),
-                { picture: '' },
-                { merge: true }
-              )
-                .then(() => console.log('removed image ref from db'))
-            })
-            .catch(console.error);
+        if (fileName) {
+            deleteImage(fileName, user)
+                .then(() => {
+                    setProfPicUrl('')
+                    setFileName('')
+                    setDoc(
+                        doc(db, 'users', user.email),
+                        { profilePicture: '' },
+                        { merge: true }
+                    ).then(() => console.log('Deleted profile picture'))
+                })
+                .catch(console.error);
         }
         // otherwise just remove from UI
         else {
-          setSelectedFile(null)
-          setImageUrl('')
+            setProfPicUrl('')
         }
-      }
+    }
 
     return (
         <div className='bg-green text-yellow min-h-screen text-left'>
@@ -88,32 +102,50 @@ function Home() {
                     <div>
                         <NavBar hideUser />
                         <div className='w-3/6 m-auto text-center justify-center pt-10 pb-14'>
-                            {profilePicture ?
-                                <Image
-                                    src={profilePicture}
-                                    loader={customImageLoader}
-                                    alt='photo of plant'
-                                    width='150' height='190'
-                                />
-                                :
-                                <div className='relative m-auto pt-6 h-32 w-32 rounded-3xl bg-yellow '>
-                                    <Image
-                                        src={sampleProfilePicture}
-                                        alt='Sample profile picture'
-                                        loader={customImageLoader}
-                                        className='absolute z-30 bottom-0 left-0'
-                                    />
-                                    <div className='absolute flex items-center cursor-pointer mt-2 top-0 right-3 text-green text-xs'>
-                                        <FileInput 
-                                            onAttachFile={(e) => {
-                                                let f = e.target.files[0]
-                                                setProfilePicture(URL.createObjectURL(f))
-                                                on
-                                            }}
+                            {profPicUrl ?
+                                // User has saved profile picture
+                                isProfPicLoading ?
+                                    <ReactLoading type='spinningBubbles' color="#fff" />
+                                    :
+                                    <div className='relative w-fit flex justify-center m-auto'>
+                                        <Image
+                                            src={profPicUrl}
+                                            loader={customImageLoader}
+                                            alt='Profile picture'
+                                            width={width / 6} height={(width / 6) * 1.2}
                                         />
-                                        Add picture &#10133;
+                                        <a className='absolute top-2 right-2 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1'
+                                            onClick={onRemoveFile} >
+                                            &#10060;
+                                        </a>
                                     </div>
-                                </div>
+                                :
+                                isProfPicLoading ?
+                                    <div className='flex justify-center'>
+                                        <ReactLoading type='spinningBubbles' color="#fff" />
+                                    </div>
+                                    :
+                                    <div className='relative m-auto pt-6 h-32 w-32 rounded-3xl bg-yellow '>
+                                        <Image
+                                            src={sampleProfilePicture}
+                                            alt='Sample profile picture'
+                                            loader={customImageLoader}
+                                            className='absolute z-30 bottom-0 left-0'
+                                        />
+                                        <div className='absolute flex items-center cursor-pointer mt-2 top-0 right-3 text-green text-xs'>
+                                            <FileInput
+                                                onAttachFile={(e) => {
+                                                    let f: File = e.target.files[0]
+                                                    setProfPicUrl(URL.createObjectURL(f))
+                                                    uploadFile(f, user);
+                                                    updateProfilePicture(f.name, user.email)
+                                                        .catch(console.log)
+                                                }}
+                                                onRemoveFile={onRemoveFile}
+                                                message='Add picture &#10133;'
+                                            />
+                                        </div>
+                                    </div>
                             }
                             <h1 className={styles.title}>
                                 {user.displayName}
