@@ -15,7 +15,7 @@ import NextHead from './components/NextHead';
 import customImageLoader from '../util/customImageLoader';
 import sampleProfilePicture from '../public/sample-plant.png'
 import FileInput from './components/FileInput';
-import { deleteImage, getProfilePictureUrl, updateProfilePicture, uploadFile } from '../../service/FileService';
+import { compressImage, deleteImage, getProfilePictureUrl, updateProfilePicture, uploadFile } from '../../service/FileService';
 import useWindowDimensions from '../hooks/useWindowDimensions';
 
 const getNumPlants = async (user: User) => {
@@ -134,12 +134,12 @@ function Home() {
                                         />
                                         <div className='absolute flex items-center cursor-pointer mt-2 top-0 right-3 text-green text-xs'>
                                             <FileInput
-                                                onAttachFile={(e) => {
+                                                onAttachFile={async (e) => {
                                                     let f: File = e.target.files[0]
+                                                    let compressedImage = await compressImage(f);
                                                     setProfPicUrl(URL.createObjectURL(f))
-                                                    uploadFile(f, user);
-                                                    updateProfilePicture(f.name, user.email)
-                                                        .catch(console.log)
+                                                    let fileName = await uploadFile(compressedImage, user);
+                                                    updateProfilePicture(fileName, user.email).catch(console.log)
                                                 }}
                                                 onRemoveFile={onRemoveFile}
                                                 message='Add picture &#10133;'

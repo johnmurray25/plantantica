@@ -2,8 +2,9 @@ import imageCompression from "browser-image-compression";
 import { User } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import db from "../src/firebase/db";
+import { v4 as uuidv4 } from 'uuid';
 
+import db from "../src/firebase/db";
 import storage from "../src/firebase/storage";
 
 export const getImageUrl = async (fileName: string, user: User): Promise<string> => {
@@ -45,7 +46,8 @@ export const createFileFromUrl = async (url: string, fileName: string, defaultTy
 }
 
 export const uploadFile = async (file: File, user: User) => {
-    let storageRef = ref(storage, `${user.email}/${file.name}`);
+    let fileName = uuidv4();
+     let storageRef = ref(storage, `${user.email}/${fileName}`);
     let bytes = await file.arrayBuffer();
     let fileRef = await uploadBytes(storageRef, bytes);
     console.log(`uploaded image: ${fileRef.ref.fullPath}`)

@@ -128,7 +128,7 @@ const PlantCard: FC<Props> = (props) => {
                 <div className='flex px-0 mx-0 pt-5 pb-0 w-full relative'>
                     <Image
                         src={imageURL}
-                        alt='photo of plant'
+                        alt={`photo of ${plant.species}`}
                         loader={customImageLoader}
                         loading='lazy'
                         width={getImageWidth()}
