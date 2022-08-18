@@ -137,9 +137,9 @@ function Home() {
                                                 onAttachFile={(e) => {
                                                     let f: File = e.target.files[0]
                                                     setProfPicUrl(URL.createObjectURL(f))
-                                                    uploadFile(f, user);
-                                                    updateProfilePicture(f.name, user.email)
-                                                        .catch(console.log)
+                                                    uploadFile(f, user)
+                                                        .then(fileName => updateProfilePicture(fileName, user.email))
+                                                        .catch(console.log);
                                                 }}
                                                 onRemoveFile={onRemoveFile}
                                                 message='Add picture &#10133;'

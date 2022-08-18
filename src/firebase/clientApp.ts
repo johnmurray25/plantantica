@@ -14,7 +14,7 @@ const config = {
 // Initialize app
 const app = initializeApp(config);
 
-console.log('initialized firebase app')
+console.debug('initialized firebase app')
 
 // Reference this object, containing app-specific configuration, throughout the codebase
 export default app;

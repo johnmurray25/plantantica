@@ -10,8 +10,6 @@ const nextConfig = {
     ],
     loader: "custom"
   },
-  // target: "serverless",
-  // assetPrefix: isProd ? "https://us-central1-plantantica.cloudfunctions.net/handler" : "",
 }
 
 module.exports = nextConfig
