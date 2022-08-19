@@ -5,8 +5,8 @@ export default interface Plant {
     daysBetweenWatering: number;
     dateLastWatered: Date;
     dateToWaterNext: Date;
-    dateLastFed: Date;
-    dateToFeedNext: Date;
+    dateLastFed?: Date;
+    dateToFeedNext?: Date;
     lightRequired: string | number;
     picture?: string;
     dateCreated?: Date;

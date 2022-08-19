@@ -2,7 +2,7 @@ import { User } from "firebase/auth";
 import { collection, deleteDoc, doc, getDocs, query } from "firebase/firestore";
 import Plant from "../domain/Plant";
 
-import db from '../firebase/db';
+import db from '../src/firebase/db';
 import { deleteImage } from "./FileService";
 
 export const getPlants = async (user: User): Promise<Plant[]> => {
@@ -20,12 +20,22 @@ export const getPlants = async (user: User): Promise<Plant[]> => {
                 daysBetweenWatering: doc.get('daysBetweenWatering'),
                 dateLastWatered: new Date(doc.get('dateLastWatered')),
                 dateToWaterNext: new Date(doc.get('dateToWaterNext')),
-                dateLastFed: new Date(doc.get('dateLastFed')),
-                dateToFeedNext: new Date(doc.get('dateToFeedNext')),
+                dateLastFed: doc.get('dateLastFed'),
+                dateToFeedNext: doc.get('dateToFeedNext'),
                 lightRequired: doc.get('lightRequired'),
                 dateCreated: new Date(doc.get('dateCreated')),
                 picture: doc.get('picture'),
             }
+        })
+        .map((plant) => {
+            // Only assign feeding dates if not null
+            if (plant.dateLastFed) {
+                plant.dateLastFed = new Date(plant.dateLastFed);
+            }
+            if (plant.dateToFeedNext) {
+                plant.dateToFeedNext = new Date(plant.dateToFeedNext);
+            }
+            return plant;
         });
 };
 

@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "deploy": "next build && next export && firebase deploy --only hosting",
+    "dev": "next dev",
+    "export": "next export",
+    "lint": "next lint",
+    "start": "next start"
   },
   "dependencies": {
     "@emotion/react": "^11.9.0",
@@ -21,8 +23,9 @@
     "@react-three/fiber": "^8.2.2",
     "browser-image-compression": "^2.0.0",
     "firebase": "^9.8.4",
+    "firebase-admin": "^11.0.1",
     "firebase-functions": "^3.22.0",
-    "next": "^12.2.3",
+    "next": "^12.2.4",
     "nprogress": "^0.2.0",
     "react": "^18.2.0",
     "react-datepicker": "^4.8.0",
@@ -31,16 +34,22 @@
     "react-icons": "^4.4.0",
     "react-loading": "^2.0.3",
     "react-mobile-datepicker": "^4.0.2",
-    "three": "^0.140.0"
+    "three": "^0.140.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@babel/cli": "^7.18.10",
+    "@babel/core": "^7.18.10",
+    "@babel/preset-env": "^7.18.10",
     "@mui/icons-material": "^5.8.4",
     "@types/node": "^18.0.0",
     "@types/react": "^18.0.14",
     "autoprefixer": "^10.4.7",
+    "cross-env": "^7.0.3",
     "eslint": "8.13.0",
     "eslint-config-next": "12.1.5",
     "postcss": "^8.4.14",
+    "rimraf": "^3.0.2",
     "tailwindcss": "^3.1.4",
     "typescript": "^4.7.4"
   }
