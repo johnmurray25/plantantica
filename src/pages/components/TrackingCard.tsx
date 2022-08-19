@@ -33,7 +33,7 @@ const PlantCard: FC<Props> = (props) => {
 
     // props
     const [userEmail] = useState(props.userEmail);
-    const [plant] = useState(props.plant);
+    const [plant, setPlant] = useState(props.plant);
     const [dateToWaterNext] = useState(plant ? plant.dateToWaterNext : new Date(new Date().getTime() + MILLIS_IN_DAY));
 
     // state
@@ -74,6 +74,7 @@ const PlantCard: FC<Props> = (props) => {
     }, [userEmail, dateToWaterNext, plant, imageURL,]);
 
     const getBgStyle = () => {
+        if (!plant) return 'hidden';
         let sharedStyle = width > SM_WIDTH ? 'border rounded-md p-0 m-2 ' : 'border rounded p-0 '
         if (wateringState == 'good')
             return sharedStyle + 'border-yellow ';
@@ -122,7 +123,7 @@ const PlantCard: FC<Props> = (props) => {
         return height / 2;
     }
 
-    return plant ? (
+    return plant && (
         <div key={plant.id} className={getBgStyle()}>
             {plant.picture && imageURL && imageURL !== '' ?
                 <div className='flex px-0 mx-0 pt-5 pb-0 w-full relative'>
@@ -200,11 +201,7 @@ const PlantCard: FC<Props> = (props) => {
                     </div>
                 </div>
             </div>
-        </div>
-    ) :
-        <div>
-
-        </div>
+        </div>)
 }
 
 export default PlantCard

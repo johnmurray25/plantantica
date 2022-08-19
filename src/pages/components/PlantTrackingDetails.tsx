@@ -3,7 +3,7 @@ import gridStyles from '../../styles/grid.module.css';
 import auth from '../../firebase/auth';
 import { useAuthState } from "react-firebase-hooks/auth";
 import Plant from "../../../domain/Plant";
-import PlantCard from "./PlantCard";
+import PlantCard from "./TrackingCard";
 import { User } from "firebase/auth";
 
 interface PTDProps {

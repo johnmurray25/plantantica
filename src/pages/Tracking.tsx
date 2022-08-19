@@ -14,6 +14,10 @@ import { User } from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
 import db from "../firebase/db";
 import NextHead from "./components/NextHead";
+import { Input } from "@mui/material";
+import TextField from "./components/TextField";
+import TrackingCard from "./components/TrackingCard";
+import gridStyles from '../styles/grid.module.css';
 
 const loadPlantData = async (user: User): Promise<Plant[]> => {
   // get plants from DB 
@@ -26,28 +30,16 @@ const UNAUTHORIZED = 403;
 const ERR_STATUS = 500;
 
 const Home = () => {
-  const [plants, setPlants]: [Plant[], Dispatch<SetStateAction<Plant[]>>] = useState([]);
+  const [plants, setPlants] = useState<Plant[]>(null);
+  const [filteredPlants, setFilteredPlants] = useState<Plant[]>([]);
   const [status, setStatus]: [number, any] = useState(OK);
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
   const [refreshToggle, setRefreshToggle] = useState(false);
 
-  useEffect(() => {
-    if (!user && !loading) {
-      setStatus(UNAUTHORIZED);
-      return
-    }
-    setIsLoading(true);
-    loadPlantData(user)
-      .then(data => {
-        setPlants(data)
-      })
-      .catch(e => {
-        console.error(e);
-        setStatus(ERR_STATUS)
-      })
-      .finally(() => setIsLoading(false))
-  }, [user, loading, refreshToggle]);
+  const [searchText, setSearchText] = useState('')
+
+  const [trackingCards, setTrackingCards] = useState([])
 
   const remove = useCallback(async (plant: Plant) => {
     if (!confirm(`Delete ${plant.species}?`)) return;
@@ -80,9 +72,9 @@ const Home = () => {
     let newDate = new Date(newWateringDate);
     plant.dateToWaterNext = newDate;
     plant.dateLastWatered = today;
-    let filteredPlants = plants.filter((p) => p.id !== plant.id);
-    filteredPlants.push(plant);
-    let results = filteredPlants
+    let filtered = plants.filter((p) => p.id !== plant.id);
+    filtered.push(plant);
+    let results = filtered
       .sort((a, b) => {
         if (a.species.toLocaleLowerCase() < b.species.toLocaleLowerCase()) {
           return -1;
@@ -95,6 +87,80 @@ const Home = () => {
     if (results && results.length > 0) setPlants(results);
   }, [plants]);
 
+  useEffect(() => {
+    if (!user && !loading) {
+      setStatus(UNAUTHORIZED);
+      return
+    }
+    if (plants === null) {
+      setIsLoading(true);
+      loadPlantData(user)
+        .then(data => {
+          setPlants(data)
+          setFilteredPlants(data)
+          if (data) {
+            setTrackingCards(
+              data
+                .sort((a, b) => {
+                  if (a.dateToWaterNext > b.dateToWaterNext) return 1
+                  else if (a.dateToWaterNext < b.dateToWaterNext) return -1
+                  return a.species < b.species ? -1 : 1
+                })
+                .map((plant, i) => (
+                  <div key={i} >
+                    <TrackingCard
+                      //key={i}
+                      plant={plant}
+                      waterPlant={() => waterPlant(plant, user)}
+                      removePlant={remove}
+                      userEmail={user.email}
+                    />
+                  </div >
+                )))
+          }
+        }, e => {
+          console.error(e);
+          setStatus(ERR_STATUS)
+          setIsLoading(false)
+        })
+        .finally(() => setIsLoading(false))
+    }
+  }, [user, loading, plants, remove, waterPlant,]);
+
+  const filterPlants = () => {
+    // filter plants
+    let filteredResults =
+      plants
+        .filter(plant => {
+          if (!searchText) return true
+          return plant.species.toLowerCase().includes(searchText.toLowerCase())
+        })
+        .sort((a, b) => {
+          if (a.dateToWaterNext > b.dateToWaterNext) return 1
+          else if (a.dateToWaterNext < b.dateToWaterNext) return -1
+          return a.species < b.species ? -1 : 1
+        })
+    setFilteredPlants(filteredResults)
+
+    // map results to TrackingCard[]
+    setTrackingCards([])
+    let filteredCards =
+      filteredResults
+        .map((plant, i) => (
+          <div key={i} >
+            <TrackingCard
+              // key={i}
+              plant={plant}
+              waterPlant={() => waterPlant(plant, user)}
+              removePlant={remove}
+              userEmail={user.email}
+            />
+          </div>
+        ))
+    setTrackingCards(filteredCards)
+    filteredResults.map(p => p.species).forEach(console.log)
+  }
+
   return (
     <div className='text-yellow bg-green min-w-full' /**Container */>
       <NextHead /**Header */ />
@@ -106,27 +172,44 @@ const Home = () => {
           style={{ lineHeight: 1.15, fontSize: '3.5rem', }}
         >
           <a>Tracking</a>
-          {!plants &&
-            <div>
-              
-            </div>
-          }
         </div>
         {isLoading && <ReactLoading type='bars' color="#fff" />}
         {plants && plants.length > 0 ?
           // If user has plants, show plants
           <div>
-            <div className="flex justify-between items-center text-center pb-3 pt-6 px-4">
-              <p>
-                You are tracking {plants.length} plants
-              </p>
+            <div className="flex justify-end pb-3 pt-6 px-4">
               <Link href="/AddPlantTrackingDetails" passHref>
                 <a className='hover:text-green hover:bg-yellow cursor-pointer border rounded-sm border-yellow p-2 m-2'>
                   Add a plant!
                 </a>
               </Link>
             </div>
-            <PlantTrackingDetails plants={plants} removePlant={remove} waterPlant={waterPlant} />
+            <div className="flex justify-between items-center pr-2">
+              <p>
+                You are tracking {plants.length} plants
+              </p>
+              <div className='flex justify-end'>
+                <TextField
+                  name="search"
+                  type="text"
+                  value={searchText}
+                  onChange={setSearchText}
+                  placeholder="Search..."
+                />
+                <a
+                  className='cursor-pointer bg-[#53984D] text-yellow rounded justify-center h-12 w-8 text-center content-center'
+                  onClick={() => {
+                    filterPlants()
+                  }}
+                >
+                  &rarr;
+                </a>
+              </div>
+            </div>
+            {/* <PlantTrackingDetails plants={plants} removePlant={remove} waterPlant={waterPlant} /> */}
+            <div className={gridStyles.container}>
+              {trackingCards}
+            </div>
           </div>
           :
           // If user doesn't have plants, show message

@@ -4,7 +4,6 @@ import Image from 'next/image';
 import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
 import { User } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth'
-import { IoAddCircleOutline } from '@react-icons/all-files/io5/IoAddCircleOutline';
 import ReactLoading from 'react-loading'
 
 import auth from '../firebase/auth';
@@ -112,9 +111,10 @@ function Home() {
                                             src={profPicUrl}
                                             loader={customImageLoader}
                                             alt='Profile picture'
-                                            width={width / 6} height={(width / 6) * 1.2}
+                                            width={150} 
+                                            height={180}
                                         />
-                                        <a className='absolute top-2 right-2 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1'
+                                        <a className='absolute top-2 right-2 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
                                             onClick={onRemoveFile} >
                                             &#10060;
                                         </a>
@@ -136,10 +136,11 @@ function Home() {
                                             <FileInput
                                                 onAttachFile={async (e) => {
                                                     let f: File = e.target.files[0]
-                                                    let compressedImage = await compressImage(f);
+                                                    let compressedImage = await compressImage(f)
                                                     setProfPicUrl(URL.createObjectURL(f))
-                                                    let fileName = await uploadFile(compressedImage, user);
-                                                    updateProfilePicture(fileName, user.email).catch(console.log)
+                                                    uploadFile(compressedImage, user)
+                                                        .then(fileName => updateProfilePicture(fileName, user.email))
+                                                        .catch(console.log)
                                                 }}
                                                 onRemoveFile={onRemoveFile}
                                                 message='Add picture &#10133;'

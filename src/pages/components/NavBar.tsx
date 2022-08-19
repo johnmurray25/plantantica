@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Link from 'next/link'
 
 import { useAuthState } from 'react-firebase-hooks/auth'
@@ -8,23 +8,57 @@ import auth from '../../firebase/auth'
 import Image from 'next/image'
 import logo from '../../public/tree-logo.png'
 import useWindowDimensions from '../../hooks/useWindowDimensions'
+import { getProfilePictureUrl } from '../../../service/FileService'
 import customImageLoader from '../../util/customImageLoader'
 
 interface NavProps {
   hideUser?: boolean;
 }
 
+const logoImageLoader = ({ src, width }) => {
+  return src
+}
+
 const NavBar: FC<NavProps> = (props) => {
 
   const [user, loading, error] = useAuthState(auth);
   const hideUser = props.hideUser ? true : false;
+
   const { width, height } = useWindowDimensions();
+
+  const [profPicUrl, setProfPicUrl] = useState('')
+  const [fileName, setFileName] = useState('')
+  const [isProfPicLoading, setIsProfPicLoading] = useState(false);
+
+  useEffect(() => {
+    if (!user) {
+      return
+    }
+
+    if (!profPicUrl) {
+      setIsProfPicLoading(true);
+      getProfilePictureUrl(user.email)
+        .then(data => {
+          setFileName(data.fileName)
+          data.url.then(setProfPicUrl)
+        })
+        .catch(console.error)
+        .finally(() => setIsProfPicLoading(false))
+    }
+
+  }, [user, profPicUrl]);
 
   return (
     <nav className="flex justify-between flex-wrap px-4 py-5 items-center w-full">
       <Link href="/" passHref>
         <div className="flex items-center flex-shrink-0  cursor-pointer">
-          <Image src={logo} alt='Tree logo' loader={customImageLoader} width={height / 17} height={height / 17} />
+          <Image
+            src={logo}
+            alt='Tree logo'
+            loader={logoImageLoader}
+            width={height ? height / 17 : 40}
+            height={height ? height / 17 : 40}
+          />
           <span className="font-semibold text-xl tracking-tight pl-3">Plantantica</span>
         </div>
       </Link>
@@ -38,15 +72,27 @@ const NavBar: FC<NavProps> = (props) => {
             (
               user ?
                 <Link href="profile" passHref>
-                  <a className="inline-block text-xs lg:text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
-                    {user.email}
-                  </a>
-                  {/* <Image
-                    src={imageUrl}
-                    loader={customImageLoader}
-                    alt='photo of plant'
-                    width='150' height='190'
-                  /> */}
+                  <div className='cursor-pointer pr-8'>
+                    {profPicUrl ?
+                      // User has saved profile picture
+                      isProfPicLoading ?
+                        <ReactLoading type='spinningBubbles' color="#fff" />
+                        :
+                        <Image
+                          src={profPicUrl}
+                          loader={customImageLoader}
+                          // alt='Profile picture'
+                          alt=''
+                          width={height ? height / 14 : 40}
+                          height={height ? height / 13 : 40}
+                          className='rounded-3xl'
+                        />
+                      :
+                      <a className="inline-block text-xs lg:text-xs px-4 py-2 leading-none border rounded border-yellow text-yellow hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
+                        {user.email}
+                      </a>
+                    }
+                  </div>
                 </Link>
                 :
                 <Link href="/auth" passHref>
