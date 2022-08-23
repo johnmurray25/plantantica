@@ -5,10 +5,10 @@ import Plant from "../domain/Plant";
 import db from '../src/firebase/db';
 import { deleteImage } from "./FileService";
 
-export const getPlants = async (user: User): Promise<Plant[]> => {
-    if (!user) return;
+export const getPlants = async (email: string): Promise<Plant[]> => {
+    if (!email) return;
     // Load all plant tracking data for current user
-    const collectionRef = collection(doc(db, 'users', user.email), 'plantTrackingDetails');
+    const collectionRef = collection(doc(db, 'users', email), 'plantTrackingDetails');
     const queryRef = query(collectionRef);
     const trackingDetails = await getDocs(queryRef);
     return trackingDetails.docs

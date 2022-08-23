@@ -7,8 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 import db from "../src/firebase/db";
 import storage from "../src/firebase/storage";
 
-export const getImageUrl = async (fileName: string, user: User): Promise<string> => {
-    let imageUrl = getDownloadURL(ref(storage, `${user.email}/${fileName}`))
+export const getImageUrl = async (fileName: string, email: string): Promise<string> => {
+    let imageUrl = getDownloadURL(ref(storage, `${email}/${fileName}`))
         .then(downloadUrl => { return downloadUrl })
         .catch(e => {
             console.debug(e);

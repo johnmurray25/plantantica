@@ -53,6 +53,15 @@ export default function Home() {
                         </a>
                     </Link>
 
+                    <Link href="/search">
+                        <a className={styles.card}>
+                            <h2>Connect &rarr;</h2>
+                            <p className='text-center'>
+                                Find people you know and see each other&apos;s plants
+                            </p>
+                        </a>
+                    </Link>
+
                     {/*<Link href='/Magic'>
                         <a className={styles.card}>
                             <h2>Magic &rarr;</h2>

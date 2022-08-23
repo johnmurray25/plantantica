@@ -19,7 +19,7 @@ import gridStyles from '../styles/grid.module.css';
 
 const loadPlantData = async (user: User): Promise<Plant[]> => {
   // get plants from DB 
-  let results = await getPlants(user);
+  let results = await getPlants(user.email);
   return results;
 }
 
