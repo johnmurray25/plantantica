@@ -131,3 +131,4 @@ package-lock.json
 
 # Firebase deployment output
 .firebase/
+*.pdf

@@ -75,13 +75,13 @@ const PlantCard: FC<Props> = (props) => {
 
     const getBgStyle = () => {
         if (!plant) return 'hidden';
-        let sharedStyle = width > SM_WIDTH ? 'border rounded-md p-0 m-2 ' : 'border rounded p-0 '
+        let sharedStyle = width > SM_WIDTH ? 'rounded-md p-0 m-2 ' : 'rounded p-0 '
         if (wateringState == 'good')
-            return sharedStyle + 'border-yellow ';
+            return sharedStyle + 'border border-yellow ';
         if (wateringState == 'check')
-            return sharedStyle + 'bg-[#BDC581] text-black border-none';
+            return sharedStyle + 'bg-[#BDC581] text-black ';
         if (wateringState == 'bad')
-            return 'border border-yellow rounded-md bg-red-900';
+            return 'rounded-md bg-red-900';
     }
     const getWtrBtnStyle = () => {
         let classNames = "flex cursor-pointer text-sm px-4 py-2 leading-none border rounded hover:border-transparent " +
@@ -195,9 +195,9 @@ const PlantCard: FC<Props> = (props) => {
                         <p className={wateringState != 'good' ? 'font-extrabold' : ''}>
                             water next {plant.dateToWaterNext.toLocaleDateString()}
                         </p>
-                        {plant.dateLastFed && `last fed ${plant.dateLastFed.toLocaleDateString()}`}
+                        {plant.dateLastFed ? `last fed ${plant.dateLastFed.toLocaleDateString()}` : <span></span>}
                         <br></br>
-                        {plant.dateToFeedNext && `feed next ${plant.dateToFeedNext.toLocaleDateString()}`}
+                        {plant.dateToFeedNext ? `feed next ${plant.dateToFeedNext.toLocaleDateString()}` : <span></span>}
                     </div>
                 </div>
             </div>

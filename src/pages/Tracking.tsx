@@ -1,20 +1,18 @@
-import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 
 import { useAuthState } from "react-firebase-hooks/auth";
-// import { IoRefresh } from '@react-icons/all-files/io5/IoRefresh';
 import ReactLoading from 'react-loading';
+import { v4 as uuidv4 } from 'uuid';
 
 import auth from '../firebase/auth';
 import NavBar from "./components/NavBar";
-import PlantTrackingDetails from "./components/PlantTrackingDetails";
 import Plant from "../../domain/Plant";
 import { getPlants, deletePlant } from "../../service/PlantService";
 import { User } from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
 import db from "../firebase/db";
 import NextHead from "./components/NextHead";
-import { Input } from "@mui/material";
 import TextField from "./components/TextField";
 import TrackingCard from "./components/TrackingCard";
 import gridStyles from '../styles/grid.module.css';
@@ -31,13 +29,14 @@ const ERR_STATUS = 500;
 
 const Home = () => {
   const [plants, setPlants] = useState<Plant[]>(null);
-  const [filteredPlants, setFilteredPlants] = useState<Plant[]>([]);
+  // const [filteredPlants, setFilteredPlants] = useState<Plant[]>([]);
   const [status, setStatus]: [number, any] = useState(OK);
   const [isLoading, setIsLoading] = useState(false);
   const [user, loading, error] = useAuthState(auth);
   const [refreshToggle, setRefreshToggle] = useState(false);
 
   const [searchText, setSearchText] = useState('')
+  const [filterActive, setFilterActive] = useState(false)
 
   const [trackingCards, setTrackingCards] = useState([])
 
@@ -46,14 +45,17 @@ const Home = () => {
 
     try {
       await deletePlant(plant, user);
-      // setPlants(plants.filter(p => p.species !== plant.species));
-      setPlants([]);
+      let filtered = plants.filter(p => p.species !== plant.species)
+      setPlants(filtered);
+      // setFilteredPlants(filteredPlants)
+      // setPlants([]);
+      // if (totalPlants) setTotalPlants(totalPlants - 1);
       setRefreshToggle(!refreshToggle);
     } catch (e) {
       console.error(e);
       setStatus(ERR_STATUS);
     }
-  }, [user, refreshToggle]);
+  }, [user, refreshToggle, plants]);
 
   const waterPlant = useCallback(async (plant: Plant, user: User) => {
     let today = new Date();
@@ -72,7 +74,10 @@ const Home = () => {
     let newDate = new Date(newWateringDate);
     plant.dateToWaterNext = newDate;
     plant.dateLastWatered = today;
-    let filtered = plants.filter((p) => p.id !== plant.id);
+    console.log(`plants:  ${plants}`)
+    let filtered = plants ?
+      plants.filter((p) => p.id !== plant.id)
+      : [];
     filtered.push(plant);
     let results = filtered
       .sort((a, b) => {
@@ -97,8 +102,9 @@ const Home = () => {
       loadPlantData(user)
         .then(data => {
           setPlants(data)
-          setFilteredPlants(data)
+          // setFilteredPlants(data)
           if (data) {
+            // setTotalPlants(data.length)
             setTrackingCards(
               data
                 .sort((a, b) => {
@@ -106,16 +112,16 @@ const Home = () => {
                   else if (a.dateToWaterNext < b.dateToWaterNext) return -1
                   return a.species < b.species ? -1 : 1
                 })
-                .map((plant, i) => (
-                  <div key={i} >
-                    <TrackingCard
-                      //key={i}
-                      plant={plant}
-                      waterPlant={() => waterPlant(plant, user)}
-                      removePlant={remove}
-                      userEmail={user.email}
-                    />
-                  </div >
+                .map((plant) => (
+                  // <div key={i} >
+                  <TrackingCard
+                    key={uuidv4()}
+                    plant={plant}
+                    waterPlant={() => waterPlant(plant, user)}
+                    removePlant={remove}
+                    userEmail={user.email}
+                  />
+                  // </div >
                 )))
           }
         }, e => {
@@ -125,40 +131,51 @@ const Home = () => {
         })
         .finally(() => setIsLoading(false))
     }
-  }, [user, loading, plants, remove, waterPlant,]);
+  }, [user, loading, plants, remove, waterPlant, filterActive]);
+  // end useEffect
 
   const filterPlants = () => {
     // filter plants
     let filteredResults =
-      plants
-        .filter(plant => {
-          if (!searchText) return true
-          return plant.species.toLowerCase().includes(searchText.toLowerCase())
-        })
+      (searchText ?
+        plants
+          .filter(plant => {
+            return plant.species.toLowerCase().includes(searchText.toLowerCase())
+          })
+        :
+        plants
+      )
         .sort((a, b) => {
           if (a.dateToWaterNext > b.dateToWaterNext) return 1
           else if (a.dateToWaterNext < b.dateToWaterNext) return -1
           return a.species < b.species ? -1 : 1
         })
-    setFilteredPlants(filteredResults)
+    // setFilteredPlants(filteredResults)
 
     // map results to TrackingCard[]
-    setTrackingCards([])
+    // setTrackingCards([])
     let filteredCards =
       filteredResults
-        .map((plant, i) => (
-          <div key={i} >
-            <TrackingCard
-              // key={i}
-              plant={plant}
-              waterPlant={() => waterPlant(plant, user)}
-              removePlant={remove}
-              userEmail={user.email}
-            />
-          </div>
+        .map((plant) => (
+          // <div key={i} >
+          <TrackingCard
+            key={uuidv4()}
+            plant={plant}
+            waterPlant={() => waterPlant(plant, user)}
+            removePlant={remove}
+            userEmail={user.email}
+          />
+          // </div>
         ))
     setTrackingCards(filteredCards)
     filteredResults.map(p => p.species).forEach(console.log)
+    if (searchText) setFilterActive(true)
+  }
+
+  const cancelFilter = () => {
+    setSearchText('')
+    filterPlants()
+    setFilterActive(false)
   }
 
   return (
@@ -167,13 +184,13 @@ const Home = () => {
       <NavBar />
 
       <div className='min-h-screen p-4 flex flex-col items-center m-auto'>
-        <div
-          className='m-0 italic'
-          style={{ lineHeight: 1.15, fontSize: '3.5rem', }}
-        >
+
+        <div className='m-0 italic' style={{ lineHeight: 1.15, fontSize: '3.5rem', }}>
           <a>Tracking</a>
         </div>
+
         {isLoading && <ReactLoading type='bars' color="#fff" />}
+
         {plants && plants.length > 0 ?
           // If user has plants, show plants
           <div>
@@ -196,14 +213,21 @@ const Home = () => {
                   onChange={setSearchText}
                   placeholder="Search..."
                 />
-                <a
-                  className='cursor-pointer bg-[#53984D] text-yellow rounded justify-center h-12 w-8 text-center content-center'
-                  onClick={() => {
-                    filterPlants()
-                  }}
-                >
-                  &rarr;
-                </a>
+                {filterActive ?
+                  <a
+                    className='cursor-pointer bg-red-900 text-yellow rounded justify-center h-12 w-8 text-center content-center'
+                    onClick={cancelFilter}
+                  >
+                    X
+                  </a>
+                  :
+                  <a
+                    className='cursor-pointer bg-[#53984D] text-yellow rounded justify-center h-12 w-8 text-center content-center'
+                    onClick={filterPlants}
+                  >
+                    &rarr;
+                  </a>
+                }
               </div>
             </div>
             {/* <PlantTrackingDetails plants={plants} removePlant={remove} waterPlant={waterPlant} /> */}

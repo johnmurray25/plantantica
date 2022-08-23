@@ -72,7 +72,7 @@ const NavBar: FC<NavProps> = (props) => {
             (
               user ?
                 <Link href="profile" passHref>
-                  <div className='cursor-pointer pr-8'>
+                  <div className='cursor-pointer p-4 lg:pr-8'>
                     {profPicUrl ?
                       // User has saved profile picture
                       isProfPicLoading ?
