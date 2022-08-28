@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import auth from '../firebase/auth';
 import NavBar from "./components/NavBar";
 import Plant from "../../domain/Plant";
-import { getPlants, deletePlant } from "../../service/PlantService";
+import { getPlants, deletePlant } from "../service/PlantService";
 import { User } from "firebase/auth";
 import { collection, doc, setDoc } from "firebase/firestore";
 import db from "../firebase/db";
@@ -19,7 +19,7 @@ import gridStyles from '../styles/grid.module.css';
 
 const loadPlantData = async (user: User): Promise<Plant[]> => {
   // get plants from DB 
-  let results = await getPlants(user.email);
+  let results = await getPlants(user.uid);
   return results;
 }
 
@@ -212,6 +212,7 @@ const Home = () => {
                   value={searchText}
                   onChange={setSearchText}
                   placeholder="Search..."
+                  width={24}
                 />
                 {filterActive ?
                   <a

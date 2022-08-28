@@ -8,7 +8,7 @@ import auth from '../../firebase/auth'
 import Image from 'next/image'
 import logo from '../../public/tree-logo.png'
 import useWindowDimensions from '../../hooks/useWindowDimensions'
-import { getProfilePictureUrl } from '../../../service/FileService'
+import { getProfilePictureUrl } from '../../service/FileService'
 import customImageLoader from '../../util/customImageLoader'
 
 interface NavProps {

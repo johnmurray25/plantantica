@@ -12,7 +12,7 @@ import Plant from "../../domain/Plant";
 import styles from "../styles/tracking.module.css";
 import FileInput from "./components/FileInput";
 import Image from "next/image";
-import { compressImage, uploadFile, getImageUrl, deleteImage } from "../../service/FileService";
+import { compressImage, uploadFile, getImageUrl, deleteImage } from "../service/FileService";
 import NextHead from "./components/NextHead";
 import GenericDatePicker from "./components/GenericDatePicker";
 import customImageLoader from "../util/customImageLoader";
@@ -102,11 +102,11 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
     let docRef: DocumentReference<DocumentData> = null;
     if (plant) {
       // Update an existing document
-      await setDoc(doc(collection(doc(db, 'users', user.email), 'plantTrackingDetails'), plant.id), plantTrackingDetails);
+      await setDoc(doc(collection(doc(db, 'users', user.uid), 'plantTrackingDetails'), plant.id), plantTrackingDetails);
       console.log('Updated existing plant tracking details');
     } else {
       // Add a new document with a generated id.
-      docRef = await addDoc(collection(doc(db, 'users', user.email), 'plantTrackingDetails'), plantTrackingDetails);
+      docRef = await addDoc(collection(doc(db, 'users', user.uid), 'plantTrackingDetails'), plantTrackingDetails);
       console.log(`Document written with ID: ${docRef.id}`);
     }
     // Redirect back to tracking page
@@ -133,7 +133,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
           setImageUrl('')
           setDoc(
             doc(
-              collection(doc(db, 'users', user.email), 'plantTrackingDetails'),
+              collection(doc(db, 'users', user.uid), 'plantTrackingDetails'),
               plant.id),
             { picture: '' },
             { merge: true }

@@ -12,17 +12,12 @@ import useWindowDimensions from '../hooks/useWindowDimensions';
 import NextHead from './components/NextHead';
 import customImageLoader from '../util/customImageLoader';
 
-
 const googleAuthProvider = new GoogleAuthProvider();
-const fbAuthProvider = new FacebookAuthProvider();
+// const fbAuthProvider = new FacebookAuthProvider();
 
-const signInWithGoogle = (width: number) => { 
-    width <= 650 ? signInWithRedirect(auth, googleAuthProvider) : signInWithPopup(auth, googleAuthProvider);
-}
-
-const signInWithFacebook = (width: number) => {
-    width <= 650 ? signInWithRedirect(auth, fbAuthProvider) : signInWithPopup(auth, fbAuthProvider);
-}
+// const signInWithFacebook = (width: number) => {
+//     width <= 650 ? signInWithRedirect(auth, fbAuthProvider) : signInWithPopup(auth, fbAuthProvider);
+// }
 
 const signOut = () => {
     auth.signOut();
@@ -40,6 +35,19 @@ function SignInScreen() {
             .catch(console.error);
     }, [user])
 
+    const signInWithGoogle = async () => {
+        // Log in/Sign up with Firebase Auth 
+        let userCredential = null;
+        try {
+            userCredential = await (width <= 650 ?
+                signInWithRedirect(auth, googleAuthProvider)
+                : signInWithPopup(auth, googleAuthProvider))
+        } catch (e) {
+            console.error(e)
+        }
+        if (!userCredential || !userCredential.user) {
+        }
+    }
     return (
         <div className='bg-green text-yellow min-h-screen text-center pt-10 text-xl' id='firebaseui-auth-container' >
             <NextHead />
@@ -68,7 +76,7 @@ function SignInScreen() {
                         <div className='flex flex-col items-center justify-center'>
                             <p>Please sign in:</p>
                             <button className='flex flex-row justify-evenly items-center bg-white text-[#757575] font-sans font-semibold px-2 py-3 m-2 text-sm  w-52 rounded-sm'
-                                onClick={() => signInWithGoogle(width)}>
+                                onClick={signInWithGoogle}>
                                 <Image alt="Google logo" loader={customImageLoader} src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width={17} height={17} />
                                 Sign in with Google
                             </button>

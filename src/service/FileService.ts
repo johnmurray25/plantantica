@@ -4,8 +4,8 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 
-import db from "../src/firebase/db";
-import storage from "../src/firebase/storage";
+import db from "../firebase/db";
+import storage from "../firebase/storage";
 
 export const getImageUrl = async (fileName: string, email: string): Promise<string> => {
     let imageUrl = getDownloadURL(ref(storage, `${email}/${fileName}`))

@@ -1,40 +1,18 @@
 import Image from 'next/image'
 import React, { useState } from 'react'
 
-import { collection, doc, DocumentData, getDoc, getDocs, query, QueryDocumentSnapshot } from 'firebase/firestore'
+import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore'
 import ReactLoading from 'react-loading';
 
 import Plant from '../../domain/Plant'
-import { getImageUrl } from '../../service/FileService'
-import { getPlants } from '../../service/PlantService'
+import { getImageUrl } from '../service/FileService'
 import db from '../firebase/db'
 import customImageLoader from '../util/customImageLoader'
 import NavBar from './components/NavBar'
 import NextHead from './components/NextHead'
 import TextField from './components/TextField'
 import useWindowDimensions from '../hooks/useWindowDimensions';
-
-const getUserByEmail = async (email: string) => {
-    let docRef = doc(db, "users", email)
-    let docSnap = await getDoc(docRef)
-    return docSnap
-}
-
-interface User {
-    plantTrackingDetails: Plant[];
-    profilePicture: string;
-    email: string;
-}
-
-const mapDocToUser = async (docSnap: QueryDocumentSnapshot<DocumentData>): Promise<User> => {
-    let plants = await getPlants(docSnap.id)
-
-    return {
-        plantTrackingDetails: plants ? plants : [],
-        profilePicture: docSnap.get('profilePicture'),
-        email: docSnap.id,
-    }
-}
+import { getUserByUid, mapDocToUser, DBUser as User, getUserByUsername } from '../service/UserService';
 
 const Home: React.FC = () => {
 
@@ -50,8 +28,9 @@ const Home: React.FC = () => {
         if (!searchText) {
             return;
         }
-        let docSnap = await getUserByEmail(searchText)
+        let docSnap = await getUserByUsername(searchText)
         if (docSnap.exists()) {
+            console.log(`email ${searchText} found in system`)
             let result = await mapDocToUser(docSnap);
             setSearchResult(result)
             setSearchMessage('')
@@ -83,16 +62,17 @@ const Home: React.FC = () => {
             <div className='min-h-screen p-4 flex flex-col items-center m-auto'>
 
                 <p className='pb-8 text-center'>
-                    This page is still in development... check back later :-{')'}
+                    This page isn&apos;t ready yet... check back later :-{')'}
                 </p>
 
-                <div className='flex justify-end'>
+                <div className='flex w-full justify-center'>
                     <TextField
                         name="search"
                         type="text"
                         value={searchText}
                         onChange={setSearchText}
-                        placeholder="Search..."
+                        placeholder="Search by username..."
+                        width={80}
                     />
                     <a
                         className='cursor-pointer bg-[#53984D] text-yellow rounded justify-center h-12 w-8 text-center content-center'
@@ -111,28 +91,30 @@ const Home: React.FC = () => {
                 }
 
                 {searchResult &&
-                    <div className='flex justify-evenly items-center m-6 border border-yellow rounded'>
-                        <p>
-                            {searchResult.email}
-                        </p>
-                        <div>
-                            {profPicUrl &&
-                                // User has saved profile picture
-                                isProfPicLoading ?
-                                <ReactLoading type='spinningBubbles' color="#fff" />
-                                :
-                                <Image
-                                    src={profPicUrl}
-                                    loader={customImageLoader}
-                                    // alt='Profile picture'
-                                    alt=''
-                                    width={height ? height / 14 : 40}
-                                    height={height ? height / 13 : 40}
-                                    className='rounded-3xl'
-                                />
-                            }
+                    <div className='border border-yellow rounded w-full py-4 px-2'>
+                        <div className='flex justify-evenly items-center '>
+                            <p>
+                                {searchResult.email}
+                            </p>
+                            <div>
+                                {profPicUrl &&
+                                    // User has saved profile picture
+                                    isProfPicLoading ?
+                                    <ReactLoading type='spinningBubbles' color="#fff" />
+                                    :
+                                    <Image
+                                        src={profPicUrl}
+                                        loader={customImageLoader}
+                                        // alt='Profile picture'
+                                        alt=''
+                                        width={height ? height / 14 : 40}
+                                        height={height ? height / 13 : 40}
+                                        className='rounded-3xl'
+                                    />
+                                }
+                            </div>
                         </div>
-                        <p>
+                        <p className='text-center'>
                             Tracking {searchResult.plantTrackingDetails ? searchResult.plantTrackingDetails.length : 0} plants
                         </p>
                     </div>
