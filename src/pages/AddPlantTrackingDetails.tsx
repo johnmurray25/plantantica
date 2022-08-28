@@ -43,7 +43,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
 
   useEffect(() => {
     if (imageUrl === '' && user && plant && plant.picture) {
-      getImageUrl(plant.picture, user.email)
+      getImageUrl(plant.picture, user.uid)
         .then(s => setImageUrl(s))
     }
     if (dateLastWatered) {

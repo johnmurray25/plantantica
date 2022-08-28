@@ -85,21 +85,26 @@ export const mapDocToUser = async (docSnap: QueryDocumentSnapshot<DocumentData>)
         console.error(e)
     }
 
+    let email = docSnap.get('email')
+
     return {
         plantTrackingDetails: plants ? plants : [],
         profilePicture: docSnap.get('profilePicture'),
-        email: docSnap.id,
+        email:  email ? email : docSnap.id,
         username: docSnap.get('username'),
         displayName: docSnap.get('displayName')
     }
 }
 
 export const mapDocToUserForMigration = async (docSnap: QueryDocumentSnapshot<DocumentData>): Promise<DBUser> => {
+    let uname = docSnap.get('username')
+    let profPic = docSnap.get('profilePicture')
+    let dname = docSnap.get('displayName')
     return {
-        profilePicture: docSnap.get('profilePicture'),
+        profilePicture: profPic ? profPic : '',
         email: docSnap.id,
-        username: docSnap.get('username'),
-        displayName: docSnap.get('displayName')
+        username:  uname ? uname : '',
+        displayName: dname ? dname : '',
     }
 }
 
@@ -152,8 +157,8 @@ export const getUserDBRecord = async (uid: string) => {
     }
 }
 
-export const saveDisplayName = async (email: string, displayName: string) => {
-    let docRef = doc(db, 'users', email)
+export const saveDisplayName = async (uid: string, displayName: string) => {
+    let docRef = doc(db, 'users', uid)
     return setDoc(docRef, { displayName }, { merge: true })
         .catch(console.error)
 }

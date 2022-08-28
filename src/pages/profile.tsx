@@ -111,7 +111,7 @@ function Home() {
 
         if (!profPicUrl) {
             setIsProfPicLoading(true);
-            getProfilePictureUrl(currentUser.email)
+            getProfilePictureUrl(currentUser.uid)
                 .then(data => {
                     setFileName(data.fileName)
                     data.url.then(setProfPicUrl)
@@ -253,7 +253,7 @@ function Home() {
                                                         let compressedImage = await compressImage(f)
                                                         setProfPicUrl(URL.createObjectURL(f))
                                                         uploadFile(compressedImage, currentUser)
-                                                            .then(fileName => updateProfilePicture(fileName, currentUser.email))
+                                                            .then(fileName => updateProfilePicture(fileName, currentUser.uid))
                                                             .catch(console.log)
                                                     }}
                                                     onRemoveFile={onRemoveFile}
@@ -270,7 +270,7 @@ function Home() {
                                                 onChange={setInputDisplayName}
                                                 onSubmit={() => {
                                                     // Save display name to DB
-                                                    saveDisplayName(currentUser.email, inputDisplayName)
+                                                    saveDisplayName(currentUser.uid, inputDisplayName)
                                                         .then(() => {
                                                             setUser({ ...user, displayName: inputDisplayName })
                                                             setEditMode(false)

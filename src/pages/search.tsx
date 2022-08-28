@@ -30,7 +30,7 @@ const Home: React.FC = () => {
         }
         let docSnap = await getUserByUsername(searchText)
         if (docSnap.exists()) {
-            console.log(`email ${searchText} found in system`)
+            console.log(`username ${searchText} found in system`)
             let result = await mapDocToUser(docSnap);
             setSearchResult(result)
             setSearchMessage('')
@@ -94,7 +94,12 @@ const Home: React.FC = () => {
                     <div className='border border-yellow rounded w-full py-4 px-2'>
                         <div className='flex justify-evenly items-center '>
                             <p>
-                                {searchResult.email}
+                                <a className='text-2xl'>
+                                    {searchResult.displayName} <br/>
+                                </a>
+                                <a className='text-xl'>
+                                    @{searchResult.username} <br/>
+                                </a>
                             </p>
                             <div>
                                 {profPicUrl &&

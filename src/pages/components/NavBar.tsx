@@ -37,7 +37,7 @@ const NavBar: FC<NavProps> = (props) => {
 
     if (!profPicUrl) {
       setIsProfPicLoading(true);
-      getProfilePictureUrl(user.email)
+      getProfilePictureUrl(user.uid)
         .then(data => {
           setFileName(data.fileName)
           data.url.then(setProfPicUrl)

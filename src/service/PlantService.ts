@@ -14,7 +14,7 @@ function userDocFromUid(uid: string) {
 }
 
 function mapDocsToPlants(docs: QueryDocumentSnapshot<DocumentData>[]) {
-    return docs.map((doc: QueryDocumentSnapshot<DocumentData>): Plant => {
+    return docs.map((doc): Plant => {
         return {
             id: doc.id,
             species: doc.get('species'),

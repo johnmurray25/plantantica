@@ -18,19 +18,11 @@ export default function Home() {
     const router = useRouter()
 
     const getUserInfo = useCallback(async (user: User) => {
-        // Check DB if user already exists
+        // Get user doc, or create new
         let userDoc = await getUserByUid(user)
-        // let emailDoc = await getUserByEmailDeprecated(user.email)
-        if (!userDoc.exists()) {
-            console.log('user doesnt exist in DB')
-            try {
-                // await initializeUser(user)
-            } catch (e) { console.error(e) }
-        }
 
-        // Check if user already has username, prompt to add one if not 
+        // If user does not have username... 
         let loggedInUser = await mapDocToUser(userDoc);
-        console.log(`username: ${loggedInUser.username}`)
         if (!loggedInUser.username && loggedInUser.email) {
             // Redirect to 'Edit Profile' page
             router.push(`/profile`)
