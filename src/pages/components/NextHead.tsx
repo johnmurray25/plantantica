@@ -9,7 +9,7 @@ function NextHead() {
                 name="description"
                 content="A place to track your plants' maintenance"
             />
-            <link rel="icon" href="/tree-logo.ico" />
+            <link rel="icon" href="../src/public/tree-logo.ico" />
         </Head>
     )
 }

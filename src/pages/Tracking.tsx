@@ -65,7 +65,7 @@ const Home = () => {
     // Update DB
     await setDoc(
       doc(
-        collection(doc(db, 'users', user.email), 'plantTrackingDetails'),
+        collection(doc(db, 'users', user.uid), 'plantTrackingDetails'),
         plant.id),
       { dateToWaterNext: newWateringDate, dateLastWatered: today.getTime() },
       { merge: true }
@@ -89,7 +89,7 @@ const Home = () => {
         }
         else return 0;
       });
-    if (results && results.length > 0) setPlants(results);
+    // if (results && results.length > 0) setPlants(results);
   }, [plants]);
 
   useEffect(() => {
@@ -119,7 +119,7 @@ const Home = () => {
                     plant={plant}
                     waterPlant={() => waterPlant(plant, user)}
                     removePlant={remove}
-                    userEmail={user.email}
+                    userID={user.uid}
                   />
                   // </div >
                 )))
@@ -163,7 +163,7 @@ const Home = () => {
             plant={plant}
             waterPlant={() => waterPlant(plant, user)}
             removePlant={remove}
-            userEmail={user.email}
+            userID={user.uid}
           />
           // </div>
         ))
@@ -183,10 +183,10 @@ const Home = () => {
       <NextHead /**Header */ />
       <NavBar />
 
-      <div className='min-h-screen p-4 flex flex-col items-center m-auto'>
+      <div className='min-h-screen p-4 pt-0 flex flex-col items-center m-auto mt-0'>
 
-        <div className='m-0 italic' style={{ lineHeight: 1.15, fontSize: '3.5rem', }}>
-          <a>Tracking</a>
+        <div className='m-0 italic p-0 text-3xl' style={{ lineHeight: 1.15, }}>
+          <a>TRACKING</a>
         </div>
 
         {isLoading && <ReactLoading type='bars' color="#fff" />}

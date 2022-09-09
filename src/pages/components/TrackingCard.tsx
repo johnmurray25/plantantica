@@ -1,4 +1,4 @@
-import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Image from 'next/image';
 
 import { IoPartlySunnySharp } from '@react-icons/all-files/io5/IoPartlySunnySharp';
@@ -16,7 +16,7 @@ interface Props {
     plant: Plant;
     waterPlant;
     removePlant;
-    userEmail: string;
+    userID: string;
 }
 
 const MILLIS_IN_DAY = 86400000;
@@ -32,7 +32,7 @@ const PlantCard: FC<Props> = (props) => {
     const { width, height } = useWindowDimensions();
 
     // props
-    const [userEmail] = useState(props.userEmail);
+    const [userID] = useState(props.userID);
     const [plant, setPlant] = useState(props.plant);
     const [dateToWaterNext] = useState(plant ? plant.dateToWaterNext : new Date(new Date().getTime() + MILLIS_IN_DAY));
 
@@ -44,9 +44,9 @@ const PlantCard: FC<Props> = (props) => {
         if (!plant) {
             return;
         }
-        if (imageURL == '' && userEmail && plant.picture && plant.picture !== '') {
+        if (imageURL == '' && userID && plant.picture && plant.picture !== '') {
             // console.log('getting download url...')
-            getDownloadURL(ref(storage, `${userEmail}/${plant.picture}`))
+            getDownloadURL(ref(storage, `${userID}/${plant.picture}`))
                 .then(downloadUrl => setImageURL(downloadUrl))
                 .catch(e => {
                     console.debug(e);
@@ -71,7 +71,7 @@ const PlantCard: FC<Props> = (props) => {
         }
         // CHECK state
         setWateringState('check');
-    }, [userEmail, dateToWaterNext, plant, imageURL,]);
+    }, [userID, dateToWaterNext, plant, imageURL,]);
 
     const getBgStyle = () => {
         if (!plant) return 'hidden';

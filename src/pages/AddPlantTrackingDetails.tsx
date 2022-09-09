@@ -97,12 +97,12 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       dateToFeedNext: dateToFeedNext ? dateToFeedNext.getTime() : null,
       lightRequired: lightRequired,
       dateCreated: (new Date()).getTime(),
-      picture: savedFileName,
+      picture: savedFileName ? savedFileName : plant.picture ? plant.picture : '',
     };
     let docRef: DocumentReference<DocumentData> = null;
     if (plant) {
       // Update an existing document
-      await setDoc(doc(collection(doc(db, 'users', user.uid), 'plantTrackingDetails'), plant.id), plantTrackingDetails);
+      await setDoc(doc(collection(doc(db, 'users', user.uid), 'plantTrackingDetails'), plant.id), plantTrackingDetails, {merge: true});
       console.log('Updated existing plant tracking details');
     } else {
       // Add a new document with a generated id.

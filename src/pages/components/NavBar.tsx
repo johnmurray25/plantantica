@@ -49,7 +49,7 @@ const NavBar: FC<NavProps> = (props) => {
   }, [user, profPicUrl]);
 
   return (
-    <nav className="flex justify-between flex-wrap px-4 py-5 items-center w-full">
+    <nav className="flex justify-between flex-wrap px-4 py-5 pb-0 items-center w-full">
       <Link href="/" passHref>
         <div className="flex items-center flex-shrink-0  cursor-pointer">
           <Image

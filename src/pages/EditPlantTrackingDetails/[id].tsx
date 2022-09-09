@@ -11,9 +11,8 @@ import NextHead from '../components/NextHead';
 
 const getPlantDetails = async (id: string | any, user: User) => {
     let docRef: DocumentReference<DocumentData> = null;
-    console.log(`User: ${user.email}`);
     try {
-        let collectionRef = collection(doc(db, 'users', user.email), 'plantTrackingDetails');
+        let collectionRef = collection(doc(db, 'users', user.uid), 'plantTrackingDetails');
         if (!collectionRef) { console.error('NO COLLECTION FOUND') }
         docRef = doc(collectionRef, id);
     } catch (e) { console.error(e); }
