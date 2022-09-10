@@ -114,7 +114,7 @@ function Home() {
             getProfilePictureUrl(currentUser.uid)
                 .then(data => {
                     setFileName(data.fileName)
-                    data.url.then(setProfPicUrl)
+                    setProfPicUrl(data.url)
                 })
                 .catch(console.error)
                 .finally(() => setIsProfPicLoading(false))

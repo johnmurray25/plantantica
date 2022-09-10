@@ -40,7 +40,7 @@ const NavBar: FC<NavProps> = (props) => {
       getProfilePictureUrl(user.uid)
         .then(data => {
           setFileName(data.fileName)
-          data.url.then(setProfPicUrl)
+          setProfPicUrl(data.url)
         })
         .catch(console.error)
         .finally(() => setIsProfPicLoading(false))
@@ -71,7 +71,7 @@ const NavBar: FC<NavProps> = (props) => {
             :
             (
               user ?
-                <Link href="profile" passHref>
+                <Link href="/profile" passHref>
                   <div className='cursor-pointer p-4 lg:pr-8'>
                     {profPicUrl ?
                       // User has saved profile picture

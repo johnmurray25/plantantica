@@ -62,8 +62,15 @@
   border: 1px solid rgb(248, 245, 240);
   border-radius: 10px;
   transition: color 0.3s ease, border-color 0.15s ease;
-  max-width: 300px;
   color: rgb(248, 245, 240);
+  max-width: 98vw;
+  width: 20rem;
+  height: 10rem;
+  color: rgb(248, 245, 240);
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
 }
 
 .card:hover,
