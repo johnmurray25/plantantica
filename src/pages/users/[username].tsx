@@ -50,7 +50,15 @@ function Home() {
                         }
 
                         setUser(record)
-                        setTrackingMsg(`Tracking ${record.plantTrackingDetails ? record.plantTrackingDetails.length : 0} plants:`)
+                        let ptd = record.plantTrackingDetails
+                        if (ptd) {
+                            if (ptd.length == 1)
+                                setTrackingMsg(`Tracking ${record.plantTrackingDetails ? record.plantTrackingDetails.length : 0} plant:`)
+                            else
+                                setTrackingMsg(`Tracking ${record.plantTrackingDetails ? record.plantTrackingDetails.length : 0} plants:`)
+                        } else {
+                            setTrackingMsg('Tracking 0 plants')
+                        }
 
                         // load profile picture
                         if (record.profilePicture) {
@@ -69,7 +77,7 @@ function Home() {
                             && record.plantTrackingDetails.length > 0) {
                             setPlants(record.plantTrackingDetails)
                             console.log(record.plantTrackingDetails)
-                            setPlantCards(record.plantTrackingDetails.map(p => 
+                            setPlantCards(record.plantTrackingDetails.map(p =>
                                 <DisplayCard
                                     plant={p}
                                     userID={uid}
@@ -90,22 +98,22 @@ function Home() {
             {
                 user &&
                 <div>
-                    <div className='relative w-full med:w-3/6 m-auto text-center justify-center pt-10 pb-14 px-6 med:border border-yellow rounded '>
+                    <div className='relative w-full med:w-3/6 m-auto text-center justify-center pt-3 px-6 med:border border-yellow rounded '>
                         {profPicUrl && profPicUrl != '' &&
                             isProfPicLoading ?
                             <ReactLoading type='spinningBubbles' color="#fff" />
                             :
-                            <div className='relative w-fit flex justify-center m-auto'>
+                            <div className='relative w-fit flex justify-center m-auto border rounded-xl p-3'>
                                 <Image
                                     src={profPicUrl}
                                     loader={customImageLoader}
                                     alt='Profile picture'
-                                    width={150}
-                                    height={180}
+                                    width={100}
+                                    height={120}
                                 />
                             </div>
                         }
-                        <div className='m-10 mb-3 flex justify-evenly items-center' >
+                        <div className='mx-10 mb-3 flex justify-evenly items-center' >
                             {/* display name */}
                             <h2 className='text-2xl' >
                                 {user ? user.displayName : ''}
@@ -118,18 +126,17 @@ function Home() {
                             </h3>
                         </div>
 
-                        <h3 className='text-lg flex justify-evenly'>
-                            {/* email */}
+                        {/* <h3 className='text-lg flex justify-evenly'>
                             <p className='italic'>
                                 {user ? user.email : ''}
                             </p>
-                        </h3>
-                        <h3 className='pt-10 font-mono'>
+                        </h3> */}
+                        <h3 className='pt-0 font-mono text-left pb-2'>
                             {/* number of plants tracked */}
                             {trackingMsg}
                         </h3>
                     </div>
-                    {plants && plants.length > 1 &&
+                    {plants && plants.length > 0 &&
                         <div className={gridStyles.container}>
                             {plantCards}
                         </div>

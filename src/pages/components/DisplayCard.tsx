@@ -38,35 +38,19 @@ const PlantCard: FC<Props> = (props) => {
     const [imageURL, setImageURL] = useState('');
 
     useEffect(() => {
-        if (!plant) {
-            return;
-        }
-        let uid = props.userID
+        if (!plant) return;
+        let uid = props.userID;
         if (imageURL == '' && uid && plant.picture && plant.picture !== '') {
             // console.log('getting download url...')
             getDownloadURL(ref(storage, `${uid}/${plant.picture}`))
                 .then(downloadUrl => setImageURL(downloadUrl))
-                .catch(e => {
-                    console.debug(e);
-                    console.error('Failed to load image from storage bucket')
-                });
+                .catch(console.error);
         }
     });
 
     const getBgStyle = () => {
         if (!plant) return 'hidden';
-        let sharedStyle = width > SM_WIDTH ? 'rounded-md p-0 m-2 ' : 'rounded p-0 '
-        if (wateringState == 'good')
-            return sharedStyle + 'border border-yellow ';
-        if (wateringState == 'check')
-            return sharedStyle + 'bg-[#BDC581] text-black ';
-        if (wateringState == 'bad')
-            return 'rounded-md bg-red-900';
-    }
-    const getIconStyle = () => {
-        if (wateringState == 'check')
-            return 'text-black';
-        return 'text-yellow';
+        return (width > SM_WIDTH ? 'rounded-md p-0 m-2 ' : 'rounded p-0 ') + ' border border-yellow bg-green w-full'
     }
 
     const getImageWidth = () => {

@@ -179,7 +179,7 @@ const Home = () => {
   }
 
   return (
-    <div className='text-yellow bg-green min-w-full' /**Container */>
+    <div className='text-yellow bg-green min-w-screen' /**Container */>
       <NextHead /**Header */ />
       <NavBar />
 
