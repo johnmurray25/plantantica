@@ -63,10 +63,6 @@ const Home: React.FC = () => {
 
             <div className='min-h-screen p-4 flex flex-col items-center m-auto'>
 
-                <p className='pb-8 text-center'>
-                    This page isn&apos;t ready yet... check back later :-{')'}
-                </p>
-
                 <div className='flex w-full justify-center'>
                     <TextField
                         name="search"

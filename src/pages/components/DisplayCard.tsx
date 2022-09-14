@@ -75,7 +75,7 @@ const PlantCard: FC<Props> = (props) => {
     return plant && (
         <div key={plant.id} className={getBgStyle()}>
             {plant.picture && imageURL && imageURL !== '' ?
-                <div className='flex px-0 mx-0 pt-5 pb-0 w-full relative'>
+                <div className='flex px-0 mx-0 pb-0 w-full relative'>
                     <Image
                         src={imageURL}
                         alt={`photo of ${plant.species}`}
@@ -86,7 +86,7 @@ const PlantCard: FC<Props> = (props) => {
                         className='rounded' />
                     <div className="absolute w-full bg-gray-900 text-white italic opacity-70 bottom-0 ">
                         <h1>
-                            <a className='hover:underline text-2xl leading-loose pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
+                            <a className='hover:underline text-lg leading-loose pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
                                 {plant.species}
                             </a>
                         </h1>
@@ -102,7 +102,7 @@ const PlantCard: FC<Props> = (props) => {
                 </div>
             }
 
-            <div className="px-5 py-1 ">
+            <div className="px-1 py-1 ">
                 <div className='flex justify-between text-xs '>
                     <div className='flex text-base'>
                         <IoWater className="cursor-pointer text-blue pr-1" />

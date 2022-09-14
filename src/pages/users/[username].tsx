@@ -11,7 +11,7 @@ import { useRouter } from 'next/router';
 import { getUserDBRecord, DBUser as User, getUserByUsername } from '../../service/UserService';
 import Plant from '../../../domain/Plant';
 import DisplayCard from '../components/DisplayCard'
-import gridStyles from '../../styles/grid.module.css'
+import gridStyles from '../../styles/smallGrid.module.css'
 
 function Home() {
 
@@ -137,7 +137,9 @@ function Home() {
                         </h3>
                     </div>
                     {plants && plants.length > 0 &&
-                        <div className={gridStyles.container}>
+                        <div
+                            className={gridStyles.container}
+                        >
                             {plantCards}
                         </div>
                     }
