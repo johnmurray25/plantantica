@@ -132,3 +132,7 @@ package-lock.json
 # Firebase deployment output
 .firebase/
 *.pdf
+
+# Functions directory
+.functions/
+.functions\

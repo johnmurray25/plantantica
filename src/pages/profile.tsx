@@ -10,7 +10,7 @@ import { IoPencilOutline } from '@react-icons/all-files/io5/IoPencilOutline';
 import auth from '../firebase/auth';
 import db from '../firebase/db';
 import NavBar from './components/NavBar';
-import styles from '../styles/Home.module.css';
+import toggleStyles from '../styles/toggle-switch.module.css';
 import NextHead from './components/NextHead';
 import customImageLoader from '../util/customImageLoader';
 import sampleProfilePicture from '../public/sample-plant.png'
@@ -18,7 +18,7 @@ import FileInput from './components/FileInput';
 import { compressImage, deleteImage, getProfilePictureUrl, updateProfilePicture, uploadFile } from '../service/FileService';
 import useWindowDimensions from '../hooks/useWindowDimensions';
 import { useRouter } from 'next/router';
-import { getUserDBRecord, saveDisplayName, saveUsername, DBUser as User } from '../service/UserService';
+import { getUserDBRecord, saveDisplayName, saveUsername, DBUser as User, unsubscribeFromDailyEmails, subscribeToDailyEmails } from '../service/UserService';
 import TextField from './components/TextField';
 import TextInput from './components/TextInput';
 
@@ -47,6 +47,7 @@ function Home() {
     const [inputUsername, setInputUsername] = useState('')
     const [inputDisplayName, setInputDisplayName] = useState('')
     const [editMode, setEditMode] = useState(false)
+    const [receiveDailyEmails, setReceiveDailyEmails] = useState(true);
 
     const { width, height } = useWindowDimensions()
     const router = useRouter()
@@ -101,6 +102,7 @@ function Home() {
 
                 setUser(record)
                 setTrackingMsg(`Tracking ${record.plantTrackingDetails ? record.plantTrackingDetails.length : 0} plants`)
+                setReceiveDailyEmails(record.dailyEmails ? true : false);
 
                 if (!record.username) {
                     // Prompt user to add username
@@ -200,14 +202,14 @@ function Home() {
                             <div className='relative w-full med:w-3/6 m-auto text-center justify-center pt-10 pb-14 px-6 med:border border-yellow rounded '>
                                 {editMode ?
                                     <a
-                                        className='absolute top-3 right-3 med:top-5 med:right-8 flex items-center border border-yellow rounded-2xl w-fit p-3 hover:text-green hover:bg-yellow'
+                                        className='m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border border-yellow rounded-2xl w-fit p-3 hover:text-green hover:bg-yellow'
                                         onClick={() => setEditMode(false)}
                                     >
                                         Cancel
                                     </a>
                                     :
                                     <a
-                                        className='absolute top-3 right-3 med:top-5 med:right-8 flex items-center border border-yellow rounded-2xl w-fit p-3 hover:text-green hover:bg-yellow'
+                                        className='m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border border-yellow rounded-2xl w-fit p-3 hover:text-green hover:bg-yellow'
                                         onClick={() => setEditMode(true)}
                                     >
                                         Edit &nbsp; <IoPencilOutline />
@@ -289,12 +291,12 @@ function Home() {
                                         </h2>
                                     }
                                 </h1>
-                                <h3 className='p-5 pt-0 flex justify-evenly items-center text-xl'>
+                                <h3 className='p-5 pt-0 flex justify-center items-center text-xl'>
                                     <p className='font-mono '>
                                         username:
                                     </p>
                                     {editMode ?
-                                        <div className='m-auto text-sm p-3 flex items-center'>
+                                        <div className='text-sm p-3 flex items-center'>
                                             <TextInput
                                                 value={inputUsername}
                                                 onChange={setInputUsername}
@@ -313,23 +315,23 @@ function Home() {
                                             />
                                         </div>
                                         :
-                                        <p className='font-bold p-3 pr-10 pl-2 rounded-lg m-2 ml-0'>
+                                        <p className='font-bold p-3 pl-10 rounded-lg m-2 ml-0'>
                                             {user ? `@${user.username}` : ''}
                                         </p>
                                     }
                                 </h3>
-                                <h3 className='text-lg flex justify-between'>
-                                    <p className='font-mono'>
+                                <h3 className='text-lg flex justify-center'>
+                                    <p className='font-mono pr-8'>
                                         email:
                                     </p>
-                                    <p className='italic'>
+                                    <p className='italic pl-8'>
                                         {currentUser.email}
                                     </p>
                                 </h3>
                                 <h3 className='pt-10 font-mono'>
                                     {trackingMsg}
                                 </h3>
-                                <div className="flex justify-between med:justify-evenly text-center pb-0 pt-10 w-full">
+                                <div className="flex justify-evenly text-center pb-0 pt-10 w-full">
                                     <a
                                         className='cursor-pointer hover:bg-yellow hover:text-green border border-yellow rounded-lg py-4 px-7 mx-2'
                                         onClick={signOut}
@@ -343,6 +345,43 @@ function Home() {
                                         Delete account
                                     </a>
                                 </div>
+                                <div className='mt-20 '>
+                                    Receive daily emails if my plants need water &nbsp;&nbsp;&nbsp;
+                                    <label className="relative inline-block w-14 h-8">
+                                        <input type="checkbox"
+                                            checked={receiveDailyEmails}
+                                            onClick={() => {
+                                                if (!(currentUser && user)) {
+                                                    return;
+                                                }
+                                                // unsubscribe
+                                                if (receiveDailyEmails) {
+                                                    unsubscribeFromDailyEmails(currentUser.uid)
+                                                        .then(() => setReceiveDailyEmails(false))
+                                                    console.log('Unsubscribed from daily emails')
+                                                }
+                                                // subscribe
+                                                else {
+                                                    subscribeToDailyEmails(currentUser.uid)
+                                                        .then(() => setReceiveDailyEmails(true))
+                                                    console.log('Subscribed to daily emails')
+                                                }
+                                            }}
+                                        />
+                                        <span className={`${toggleStyles.slider} ${toggleStyles.round}`}></span>
+                                    </label>
+                                </div>
+                                {/* <div className={toggleStyles.toggleButtonCover}>
+                                    <div className={toggleStyles.buttonCover}>
+                                        <div className={toggleStyles.button + ' ' + toggleStyles.b2} id="boxFlip">
+                                            <input type="checkbox" className={toggleStyles.checkbox} />
+                                            <div className={toggleStyles.knobs}>
+                                                <span>YES</span>
+                                            </div>
+                                            <div className={toggleStyles.layer}></div>
+                                        </div>
+                                    </div>
+                                </div> */}
                             </div>
                         </div>
                         :

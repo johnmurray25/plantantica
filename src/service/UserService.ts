@@ -1,5 +1,5 @@
 import { User } from "firebase/auth";
-import { collection, doc, DocumentData, getDoc, getDocs, query, QueryDocumentSnapshot, setDoc, where } from "firebase/firestore"
+import { collection, doc, DocumentData, DocumentSnapshot, getDoc, getDocs, query, QueryDocumentSnapshot, setDoc, where } from "firebase/firestore"
 import Plant from "../../domain/Plant";
 import db from "../firebase/db"
 import { getPlants, migratePlantData } from "./PlantService"
@@ -9,7 +9,8 @@ export interface DBUser {
     profilePicture: string;
     email: string;
     username?: string;
-    displayName?: string
+    displayName?: string;
+    dailyEmails?: boolean;
 }
 
 // Should delete after data is merged
@@ -20,10 +21,10 @@ export const getUserByEmailDeprecated = async (email: string) => {
     return docSnap
 }
 
-export const getUserByUid = async (user: User) => {
+export const getUser = async (user: User) => {
     let uidRef = doc(db, "users", user.uid)
     let docSnap = await getDoc(uidRef)
-    let emailDoc = await getUserByEmailDeprecated(user.email)
+    let emailDoc = user.email ? await getUserByEmailDeprecated(user.email) : { exists: () => false };
     // initialize/migrate user data
     if (!docSnap.exists()) {
         await initializeUser(user)
@@ -70,15 +71,15 @@ export const getUserByUsername = async (username: string) => {
     return null
 }
 
-export const getUserByUidString = async (uid: string) => {
+export const getUserByUid = async (uid: string) => {
     let uidRef = doc(db, "users", uid)
     let docSnap = await getDoc(uidRef)
     // check if result exists or not using docSnap.exists()
     return docSnap
 }
 
-export const mapDocToUser = async (docSnap: QueryDocumentSnapshot<DocumentData>): Promise<DBUser> => {
-    let plants: Plant[] = null
+export const mapDocToUser = async (docSnap: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>): Promise<DBUser> => {
+    let plants: Plant[] = []
     try {
         plants = await getPlants(docSnap.id)
     } catch (e) {
@@ -88,11 +89,12 @@ export const mapDocToUser = async (docSnap: QueryDocumentSnapshot<DocumentData>)
     let email = docSnap.get('email')
 
     return {
-        plantTrackingDetails: plants ? plants : [],
+        plantTrackingDetails: plants,
         profilePicture: docSnap.get('profilePicture'),
-        email:  email ? email : docSnap.id,
+        email: email ? email : docSnap.id,
         username: docSnap.get('username'),
-        displayName: docSnap.get('displayName')
+        displayName: docSnap.get('displayName'),
+        dailyEmails: docSnap.get('dailyEmails')
     }
 }
 
@@ -103,19 +105,21 @@ export const mapDocToUserForMigration = async (docSnap: QueryDocumentSnapshot<Do
     return {
         profilePicture: profPic ? profPic : '',
         email: docSnap.id,
-        username:  uname ? uname : '',
+        username: uname ? uname : '',
         displayName: dname ? dname : '',
     }
 }
 
 export const existsByUsername = async (uname: string): Promise<boolean> => {
-    let usersRef = collection(db, 'users')
-    let q = query(usersRef, where('username', '==', uname))
     try {
+        let usersRef = collection(db, 'users')
+        let q = query(usersRef, where('username', '==', uname))
         let result = await getDocs(q)
         if (result && result.docs && result.docs.length > 0) {
             console.log('doc => ' + result.docs[0].id)
             return true;
+        } else {
+            return false;
         }
     } catch (e) {
         console.error(e)
@@ -128,7 +132,7 @@ export const saveUsername = async (username: string, user: User): Promise<string
         return 'username';
     }
 
-    let userDoc = await getUserByUid(user)
+    let userDoc = await getUser(user)
     if (!userDoc.exists()) {
         return 'uid';
     }
@@ -149,7 +153,9 @@ export const saveUsername = async (username: string, user: User): Promise<string
 
 export const getUserDBRecord = async (uid: string) => {
     try {
-        let result = await mapDocToUser(await getUserByUidString(uid))
+        let userDoc = await getUserByUid(uid);
+        if (!userDoc) return null;
+        let result = await mapDocToUser(userDoc);
         return result
     } catch (e) {
         console.log(e)
@@ -163,3 +169,31 @@ export const saveDisplayName = async (uid: string, displayName: string) => {
         .catch(console.error)
 }
 
+export const getAllUsers = async () => {
+    let usersRef = collection(db, 'users')
+    let userDocs = await getDocs(usersRef)
+    let results = userDocs.docs.map(mapDocToUser)
+    return results
+}
+
+export const subscribeToDailyEmails = async (uid: string): Promise<boolean> => {
+    try {
+        let userDoc = await getUserByUid(uid)
+        await setDoc(userDoc.ref, { dailyEmails: true }, { merge: true })
+        return true;
+    } catch (e) {
+        console.error(e);
+        return false;
+    }
+}
+
+export const unsubscribeFromDailyEmails = async (uid: string): Promise<boolean> => {
+    try {
+        let userDoc = await getUserByUid(uid)
+        await setDoc(userDoc.ref, { dailyEmails: false }, { merge: true })
+        return true
+    } catch (e) {
+        console.error(e)
+        return false
+    }
+}

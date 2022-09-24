@@ -1,22 +1,19 @@
 import imageCompression from "browser-image-compression";
 import { User } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import { deleteObject, getDownloadURL, listAll, ref, uploadBytes } from "firebase/storage";
+import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 
 import db from "../firebase/db";
 import storage from "../firebase/storage";
 
-let handleEr = (e) => {
-    console.debug(e);
-    console.error('Failed to load image from storage bucket');
-    return '';
-}
-
 export const getImageUrl = async (fileName: string, uid: string): Promise<string> => {
     let imageUrl = getDownloadURL(ref(storage, `${uid}/${fileName}`))
-        .then(downloadUrl => { return downloadUrl }, handleEr)
-        .catch(handleEr);
+        .then(downloadUrl => { return downloadUrl })
+        .catch((e) => {
+            console.error(e)
+            return '';
+        });
     return imageUrl;
 }
 
@@ -36,6 +33,7 @@ export const compressImage = async (imageFile: File) => {
     }
     catch (error) {
         console.log(error);
+        return null;
     }
 }
 
@@ -72,7 +70,7 @@ export const getProfilePictureUrl = async (uid: string): Promise<{ url: string, 
     let userDoc = await getDoc(doc(db, 'users', uid))
     let fileName = userDoc.get('profilePicture')
     if (!fileName)
-        return { url: null, fileName: '' }
+        return { url: '', fileName: '' }
     let imageUrl = await getDownloadURL(ref(storage, `${uid}/${fileName}`))
         // .then(downloadUrl => { return downloadUrl })
         // .catch(e => {

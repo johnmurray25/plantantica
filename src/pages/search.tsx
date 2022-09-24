@@ -1,18 +1,15 @@
 import Image from 'next/image'
 import React, { useState } from 'react'
 
-import { DocumentData, QueryDocumentSnapshot } from 'firebase/firestore'
 import ReactLoading from 'react-loading';
 
-import Plant from '../../domain/Plant'
 import { getImageUrl } from '../service/FileService'
-import db from '../firebase/db'
 import customImageLoader from '../util/customImageLoader'
 import NavBar from './components/NavBar'
 import NextHead from './components/NextHead'
 import TextField from './components/TextField'
 import useWindowDimensions from '../hooks/useWindowDimensions';
-import { getUserByUid, mapDocToUser, DBUser as User, getUserByUsername } from '../service/UserService';
+import { mapDocToUser, DBUser as User, getUserByUsername } from '../service/UserService';
 import { useRouter } from 'next/router';
 
 const Home: React.FC = () => {

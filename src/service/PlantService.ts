@@ -41,31 +41,33 @@ function mapDocsToPlants(docs: QueryDocumentSnapshot<DocumentData>[]) {
     });
 }
  
-function mapDocToPlant(doc: QueryDocumentSnapshot<DocumentData>) {
-    let plant = {
-        id: doc.id,
-        species: doc.get('species'),
-        dateObtained: new Date(doc.get('dateObtained')),
-        daysBetweenWatering: doc.get('daysBetweenWatering'),
-        dateLastWatered: new Date(doc.get('dateLastWatered')),
-        dateToWaterNext: new Date(doc.get('dateToWaterNext')),
-        dateLastFed: doc.get('dateLastFed'),
-        dateToFeedNext: doc.get('dateToFeedNext'),
-        lightRequired: doc.get('lightRequired'),
-        dateCreated: new Date(doc.get('dateCreated')),
-        picture: doc.get('picture'),
-    } 
-    if (plant.dateLastFed) {
-        plant.dateLastFed = new Date(plant.dateLastFed);
-    }
-    if (plant.dateToFeedNext) {
-        plant.dateToFeedNext = new Date(plant.dateToFeedNext);
-    }
-    return plant
-}
+// function mapDocToPlant(doc: QueryDocumentSnapshot<DocumentData>) {
+//     let plant = {
+//         id: doc.id,
+//         species: doc.get('species'),
+//         dateObtained: new Date(doc.get('dateObtained')),
+//         daysBetweenWatering: doc.get('daysBetweenWatering'),
+//         dateLastWatered: new Date(doc.get('dateLastWatered')),
+//         dateToWaterNext: new Date(doc.get('dateToWaterNext')),
+//         dateLastFed: doc.get('dateLastFed'),
+//         dateToFeedNext: doc.get('dateToFeedNext'),
+//         lightRequired: doc.get('lightRequired'),
+//         dateCreated: new Date(doc.get('dateCreated')),
+//         picture: doc.get('picture'),
+//     } 
+//     if (plant.dateLastFed) {
+//         plant.dateLastFed = new Date(plant.dateLastFed);
+//     }
+//     if (plant.dateToFeedNext) {
+//         plant.dateToFeedNext = new Date(plant.dateToFeedNext);
+//     }
+//     return plant
+// }
 
 export const getPlants = async (uid: string): Promise<Plant[]> => {
-    if (!uid) return;
+    if (!uid) {
+        return [];
+    }
     // Load all plant tracking data for current user
     const collectionRef = collection(userDocFromUid(uid), 'plantTrackingDetails');
     const queryRef = query(collectionRef);
@@ -84,6 +86,10 @@ export const deletePlant = async (plant: Plant, user: User) => {
 
 export const migratePlantData = async (user: User) => {
     let userData = userDoc(user)
+    if (!user.email) {
+        console.error('no email saved for this user.')
+        return;
+    }
     let oldUserData = doc(db, 'users', user.email)
     let plantDataRef = collection(oldUserData, 'plantTrackingDetails')
     let plantData = await getDocs(plantDataRef)

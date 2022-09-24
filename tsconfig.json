@@ -17,14 +17,24 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    // 9/23/22:
+    "types": [
+      "node",
+      "jest"
+    ],
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "firebaseFunctions.js", "functions/src/index.js"  ],
+    "**/*.tsx",
+    "firebaseFunctions.js",
+    "functions/index.js",
+    "functions/test/index.test.ts"
+  ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+  // 9/23/22:
+  "compileOnSave": true
 }

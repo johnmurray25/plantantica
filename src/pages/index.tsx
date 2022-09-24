@@ -8,7 +8,7 @@ import NavBar from "./components/NavBar";
 import NextHead from './components/NextHead'
 // import Cubes from './components/Cubes'
 import auth from '../firebase/auth';
-import { getUserByEmailDeprecated, getUserByUid, initializeUser, mapDocToUser } from '../service/UserService';
+import { getUser, mapDocToUser } from '../service/UserService';
 import { User } from "firebase/auth";
 import { useRouter } from "next/router";
 
@@ -19,7 +19,7 @@ export default function Home() {
 
     const getUserInfo = useCallback(async (user: User) => {
         // Get user doc, or create new
-        let userDoc = await getUserByUid(user)
+        let userDoc = await getUser(user)
 
         // If user does not have username... 
         let loggedInUser = await mapDocToUser(userDoc);
