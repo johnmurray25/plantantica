@@ -202,14 +202,14 @@ function Home() {
                             <div className='pt-24 relative w-full med:w-3/6 m-auto text-center justify-center pb-14 px-6 med:border border-yellow rounded '>
                                 {editMode ?
                                     <a
-                                        className='m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border border-yellow rounded-2xl w-fit p-3 hover:text-green hover:bg-yellow'
+                                        className='m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border border-yellow rounded w-fit p-3 hover:text-green hover:bg-yellow'
                                         onClick={() => setEditMode(false)}
                                     >
                                         Cancel
                                     </a>
                                     :
                                     <a
-                                        className='m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border border-yellow rounded-2xl w-fit p-3 hover:text-green hover:bg-yellow'
+                                        className='m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border border-yellow rounded w-fit p-3 hover:text-green hover:bg-yellow'
                                         onClick={() => setEditMode(true)}
                                     >
                                         Edit &nbsp; <IoPencilOutline />
@@ -291,8 +291,9 @@ function Home() {
                                         </h2>
                                     }
                                 </h1>
-                                <h3 className='p-5 pt-0 flex justify-center items-center text-xl'>
-                                    <p className=' '>
+                                <div className=''>
+                                <h3 className='pb-5 pt-0 flex justify-start w-full items-center text-xl'>
+                                    <p className='text-[#29bc29] '>
                                         username:
                                     </p>
                                     {editMode ?
@@ -320,15 +321,16 @@ function Home() {
                                         </p>
                                     }
                                 </h3>
-                                <h3 className='text-lg flex justify-center'>
+                                <h3 className='text-lg flex justify-start w-full text-[#29bc29]'>
                                     <p className=' pr-8'>
                                         email:
                                     </p>
-                                    <p className='italic pl-8'>
+                                    <p className='italic pl-8 text-white'>
                                         {currentUser.email}
                                     </p>
                                 </h3>
-                                <h3 className='pt-10'>
+                                </div>
+                                <h3 className='pt-10 text-[#29bc29]'>
                                     {trackingMsg}
                                 </h3>
                                 <div className='mt-10 '>
