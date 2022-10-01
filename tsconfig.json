@@ -21,7 +21,8 @@
     // 9/23/22:
     "types": [
       "node",
-      "jest"
+      "jest",
+      "cypress",
     ],
   },
   "include": [

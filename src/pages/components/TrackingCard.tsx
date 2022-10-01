@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { IoPartlySunnySharp } from '@react-icons/all-files/io5/IoPartlySunnySharp';
 import { IoSunnySharp } from '@react-icons/all-files/io5/IoSunnySharp';
 import { IoWater } from '@react-icons/all-files/io5/IoWater';
+import { IoLeaf } from '@react-icons/all-files/io5/IoLeaf';
 import { getDownloadURL, ref } from 'firebase/storage';
 
 import storage from '../../firebase/storage';
@@ -11,12 +12,14 @@ import Plant from '../../../domain/Plant';
 import DropDownMenu from './DropDownMenu';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import customImageLoader from '../../util/customImageLoader';
+import { User } from 'firebase/auth';
 
 interface Props {
     plant: Plant;
-    waterPlant;
+    waterPlant: () => Promise<void>;
     removePlant;
     userID: string;
+    feedPlant: () => Promise<void>;
 }
 
 const MILLIS_IN_DAY = 86400000;
@@ -65,7 +68,7 @@ const PlantCard: FC<Props> = (props) => {
             return;
         }
         // BAD state
-        if ((today.getTime() - dateToWaterNext.getTime()) > (3 * MILLIS_IN_DAY)) {
+        if ((today.getTime() - dateToWaterNext.getTime()) >= (2 * MILLIS_IN_DAY)) {
             setWateringState('bad');
             return;
         }
@@ -77,7 +80,7 @@ const PlantCard: FC<Props> = (props) => {
         if (!plant) return 'hidden';
         let sharedStyle = width > SM_WIDTH ? 'rounded-md p-0 m-2 ' : 'rounded p-0 '
         if (wateringState == 'good')
-            return sharedStyle + 'border border-yellow ';
+            return sharedStyle + ' bg-[#145914] border-[#29bc29] ';
         if (wateringState == 'check')
             return sharedStyle + 'bg-[#BDC581] text-black ';
         if (wateringState == 'bad')
@@ -104,7 +107,7 @@ const PlantCard: FC<Props> = (props) => {
         return 'text-yellow';
     }
 
-    const getImageWidth = () => {
+    const imgWidth: number = (() => {
         // when running 'next build' etc.
         if (!width) return 480;
         // single column
@@ -115,13 +118,13 @@ const PlantCard: FC<Props> = (props) => {
         else if (width <= LG_WIDTH) return 0.97 * width / 3;
         // four columns (full size)
         return 0.97 * width / 4;
-    }
+    })();
 
-    const getImageHeight = () => {
+    const imgHeight: number = (() => {
         if (!width) return 500;
         if (width <= SM_WIDTH) return width * 1.2;
         return height / 2;
-    }
+    })();
 
     return plant && (
         <div key={plant.id} className={getBgStyle()}>
@@ -132,8 +135,8 @@ const PlantCard: FC<Props> = (props) => {
                         alt={`photo of ${plant.species}`}
                         loader={customImageLoader}
                         loading='lazy'
-                        width={getImageWidth()}
-                        height={Math.min(getImageHeight(), getImageWidth())}
+                        width={imgWidth}
+                        height={Math.min(imgHeight, imgWidth)}
                         className='rounded' />
                     <div className="absolute w-full bg-gray-900 text-white italic opacity-70 bottom-0 ">
                         <h1>
@@ -195,11 +198,31 @@ const PlantCard: FC<Props> = (props) => {
                         <p className={wateringState != 'good' ? 'font-extrabold' : ''}>
                             water next {plant.dateToWaterNext.toLocaleDateString()}
                         </p>
-                        {plant.dateLastFed ? `last fed ${plant.dateLastFed.toLocaleDateString()}` : <span></span>}
-                        <br></br>
-                        {plant.dateToFeedNext ? `feed next ${plant.dateToFeedNext.toLocaleDateString()}` : <span></span>}
                     </div>
                 </div>
+                {plant && plant.dateLastFed && plant.dateToFeedNext &&
+                    <div className="flex justify-start relative">
+                        <a onClick={() => {
+                            if (!confirm('Mark as fed today?')) {
+                                return;
+                            }
+                            props.feedPlant()
+                                .then(() => plant.dateLastFed = new Date())
+                                .catch(console.error);
+                        }}
+                            className={getWtrBtnStyle()}>
+                            <IoLeaf className="cursor-pointer " style={{ color: 'green' }} />
+                            &nbsp;&nbsp;
+                            Feed?
+                            &nbsp;&nbsp;
+                            <IoLeaf className="cursor-pointer " style={{ color: 'green' }} />
+                        </a>
+                        <div className='pt-2'>
+                            {`last fed ${plant.dateLastFed.toLocaleDateString()}`}
+                            <br></br>
+                            {`feed next ${plant.dateToFeedNext.toLocaleDateString()}`}
+                        </div>
+                    </div>}
             </div>
         </div>)
 }

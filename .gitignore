@@ -136,3 +136,5 @@ package-lock.json
 # Functions directory
 .functions/
 .functions\
+.firebase/hosting.b3V0.cache
+.firebaserc

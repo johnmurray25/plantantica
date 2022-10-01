@@ -18,7 +18,7 @@ import FileInput from './components/FileInput';
 import { compressImage, deleteImage, getProfilePictureUrl, updateProfilePicture, uploadFile } from '../service/FileService';
 import useWindowDimensions from '../hooks/useWindowDimensions';
 import { useRouter } from 'next/router';
-import { getUserDBRecord, saveDisplayName, saveUsername, DBUser as User, unsubscribeFromDailyEmails, subscribeToDailyEmails } from '../service/UserService';
+import { getUserDBRecord, saveDisplayName, saveUsername, DBUser as User, unsubscribeFromDailyEmails, subscribeToDailyEmails, deleteUser } from '../service/UserService';
 import TextField from './components/TextField';
 import TextInput from './components/TextInput';
 
@@ -127,7 +127,7 @@ function Home() {
     const deleteAccount = () => {
         if (confirm('Are you sure you want to delete your account?')
             && confirm('Are you really sure you want to delete your account?')) {
-            currentUser.delete();
+            deleteUser(currentUser);
         }
     }
 
@@ -199,7 +199,7 @@ function Home() {
                     currentUser ?
                         <div>
                             <NavBar hideUser />
-                            <div className='relative w-full med:w-3/6 m-auto text-center justify-center pt-10 pb-14 px-6 med:border border-yellow rounded '>
+                            <div className='pt-24 relative w-full med:w-3/6 m-auto text-center justify-center pb-14 px-6 med:border border-yellow rounded '>
                                 {editMode ?
                                     <a
                                         className='m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border border-yellow rounded-2xl w-fit p-3 hover:text-green hover:bg-yellow'
@@ -328,7 +328,7 @@ function Home() {
                                         {currentUser.email}
                                     </p>
                                 </h3>
-                                <h3 className='pt-10 font-mono'>
+                                <h3 className='pt-10'>
                                     {trackingMsg}
                                 </h3>
                                 <div className="flex justify-evenly text-center pb-0 pt-10 w-full">

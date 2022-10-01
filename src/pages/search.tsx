@@ -58,7 +58,7 @@ const Home: React.FC = () => {
             <NextHead /**Header */ />
             <NavBar />
 
-            <div className='min-h-screen p-4 flex flex-col items-center m-auto'>
+            <div className='min-h-screen p-4 pt-28 flex flex-col items-center m-auto'>
 
                 <div className='flex w-full justify-center'>
                     <TextField

@@ -10,6 +10,7 @@ import logo from '../../public/tree-logo.png'
 import useWindowDimensions from '../../hooks/useWindowDimensions'
 import { getProfilePictureUrl } from '../../service/FileService'
 import customImageLoader from '../../util/customImageLoader'
+import { DBUser, getUserByUid, mapDocToUser } from '../../service/UserService'
 
 interface NavProps {
   hideUser?: boolean;
@@ -29,6 +30,7 @@ const NavBar: FC<NavProps> = (props) => {
   const [profPicUrl, setProfPicUrl] = useState('')
   const [fileName, setFileName] = useState('')
   const [isProfPicLoading, setIsProfPicLoading] = useState(false);
+  const [userInDB, setUserInDB] = useState<DBUser>(null);
 
   useEffect(() => {
     if (!user) {
@@ -44,24 +46,32 @@ const NavBar: FC<NavProps> = (props) => {
         })
         .catch(console.error)
         .finally(() => setIsProfPicLoading(false))
+      getUserByUid(user.uid)
+        .then(mapDocToUser)
+        .then(setUserInDB)
+        .catch(console.error);
     }
 
   }, [user, profPicUrl]);
 
+  const logoSize = height ? height / 17 : 40;
+
   return (
-    <nav className="flex justify-between flex-wrap px-4 py-5 pb-0 items-center w-full">
+    <nav className="z-10 fixed bg-transparent flex justify-between flex-wrap px-4 pt-4 pb-2 items-center w-full">
+      <div className='bg-green p-1 lg:p-3 pl-2 border rounded border-[#29bc29]'>
       <Link href="/" passHref>
         <div className="flex items-center flex-shrink-0  cursor-pointer">
           <Image
             src={logo}
             alt='Tree logo'
             loader={logoImageLoader}
-            width={height ? height / 17 : 40}
-            height={height ? height / 17 : 40}
+            width={logoSize}
+            height={logoSize}
           />
-          <span className="font-semibold text-xl tracking-tight pl-3">Plantantica</span>
+          <span className="text-xl tracking-tight px-2 py-4 rounded bg-green">Plantantica</span>
         </div>
       </Link>
+      </div>
       {!hideUser &&
         (
           loading ?
@@ -70,10 +80,10 @@ const NavBar: FC<NavProps> = (props) => {
             </div>
             :
             (
-              user ?
+              user && userInDB ?
                 <Link href="/profile" passHref>
-                  <div className='cursor-pointer p-4 lg:pr-8'>
-                    {profPicUrl ?
+                  <div className='cursor-pointer lg:pr-8'>
+                    {userInDB.profilePicture ?
                       // User has saved profile picture
                       isProfPicLoading ?
                         <ReactLoading type='spinningBubbles' color="#fff" />
@@ -89,7 +99,7 @@ const NavBar: FC<NavProps> = (props) => {
                         />
                       :
                       <a className="inline-block text-xs lg:text-xs px-4 py-2 leading-none border rounded border-yellow text-yellow hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
-                        {user.email}
+                        {userInDB.username ? `@${userInDB.username}` : user.email}
                       </a>
                     }
                   </div>

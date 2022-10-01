@@ -92,6 +92,40 @@ const Home = () => {
     // if (results && results.length > 0) setPlants(results);
   }, [plants]);
 
+  const feedPlant = useCallback(async (plant: Plant, user: User) => {
+    let today = new Date();
+    // let daysBetweenWatering = plant.daysBetweenWatering ? plant.daysBetweenWatering : 10;
+    // TODO ::::: Calculate next feeding date
+    // let newWateringDate = today.getTime() + (daysBetweenWatering * 86400000);
+    // Update DB
+    await setDoc(
+      doc(
+        collection(doc(db, 'users', user.uid), 'plantTrackingDetails'),
+        plant.id),
+      { dateLastFed: today.getTime() },
+      { merge: true }
+    );
+    // Update state
+    // let newDate = new Date(newWateringDate);
+    // plant.dateToWaterNext = newDate;
+    plant.dateLastFed = today;
+    let filtered = plants ?
+      plants.filter((p) => p.id !== plant.id)
+      : [];
+    filtered.push(plant);
+    let results = filtered
+      .sort((a, b) => {
+        if (a.species.toLocaleLowerCase() < b.species.toLocaleLowerCase()) {
+          return -1;
+        }
+        else if (a.species.toLocaleLowerCase() > b.species.toLocaleLowerCase()) {
+          return 1;
+        }
+        else return 0;
+      });
+    if (results && results.length > 0) setPlants(results);
+  }, [plants]);
+
   useEffect(() => {
     if (!user && !loading) {
       setStatus(UNAUTHORIZED);
@@ -118,6 +152,7 @@ const Home = () => {
                     key={uuidv4()}
                     plant={plant}
                     waterPlant={() => waterPlant(plant, user)}
+                    feedPlant={() => feedPlant(plant, user)}
                     removePlant={remove}
                     userID={user.uid}
                   />
@@ -131,7 +166,7 @@ const Home = () => {
         })
         .finally(() => setIsLoading(false))
     }
-  }, [user, loading, plants, remove, waterPlant, filterActive]);
+  }, [user, loading, plants, remove, waterPlant, filterActive, feedPlant]);
   // end useEffect
 
   const filterPlants = () => {
@@ -162,6 +197,7 @@ const Home = () => {
             key={uuidv4()}
             plant={plant}
             waterPlant={() => waterPlant(plant, user)}
+            feedPlant={() => feedPlant(plant, user)}
             removePlant={remove}
             userID={user.uid}
           />
@@ -179,29 +215,34 @@ const Home = () => {
   }
 
   return (
-    <div className='text-yellow bg-green min-w-screen' /**Container */>
+    <div className='text-yellow min-w-screen bg-green' /**Container */>
       <NextHead /**Header */ />
       <NavBar />
 
-      <div className='min-h-screen p-4 pt-0 flex flex-col items-center m-auto mt-0'>
+      <div className='min-h-screen p-4 pt-28 flex flex-col items-center m-auto mt-0'>
 
-        <div className='m-0 italic p-0 text-3xl' style={{ lineHeight: 1.15, }}>
+        {/* <div className='m-0 italic p-0 text-3xl' style={{ lineHeight: 1.15, }}>
           <a>TRACKING</a>
-        </div>
+        </div> */}
 
         {isLoading && <ReactLoading type='bars' color="#fff" />}
 
         {plants && plants.length > 0 ?
           // If user has plants, show plants
-          <div>
-            <div className="flex justify-end pb-3 pt-6 px-4">
+          <div className="relative">
+            <div 
+              className="absolute top-0 right-2 pb-3 pt-3 px-4 bg-[#2bb32b] w-fit hover:text-green hover:bg-yellow"
+              style={{
+                borderRadius: '0 222px'
+              }}
+            >
               <Link href="/AddPlantTrackingDetails" passHref>
-                <a className='hover:text-green hover:bg-yellow cursor-pointer border rounded-sm border-yellow p-2 m-2'>
-                  Add a plant!
+                <a className='cursor-pointer p-2 m-2'>
+                  Add a plant +
                 </a>
               </Link>
             </div>
-            <div className="flex justify-between items-center pr-2">
+            <div className="flex justify-between items-center pr-2 pl-2 pb-1 pt-16">
               <p>
                 You are tracking {plants.length} plants
               </p>
@@ -245,7 +286,7 @@ const Home = () => {
               </p>
               <Link href="/AddPlantTrackingDetails" passHref>
                 <a className='hover:text-green hover:bg-yellow cursor-pointer border rounded-sm border-yellow p-2 m-2'>
-                  Add a plant!
+                  Add a plant +
                 </a>
               </Link>
             </div>

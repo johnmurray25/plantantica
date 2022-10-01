@@ -1,3 +1,4 @@
+export {};
 // import {EventContext, pubsub} from "firebase-functions/v1";
 // import admin, {firestore} from "firebase-admin";
 // import nodemailer from "nodemailer";

@@ -1,5 +1,5 @@
 import { User } from "firebase/auth";
-import { collection, doc, DocumentData, DocumentSnapshot, getDoc, getDocs, query, QueryDocumentSnapshot, setDoc, where } from "firebase/firestore"
+import { collection, deleteDoc, doc, DocumentData, DocumentSnapshot, getDoc, getDocs, query, QueryDocumentSnapshot, setDoc, where } from "firebase/firestore"
 import Plant from "../../domain/Plant";
 import db from "../firebase/db"
 import { getPlants, migratePlantData } from "./PlantService"
@@ -44,6 +44,7 @@ export const initializeUser = async (user: User) => {
     let userData = {
         email: user.email,
         displayName: user.displayName,
+        dailyEmails: true,
     }
     try {
         await setDoc(userDoc, userData, { merge: true })
@@ -196,4 +197,12 @@ export const unsubscribeFromDailyEmails = async (uid: string): Promise<boolean> 
         console.error(e)
         return false
     }
+}
+
+export const deleteUser = async (u: User) => {
+    let userDoc = await getUserByUid(u.uid);
+    deleteDoc(userDoc.ref)
+        .then(() => u.delete())
+        .catch(console.error);
+    // TODO delete images in storage
 }

@@ -98,10 +98,12 @@ function Home() {
             {
                 user &&
                 <div>
-                    <div className='relative w-full med:w-3/6 m-auto text-center justify-center pt-3 px-6 med:border border-yellow rounded '>
+                    <div className='relative w-full med:w-3/6 m-auto text-center justify-center pt-28 px-6 med:border border-yellow rounded '>
                         {profPicUrl && profPicUrl != '' &&
                             isProfPicLoading ?
-                            <ReactLoading type='spinningBubbles' color="#fff" />
+                            <div className='relative w-fit flex justify-center m-auto border rounded-xl p-3'>
+                                <ReactLoading type='spinningBubbles' color="#fff" />
+                            </div>
                             :
                             <div className='relative w-fit flex justify-center m-auto border rounded-xl p-3'>
                                 <Image

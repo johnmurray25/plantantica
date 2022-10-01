@@ -70,7 +70,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
     // Check if image to be processed
     if (imageUrl) {
       // Image was already saved 
-      if (!selectedFile) {
+      if (!selectedFile && plant && plant.picture) {
         savedFileName = plant.picture;
       } else {
         try {
@@ -97,12 +97,12 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       dateToFeedNext: dateToFeedNext ? dateToFeedNext.getTime() : null,
       lightRequired: lightRequired,
       dateCreated: (new Date()).getTime(),
-      picture: savedFileName ? savedFileName : plant.picture ? plant.picture : '',
+      picture: savedFileName ? savedFileName : plant ? plant.picture ? plant.picture : '' : '',
     };
     let docRef: DocumentReference<DocumentData> = null;
     if (plant) {
       // Update an existing document
-      await setDoc(doc(collection(doc(db, 'users', user.uid), 'plantTrackingDetails'), plant.id), plantTrackingDetails, {merge: true});
+      await setDoc(doc(collection(doc(db, 'users', user.uid), 'plantTrackingDetails'), plant.id), plantTrackingDetails, { merge: true });
       console.log('Updated existing plant tracking details');
     } else {
       // Add a new document with a generated id.
