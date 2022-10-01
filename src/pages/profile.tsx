@@ -292,7 +292,7 @@ function Home() {
                                     }
                                 </h1>
                                 <h3 className='p-5 pt-0 flex justify-center items-center text-xl'>
-                                    <p className='font-mono '>
+                                    <p className=' '>
                                         username:
                                     </p>
                                     {editMode ?
@@ -321,7 +321,7 @@ function Home() {
                                     }
                                 </h3>
                                 <h3 className='text-lg flex justify-center'>
-                                    <p className='font-mono pr-8'>
+                                    <p className=' pr-8'>
                                         email:
                                     </p>
                                     <p className='italic pl-8'>
@@ -331,21 +331,7 @@ function Home() {
                                 <h3 className='pt-10'>
                                     {trackingMsg}
                                 </h3>
-                                <div className="flex justify-evenly text-center pb-0 pt-10 w-full">
-                                    <a
-                                        className='cursor-pointer hover:bg-yellow hover:text-green border border-yellow rounded-lg py-4 px-7 mx-2'
-                                        onClick={signOut}
-                                    >
-                                        Sign out
-                                    </a>
-                                    <a
-                                        className='cursor-pointer hover:bg-red-600 hover:text-white border border-yellow hover:border-red-600 rounded-lg py-4 px-7 mx-2'
-                                        onClick={deleteAccount}
-                                    >
-                                        Delete account
-                                    </a>
-                                </div>
-                                <div className='mt-20 '>
+                                <div className='mt-10 '>
                                     Receive daily emails if my plants need water &nbsp;&nbsp;&nbsp;
                                     <label className="relative inline-block w-14 h-8">
                                         <input type="checkbox"
@@ -370,6 +356,26 @@ function Home() {
                                         />
                                         <span className={`${toggleStyles.slider} ${toggleStyles.round}`}></span>
                                     </label>
+                                </div>
+                                <div className="flex justify-evenly text-center pb-0 pt-10 w-full">
+                                    <a
+                                        className='cursor-pointer hover:bg-yellow hover:text-green border border-[#29bc29] py-4 px-7 mx-2'
+                                        style={{
+                                            borderRadius: "0 222px",
+                                        }}
+                                        onClick={signOut}
+                                    >
+                                        Sign out
+                                    </a>
+                                    <a
+                                        className='cursor-pointer hover:bg-red-600 hover:text-white border border-red-600 py-4 px-7 mx-2'
+                                        style={{
+                                            borderRadius: "222px 0",
+                                        }}
+                                        onClick={deleteAccount}
+                                    >
+                                        Delete account
+                                    </a>
                                 </div>
                                 {/* <div className={toggleStyles.toggleButtonCover}>
                                     <div className={toggleStyles.buttonCover}>
