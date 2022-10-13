@@ -82,16 +82,16 @@ const PlantCard: FC<Props> = (props) => {
         if (wateringState == 'good')
             return sharedStyle + ' bg-[#145914] border-[#29bc29] ';
         if (wateringState == 'check')
-            return sharedStyle + 'bg-[#BDC581] text-black ';
+            return sharedStyle + 'bg-[#b2b22c] text-black ';
         if (wateringState == 'bad')
-            return 'rounded-md bg-red-900';
+            return 'rounded-md bg-[#b2b22c] text-black';
     }
     const getWtrBtnStyle = () => {
         let classNames = "flex cursor-pointer text-sm px-4 py-2 leading-none border rounded hover:border-transparent " +
             "hover:text-green hover:bg-yellow mt-4 lg:mt-2 ";
-        if (wateringState == 'good' || wateringState == 'bad')
+        if (wateringState == 'good')
             classNames += " border-yellow text-yellow ";
-        else if (wateringState == 'check')
+        else
             classNames += " border-black text-black ";
         // when running 'next build' etc.
         if (!width) return classNames;
@@ -102,7 +102,7 @@ const PlantCard: FC<Props> = (props) => {
         return classNames;
     }
     const getIconStyle = () => {
-        if (wateringState == 'check')
+        if (wateringState != 'good')
             return 'text-black';
         return 'text-yellow';
     }
@@ -162,8 +162,8 @@ const PlantCard: FC<Props> = (props) => {
                 </div>
             }
 
-            <div className="px-5 py-1 ">
-                <div className='flex justify-between text-xs '>
+            <div className="px-5 py-1 text-lg">
+                <div className='flex justify-between text-sm '>
                     {plant.dateObtained &&
                         <p>
                             had since {plant.dateObtained.toLocaleDateString()}
@@ -174,7 +174,7 @@ const PlantCard: FC<Props> = (props) => {
                         :
                         <IoSunnySharp className={getIconStyle()} />
                     }
-                    <p>
+                    <p className='text-lg'>
                         water every {plant.daysBetweenWatering} days
                     </p>
                 </div>
@@ -222,7 +222,8 @@ const PlantCard: FC<Props> = (props) => {
                             <br></br>
                             {`feed next ${plant.dateToFeedNext.toLocaleDateString()}`}
                         </div>
-                    </div>}
+                    </div>
+                }
             </div>
         </div>)
 }

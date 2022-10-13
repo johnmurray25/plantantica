@@ -264,7 +264,7 @@ const Home = () => {
                   </a>
                   :
                   <a
-                    className='cursor-pointer bg-[#53984D] text-yellow rounded justify-center h-12 w-8 text-center content-center'
+                    className='cursor-pointer bg-[#2bb32b] text-yellow rounded justify-center h-12 w-8 text-center content-center'
                     onClick={filterPlants}
                   >
                     &rarr;
