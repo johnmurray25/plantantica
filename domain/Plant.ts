@@ -10,4 +10,5 @@ export default interface Plant {
     lightRequired: string | number;
     picture?: string;
     dateCreated?: Date;
+    careInstructions?: string;
 }

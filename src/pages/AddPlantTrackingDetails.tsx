@@ -16,6 +16,7 @@ import { compressImage, uploadFile, getImageUrl, deleteImage } from "../service/
 import NextHead from "./components/NextHead";
 import GenericDatePicker from "./components/GenericDatePicker";
 import customImageLoader from "../util/customImageLoader";
+import TextField from "./components/TextField";
 
 const MILLIS_IN_DAY = 86400000;
 
@@ -27,6 +28,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const router = useRouter();
   const [user] = useAuthState(auth);
   const todaysDate = new Date();
+
   const [plant]: [Plant, Dispatch<SetStateAction<Plant>>] = useState(props.plant);
   const [species, setSpecies] = useState(plant ? plant.species : "");
   const [dateObtained, setDateObtained] = useState(plant ? plant.dateObtained : todaysDate);
@@ -36,6 +38,8 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const [dateLastFed, setDateLastFed] = useState(plant ? plant.dateLastFed : null);
   const [dateToFeedNext, setDateToFeedNext] = useState(plant ? plant.dateToFeedNext : null);
   const [lightRequired, setLightRequired] = useState(plant ? plant.lightRequired : 2);
+  const [careInstructions, setCareInstructions] = useState(plant ? plant.careInstructions : '');
+
   const [selectedFile, setSelectedFile]: [File, Dispatch<SetStateAction<File>>] = useState(null);
   const [imageUrl, setImageUrl] = useState('');
   const [loadingStatus, setLoadingStatus] = useState(null);
@@ -55,7 +59,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
     event.preventDefault();
     // Validation
     if (!species) {
-      alert('You must enter a species 🙂');
+      alert("You must enter a species. Or, give the plant a name");
       return;
     }
     if (!dateLastWatered || !dateToWaterNext) {
@@ -98,6 +102,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       lightRequired: lightRequired,
       dateCreated: (new Date()).getTime(),
       picture: savedFileName ? savedFileName : plant ? plant.picture ? plant.picture : '' : '',
+      careInstructions: careInstructions,
     };
     let docRef: DocumentReference<DocumentData> = null;
     if (plant) {
@@ -163,13 +168,13 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
               {(() => {
                 switch (page) {
                   case 1:
-                    return ((plant ? 'EDIT' : 'ADD') + ' PLANT INFO')
+                    return ((plant ? 'Edit' : 'Add') + ' Plant Info')
                   case 2:
-                    return ((plant ? 'EDIT' : 'ADD') + ' WATER INFO')
+                    return ((plant ? 'Edit' : 'Add') + ' Plant Info')
                   case 3:
-                    return ((plant ? 'EDIT' : 'ADD') + ' FEEDING INFO')
+                    return ((plant ? 'Edit' : 'Add') + ' Plant Info')
                   case 4:
-                    return ((plant ? 'EDIT' : 'ADD') + ' PLANT HISTORY')
+                    return ((plant ? 'Edit' : 'Add') + ' Plant Info')
                 }
               })()}
             </a>
@@ -216,7 +221,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                             placeholder="Enter a species..."
                             value={species}
                             onChange={(e) => setSpecies(e.target.value)}
-                            required={true}
+                            required={true} 
                           />
                           <label htmlFor="lightReq">
                             Requires
@@ -340,6 +345,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                     return (
                       // Page 4: Other info
                       <div>
+                        {/* Image */}
                         <div className="flex justify-center m-auto ">
                           {imageUrl &&
                             <div>
@@ -357,7 +363,8 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                             </div>
                           }
                         </div>
-                        <div className="grid grid-cols-1 gap-x-2 gap-y-6 m-7 items-center px-10">
+                        {/* Date obtained */}
+                        <div className="grid grid-cols-1 gap-x-2 gap-y-6 m-7 items-center px-10 w-fit">
                           <GenericDatePicker
                             label='Obtained plant on'
                             value={dateObtained}
@@ -366,7 +373,21 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                             }}
                           />
                         </div>
-                      </div>)
+                        {/* Other care instructions */}
+                        <div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center pr-10' >
+                          <label htmlFor='species'>
+                            Other care instructions
+                          </label>
+                          <TextField
+                            placeholder=''
+                            value={careInstructions}
+                            onChange={setCareInstructions}
+                            textarea={true}
+                            width={40}
+                          />
+                        </div>
+                      </div>
+                    )
                 }
               })()}
             </div>

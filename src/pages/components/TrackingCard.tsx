@@ -13,6 +13,9 @@ import DropDownMenu from './DropDownMenu';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import customImageLoader from '../../util/customImageLoader';
 import { User } from 'firebase/auth';
+import { useRouter } from 'next/router';
+import { IoPencil } from '@react-icons/all-files/io5/IoPencil';
+import { IoTrash } from '@react-icons/all-files/io5/IoTrash';
 
 interface Props {
     plant: Plant;
@@ -30,6 +33,7 @@ const MD_WIDTH = 1140;
 const LG_WIDTH = 1530; // computers will be larger than this
 
 const PlantCard: FC<Props> = (props) => {
+    const router = useRouter();
 
     // dimensions
     const { width, height } = useWindowDimensions();
@@ -42,6 +46,11 @@ const PlantCard: FC<Props> = (props) => {
     // state
     const [wateringState, setWateringState] = useState('good');
     const [imageURL, setImageURL] = useState('');
+    const [showInstructions, setShowInstructions] = useState(false);
+
+    const toggleInstructions = () => {
+        setShowInstructions(!showInstructions);
+    }
 
     useEffect(() => {
         if (!plant) {
@@ -80,11 +89,11 @@ const PlantCard: FC<Props> = (props) => {
         if (!plant) return 'hidden';
         let sharedStyle = width > SM_WIDTH ? 'rounded-md p-0 m-2 ' : 'rounded p-0 '
         if (wateringState == 'good')
-            return sharedStyle + ' bg-[#145914] border-[#29bc29] ';
+            return sharedStyle + ' bg-[#286314] border-[#29bc29] ';
         if (wateringState == 'check')
-            return sharedStyle + 'bg-[#b2b22c] text-black ';
+            return sharedStyle + 'bg-[#afaf63] text-black ';
         if (wateringState == 'bad')
-            return 'rounded-md bg-[#b2b22c] text-black';
+            return 'rounded-md bg-[#afaf63] text-black';
     }
     const getWtrBtnStyle = () => {
         let classNames = "flex cursor-pointer text-sm px-4 py-2 leading-none border rounded hover:border-transparent " +
@@ -128,8 +137,21 @@ const PlantCard: FC<Props> = (props) => {
 
     return plant && (
         <div key={plant.id} className={getBgStyle()}>
-            {plant.picture && imageURL && imageURL !== '' ?
-                <div className='flex px-0 mx-0 pt-5 pb-0 w-full relative'>
+            <div className='relative pt-2'>
+                <div className="w-full flex justify-between pt-2 pr-2">
+                    {/* <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} /> */}
+                    <div className={`flex items-center mx-4 mb-1 px-6 py-1 hover:bg-white hover:text-black hover:border-white cursor-pointer border rounded p-2 ${wateringState == 'good' ? 'border-white' : 'border-black'}`}
+                        onClick={() => router.push(`/EditPlantTrackingDetails/${plant.id}`)}>
+                        <IoPencil />
+                    </div>
+                    <div className={`flex items-center mx-4 mb-1 px-6 py-1 hover:bg-red-500 hover:text-white hover:border-red-500 cursor-pointer border rounded p-2 ${wateringState == 'good' ? 'border-white' : 'border-black'}`}
+                        onClick={() => props.removePlant(plant)}>
+                        <IoTrash />
+                    </div>
+                </div>
+            </div>
+            {plant.picture && imageURL && imageURL !== '' &&
+                <div className='flex px-0 mx-0 pt-2 pb-2 w-full relative'>
                     <Image
                         src={imageURL}
                         alt={`photo of ${plant.species}`}
@@ -138,30 +160,13 @@ const PlantCard: FC<Props> = (props) => {
                         width={imgWidth}
                         height={Math.min(imgHeight, imgWidth)}
                         className='rounded' />
-                    <div className="absolute w-full bg-gray-900 text-white italic opacity-70 bottom-0 ">
-                        <h1>
-                            <a className='hover:underline text-2xl leading-loose pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
-                                {plant.species}
-                            </a>
-                        </h1>
-                    </div>
-                    <div className="absolute w-full flex justify-end pt-2 pr-2 ">
-                        <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
-                    </div>
-                </div>
-                :
-                <div className='relative'>
-                    <div className="absolute w-full flex justify-end pt-2 pr-2 ">
-                        <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} />
-                    </div>
-                    <h1>
-                        <a className='hover:underline text-2xl leading-loose pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
-                            {plant.species}
-                        </a>
-                    </h1>
                 </div>
             }
-
+            <h1 className='text-left p-1'>
+                <a className='hover:underline text-3xl italic pl-2 pt-5 leading-7' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
+                    {plant.species}
+                </a>
+            </h1>
             <div className="px-5 py-1 text-lg">
                 <div className='flex justify-between text-sm '>
                     {plant.dateObtained &&
@@ -178,7 +183,30 @@ const PlantCard: FC<Props> = (props) => {
                         water every {plant.daysBetweenWatering} days
                     </p>
                 </div>
-                <div className="flex justify-start relative">
+                {/* Instructions & Updates buttons */}
+                <div className='relative'>
+                    <div
+                        className={`w-fit top-2 left-2 text-sm hover:bg-white hover:text-black hover:border-white cursor-pointer border rounded py-1 px-5  
+                            ${wateringState == 'good' ? 'border-white' : 'border-black'}
+                            ${plant && plant.careInstructions ? 'opacity-100' : 'opacity-0 h-0'}
+                            `}
+                        onClick={toggleInstructions}
+                    >
+                        Instructions
+                        &nbsp;
+                        {showInstructions ? <span>&nbsp;&darr;</span> : <span>&rarr;</span>}
+                    </div>
+                    {/* <div className={`absolute top-2 right-2 hover:bg-white hover:text-black hover:border-white cursor-pointer border rounded py-1 px-5 
+                    ${wateringState == 'good' ? 'border-white' : 'border-black'}
+                    ${plant && true ? 'opacity-100' : 'opacity-0'}
+                    `}>
+                        Updates
+                    </div> */}
+                </div>
+                <div className={`py-2 ${showInstructions ? 'opacity-100' : 'opacity-0 h-0'} transition ease-linear duration-100`}>
+                    {plant && plant.careInstructions}
+                </div>
+                <div className='flex justify-start relative mt-0'>
                     <a onClick={() => {
                         if (!confirm('Mark as watered today?')) {
                             return;
@@ -186,13 +214,13 @@ const PlantCard: FC<Props> = (props) => {
                         props.waterPlant().then(() => setWateringState('good'));
                     }}
                         className={getWtrBtnStyle()}>
-                        <IoWater className="cursor-pointer text-blue" />
+                        <IoWater className={`cursor-pointer ${wateringState=='good'?'text-blue-400':'text-blue-600'}`} />
                         &nbsp;&nbsp;
                         Water?
                         &nbsp;&nbsp;
-                        <IoWater className="cursor-pointer text-blue" />
+                        <IoWater className={`cursor-pointer ${wateringState=='good'?'text-blue-400':'text-blue-600'}`} />
                     </a>
-                    <div className='pt-4'>
+                    <div >
                         last watered {plant.dateLastWatered.toLocaleDateString()}
                         <br></br>
                         <p className={wateringState != 'good' ? 'font-extrabold' : ''}>
@@ -211,11 +239,11 @@ const PlantCard: FC<Props> = (props) => {
                                 .catch(console.error);
                         }}
                             className={getWtrBtnStyle()}>
-                            <IoLeaf className="cursor-pointer " style={{ color: 'green' }} />
+                            <IoLeaf className={`cursor-pointer ${wateringState == 'good' ? 'text-lime-500' : 'text-lime-800'}`} />
                             &nbsp;&nbsp;
                             Feed?
                             &nbsp;&nbsp;
-                            <IoLeaf className="cursor-pointer " style={{ color: 'green' }} />
+                            <IoLeaf className={`cursor-pointer ${wateringState == 'good' ? 'text-lime-500' : 'text-lime-800'}`} />
                         </a>
                         <div className='pt-2'>
                             {`last fed ${plant.dateLastFed.toLocaleDateString()}`}

@@ -33,6 +33,7 @@ const getPlantDetails = async (id: string | any, user: User) => {
             lightRequired: d.get('lightRequired'),
             dateCreated: new Date(d.get('dateCreated')),
             picture: d.get('picture'),
+            careInstructions: d.get('careInstructions')
         }
     } catch (e) {
         console.error(e);

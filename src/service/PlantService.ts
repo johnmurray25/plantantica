@@ -27,6 +27,7 @@ function mapDocsToPlants(docs: QueryDocumentSnapshot<DocumentData>[]) {
             lightRequired: doc.get('lightRequired'),
             dateCreated: new Date(doc.get('dateCreated')),
             picture: doc.get('picture'),
+            careInstructions: doc.get('careInstructions'),
         }
     })
     .map((plant) => {

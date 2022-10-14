@@ -231,7 +231,7 @@ const Home = () => {
           // If user has plants, show plants
           <div className="relative">
             <div 
-              className="absolute top-0 right-2 pb-3 pt-3 px-4 bg-[#2bb32b] w-fit hover:text-green hover:bg-yellow"
+              className="absolute top-0 right-2 pb-3 pt-3 px-4 bg-[#145914] w-fit hover:text-green hover:bg-yellow"
               style={{
                 borderRadius: '0 222px'
               }}
