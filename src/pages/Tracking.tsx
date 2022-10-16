@@ -126,50 +126,7 @@ const Home = () => {
     if (results && results.length > 0) setPlants(results);
   }, [plants]);
 
-  useEffect(() => {
-    if (!user && !loading) {
-      setStatus(UNAUTHORIZED);
-      return
-    }
-    if (plants === null) {
-      setIsLoading(true);
-      loadPlantData(user)
-        .then(data => {
-          setPlants(data)
-          // setFilteredPlants(data)
-          if (data) {
-            // setTotalPlants(data.length)
-            setTrackingCards(
-              data
-                .sort((a, b) => {
-                  if (a.dateToWaterNext > b.dateToWaterNext) return 1
-                  else if (a.dateToWaterNext < b.dateToWaterNext) return -1
-                  return a.species < b.species ? -1 : 1
-                })
-                .map((plant) => (
-                  // <div key={i} >
-                  <TrackingCard
-                    key={uuidv4()}
-                    plant={plant}
-                    waterPlant={() => waterPlant(plant, user)}
-                    feedPlant={() => feedPlant(plant, user)}
-                    removePlant={remove}
-                    userID={user.uid}
-                  />
-                  // </div >
-                )))
-          }
-        }, e => {
-          console.error(e);
-          setStatus(ERR_STATUS)
-          setIsLoading(false)
-        })
-        .finally(() => setIsLoading(false))
-    }
-  }, [user, loading, plants, remove, waterPlant, filterActive, feedPlant]);
-  // end useEffect
-
-  const filterPlants = () => {
+  const filterPlants = useCallback(() => {
     // filter plants
     let filteredResults =
       (searchText ?
@@ -206,7 +163,61 @@ const Home = () => {
     setTrackingCards(filteredCards)
     filteredResults.map(p => p.species).forEach(console.log)
     if (searchText) setFilterActive(true)
-  }
+  }, [feedPlant, plants, remove, searchText, user, waterPlant])
+
+
+  useEffect(() => {
+    if (!user && !loading) {
+      setStatus(UNAUTHORIZED);
+      return
+    }
+    const handleKeyPress = (e) => {
+      const key = e.key;
+      if (key === 'Enter') {
+        filterPlants()
+      }
+    };
+    document.addEventListener('keydown', handleKeyPress)
+    if (plants === null) {
+      setIsLoading(true);
+      loadPlantData(user)
+        .then(data => {
+          setPlants(data)
+          // setFilteredPlants(data)
+          if (data) {
+            // setTotalPlants(data.length)
+            setTrackingCards(
+              data
+                .sort((a, b) => {
+                  if (a.dateToWaterNext > b.dateToWaterNext) return 1
+                  else if (a.dateToWaterNext < b.dateToWaterNext) return -1
+                  return a.species < b.species ? -1 : 1
+                })
+                .map((plant) => (
+                  // <div key={i} >
+                  <TrackingCard
+                    key={uuidv4()}
+                    plant={plant}
+                    waterPlant={() => waterPlant(plant, user)}
+                    feedPlant={() => feedPlant(plant, user)}
+                    removePlant={remove}
+                    userID={user.uid}
+                  />
+                  // </div >
+                )))
+          }
+        }, e => {
+          console.error(e);
+          setStatus(ERR_STATUS)
+          setIsLoading(false)
+        })
+        .finally(() => setIsLoading(false))
+    }
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    }
+  }, [user, loading, plants, remove, waterPlant, filterActive, feedPlant, filterPlants]);
+  // end useEffect
 
   const cancelFilter = () => {
     setSearchText('')
@@ -230,7 +241,7 @@ const Home = () => {
         {plants && plants.length > 0 ?
           // If user has plants, show plants
           <div className="relative">
-            <div 
+            <div
               className="absolute top-0 right-2 pb-3 pt-3 px-4 bg-[#145914] w-fit hover:text-green hover:bg-yellow"
               style={{
                 borderRadius: '0 222px'
@@ -264,7 +275,7 @@ const Home = () => {
                   </a>
                   :
                   <a
-                    className='cursor-pointer bg-[#2bb32b] text-yellow rounded justify-center h-12 w-8 text-center content-center'
+                    className='cursor-pointer bg-[#145914] text-yellow rounded justify-center h-12 w-8 text-center content-center'
                     onClick={filterPlants}
                   >
                     &rarr;

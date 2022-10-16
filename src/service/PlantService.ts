@@ -1,9 +1,11 @@
+import { DocumentSnapshot } from "@google-cloud/firestore";
 import { User } from "firebase/auth";
-import { collection, deleteDoc, doc, DocumentData, getDocs, query, QueryDocumentSnapshot, setDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, DocumentData, getDoc, getDocs, query, QueryDocumentSnapshot, setDoc, where } from "firebase/firestore";
 import Plant from "../../domain/Plant";
 
 import db from '../firebase/db';
 import { deleteImage } from "./FileService";
+import { getUserByUid, mapDocToUser } from "./UserService";
 
 function userDoc(user: User) {
     return doc(db, 'users', user.uid);
@@ -30,18 +32,18 @@ function mapDocsToPlants(docs: QueryDocumentSnapshot<DocumentData>[]) {
             careInstructions: doc.get('careInstructions'),
         }
     })
-    .map((plant) => {
-        // Only assign feeding dates if not null
-        if (plant.dateLastFed) {
-            plant.dateLastFed = new Date(plant.dateLastFed);
-        }
-        if (plant.dateToFeedNext) {
-            plant.dateToFeedNext = new Date(plant.dateToFeedNext);
-        }
-        return plant;
-    });
+        .map((plant) => {
+            // Only assign feeding dates if not null
+            if (plant.dateLastFed) {
+                plant.dateLastFed = new Date(plant.dateLastFed);
+            }
+            if (plant.dateToFeedNext) {
+                plant.dateToFeedNext = new Date(plant.dateToFeedNext);
+            }
+            return plant;
+        });
 }
- 
+
 // function mapDocToPlant(doc: QueryDocumentSnapshot<DocumentData>) {
 //     let plant = {
 //         id: doc.id,
@@ -101,4 +103,65 @@ export const migratePlantData = async (user: User) => {
         setDoc(destinationDoc, plant.data())
             .then(() => console.log('saved plant document'), console.error)
     })
+}
+
+export const getPlantById = async (uid: string, plantId: string): Promise<Plant> => {
+    let plants = await getPlants(uid)
+
+    let filtered = plants.filter(p => p.id === plantId)
+
+    if (filtered.length > 0) {
+        return filtered[0]
+    } else {
+        return null
+    }
+}
+
+//-------------------------------- UPDATES ----------------------------------------------------//
+export interface Update {
+    image?: string;
+    title: string;
+    description?: string;
+    dateCreated: Date;
+    id?: string;
+}
+
+export const getUpdatesForPlant = async (uid: string, plantId: string): Promise<Update[]> => {
+    let snapshot = await getDocs(collection(db, `users/${uid}/plantTrackingDetails/${plantId}/updates`))
+    return snapshot.docs
+        .map(doc => ({
+            image: doc.get('image'),
+            title: doc.get('title'),
+            description: doc.get('description'),
+            dateCreated: new Date(doc.get('dateCreated')),
+            id: doc.id,
+        }))
+        .sort((a,b) => a.dateCreated.getTime() < b.dateCreated.getTime() ? 1 : -1)
+}
+
+export const saveUpdateForPlant = async (uid: string, plantId: string, update: Update, id?: string) => {
+    console.log(`plantId: ${plantId}`)
+    const colRef = collection(db, `users/${uid}/plantTrackingDetails/${plantId}/updates`);
+
+    if (id) {
+        setDoc(doc(colRef, id),
+            {
+                ...update,
+                dateCreated: update && update.dateCreated ? update.dateCreated.getTime() : new Date().getTime(),
+            },
+            { merge: true }
+        ).catch(console.error);
+    } else {
+        addDoc(colRef,
+            {
+                ...update,
+                dateCreated: update && update.dateCreated ? update.dateCreated.getTime() : new Date().getTime(),
+            }
+        ).catch(console.error);
+    }
+}
+
+export const deleteUpdateForPlant = (uid: string, plantId: string, updateId: string) => {
+    const docRef = doc(db, `users/${uid}/plantTrackingDetails/${plantId}/updates/${updateId}`);
+    deleteDoc(docRef);
 }

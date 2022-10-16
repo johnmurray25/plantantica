@@ -29,7 +29,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const [user] = useAuthState(auth);
   const todaysDate = new Date();
 
-  const [plant]: [Plant, Dispatch<SetStateAction<Plant>>] = useState(props.plant);
+  const [plant] = useState<Plant>(props.plant);
   const [species, setSpecies] = useState(plant ? plant.species : "");
   const [dateObtained, setDateObtained] = useState(plant ? plant.dateObtained : todaysDate);
   const [daysBetweenWatering, setDaysBetweenWatering] = useState(plant ? plant.daysBetweenWatering : 7);
@@ -40,7 +40,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const [lightRequired, setLightRequired] = useState(plant ? plant.lightRequired : 2);
   const [careInstructions, setCareInstructions] = useState(plant ? plant.careInstructions : '');
 
-  const [selectedFile, setSelectedFile]: [File, Dispatch<SetStateAction<File>>] = useState(null);
+  const [selectedFile, setSelectedFile] = useState<File>(null);
   const [imageUrl, setImageUrl] = useState('');
   const [loadingStatus, setLoadingStatus] = useState(null);
   const [page, setPage] = useState(1);

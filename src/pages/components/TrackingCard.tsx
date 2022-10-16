@@ -16,6 +16,8 @@ import { User } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { IoPencil } from '@react-icons/all-files/io5/IoPencil';
 import { IoTrash } from '@react-icons/all-files/io5/IoTrash';
+import TimelineInCard from './TimelineInCard';
+import { getUpdatesForPlant } from '../../service/PlantService';
 
 interface Props {
     plant: Plant;
@@ -47,6 +49,8 @@ const PlantCard: FC<Props> = (props) => {
     const [wateringState, setWateringState] = useState('good');
     const [imageURL, setImageURL] = useState('');
     const [showInstructions, setShowInstructions] = useState(false);
+    const [showUpdates, setShowUpdates] = useState(false);
+    const [updates, setUpdates] = useState([])
 
     const toggleInstructions = () => {
         setShowInstructions(!showInstructions);
@@ -65,6 +69,9 @@ const PlantCard: FC<Props> = (props) => {
                     console.error('Failed to load image from storage bucket')
                 });
         }
+        getUpdatesForPlant(userID, plant.id)
+            .then(setUpdates)
+            .catch(console.error);
         let today = new Date();
         // CHECK state
         if (today.toLocaleDateString() == dateToWaterNext.toLocaleDateString()) {
@@ -97,7 +104,7 @@ const PlantCard: FC<Props> = (props) => {
     }
     const getWtrBtnStyle = () => {
         let classNames = "flex cursor-pointer text-sm px-4 py-2 leading-none border rounded hover:border-transparent " +
-            "hover:text-green hover:bg-yellow mt-4 lg:mt-2 ";
+            "hover:text-green hover:bg-[#8de2ef] mt-4 lg:mt-2 ";
         if (wateringState == 'good')
             classNames += " border-yellow text-yellow ";
         else
@@ -186,9 +193,9 @@ const PlantCard: FC<Props> = (props) => {
                 {/* Instructions & Updates buttons */}
                 <div className='relative'>
                     <div
-                        className={`w-fit top-2 left-2 text-sm hover:bg-white hover:text-black hover:border-white cursor-pointer border rounded py-1 px-5  
-                            ${wateringState == 'good' ? 'border-white' : 'border-black'}
-                            ${plant && plant.careInstructions ? 'opacity-100' : 'opacity-0 h-0'}
+                        className={`w-fit top-2 left-2 text-sm hover:bg-[#ffff63] hover:border-[#ffff63] cursor-pointer border rounded py-1 px-5  
+                            ${wateringState == "good" ? "border-white hover:text-black" : "border-black"}
+                            ${plant && plant.careInstructions ? "opacity-100" : "opacity-0 h-0"}
                             `}
                         onClick={toggleInstructions}
                     >
@@ -196,17 +203,36 @@ const PlantCard: FC<Props> = (props) => {
                         &nbsp;
                         {showInstructions ? <span>&nbsp;&darr;</span> : <span>&rarr;</span>}
                     </div>
-                    {/* <div className={`absolute top-2 right-2 hover:bg-white hover:text-black hover:border-white cursor-pointer border rounded py-1 px-5 
-                    ${wateringState == 'good' ? 'border-white' : 'border-black'}
-                    ${plant && true ? 'opacity-100' : 'opacity-0'}
-                    `}>
-                        Updates
-                    </div> */}
+                    <div className='absolute top-2 right-2 text-sm '>
+                        <div className="flex ">
+                            <div
+                                className={`hover:bg-[#ffaf63] hover:text-black hover:border-[#ffaf63] cursor-pointer border rounded py-1 px-5 mx-1 
+                                    ${wateringState == 'good' ? 'border-white' : 'border-black'}`}
+                                onClick={() => setShowUpdates(!showUpdates)}
+                            >
+                                Updates
+                            </div>
+                            <div
+                                className={`hover:bg-[#29bc29] hover:text-white hover:border-[#29bc29] cursor-pointer border rounded py-1 px-3 
+                                    ${wateringState == 'good' ? 'border-white' : 'border-black'}`}
+                                onClick={() => router.push(`/AddUpdateForPlant/${plant.id}`)}
+                            >
+                                +
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div className={`py-2 ${showInstructions ? 'opacity-100' : 'opacity-0 h-0'} transition ease-linear duration-100`}>
+                <div className={`py-2 pr-40 ${showInstructions ? 'opacity-100' : 'opacity-0 h-0'} transition ease-linear duration-100`}>
                     {plant && plant.careInstructions}
                 </div>
-                <div className='flex justify-start relative mt-0'>
+                <div className="py-2 flex justify-end">
+                    {showUpdates && 
+                        <TimelineInCard plantId={plant.id} updates={updates} height={height} width={width} 
+                            species={plant.species} uid={userID} key={plant.id}/>
+                    }
+                </div>
+                <div className='flex justify-start relative mt-3'>
                     <a onClick={() => {
                         if (!confirm('Mark as watered today?')) {
                             return;
@@ -214,11 +240,11 @@ const PlantCard: FC<Props> = (props) => {
                         props.waterPlant().then(() => setWateringState('good'));
                     }}
                         className={getWtrBtnStyle()}>
-                        <IoWater className={`cursor-pointer ${wateringState=='good'?'text-blue-400':'text-blue-600'}`} />
+                        <IoWater className={`cursor-pointer ${wateringState == 'good' ? 'text-blue-400' : 'text-blue-600'}`} />
                         &nbsp;&nbsp;
                         Water?
                         &nbsp;&nbsp;
-                        <IoWater className={`cursor-pointer ${wateringState=='good'?'text-blue-400':'text-blue-600'}`} />
+                        <IoWater className={`cursor-pointer ${wateringState == 'good' ? 'text-blue-400' : 'text-blue-600'}`} />
                     </a>
                     <div >
                         last watered {plant.dateLastWatered.toLocaleDateString()}
@@ -230,15 +256,17 @@ const PlantCard: FC<Props> = (props) => {
                 </div>
                 {plant && plant.dateLastFed && plant.dateToFeedNext &&
                     <div className="flex justify-start relative">
-                        <a onClick={() => {
-                            if (!confirm('Mark as fed today?')) {
-                                return;
-                            }
-                            props.feedPlant()
-                                .then(() => plant.dateLastFed = new Date())
-                                .catch(console.error);
-                        }}
-                            className={getWtrBtnStyle()}>
+                        <a
+                            onClick={() => {
+                                if (!confirm('Mark as fed today?')) {
+                                    return;
+                                }
+                                props.feedPlant()
+                                    .then(() => plant.dateLastFed = new Date())
+                                    .catch(console.error);
+                            }}
+                            className={getWtrBtnStyle() + " hover:bg-[#a2ef8d] hover:border-[#a2ef8d]"}
+                        >
                             <IoLeaf className={`cursor-pointer ${wateringState == 'good' ? 'text-lime-500' : 'text-lime-800'}`} />
                             &nbsp;&nbsp;
                             Feed?
