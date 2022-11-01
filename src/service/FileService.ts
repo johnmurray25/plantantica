@@ -67,17 +67,11 @@ export const updateProfilePicture = async (fileName: string, uid: string) => {
 }
 
 export const getProfilePictureUrl = async (uid: string): Promise<{ url: string, fileName: string }> => {
-    let userDoc = await getDoc(doc(db, 'users', uid))
-    let fileName = userDoc.get('profilePicture')
+    const data = (await getDoc(doc(db, 'users', uid))).data()
+    let fileName = data.profilePicture
     if (!fileName)
         return { url: '', fileName: '' }
     let imageUrl = await getDownloadURL(ref(storage, `${uid}/${fileName}`))
-        // .then(downloadUrl => { return downloadUrl })
-        // .catch(e => {
-        //     console.debug(e);
-        //     console.error('Failed to load image from storage bucket');
-        //     return '';
-        // });
     return { url: imageUrl, fileName };
 }
 

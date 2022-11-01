@@ -7,16 +7,17 @@ import FileInput from './components/FileInput';
 
 import NextHead from './components/NextHead';
 import styles from "../styles/tracking.module.css";
-import { saveUpdateForPlant, Update } from '../service/PlantService';
-import { deleteImage } from '../service/FileService';
+import { saveUpdateForPlant } from '../service/PlantService';
+import { compressImage, deleteImage, uploadFile } from '../service/FileService';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import auth from '../firebase/auth';
 import { collection, doc, setDoc } from 'firebase/firestore';
 import db from '../firebase/db';
 import TextField from './components/TextField';
-import Plant from '../../domain/Plant';
+import Plant from '../domain/Plant';
 import { useRouter } from 'next/router';
 import GenericDatePicker from './components/GenericDatePicker';
+import Update from '../domain/Update';
 
 interface Props {
     plantId: string;
@@ -62,12 +63,32 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
         }
     }
 
-    const handleSave = () => {
+    const handleSave = async () => {
+        let savedFileName = ""
+        // Check if image to be processed
+        if (imageUrl) {
+            // Image was already saved 
+            if (!selectedFile && props.update && props.update.image) {
+                savedFileName = props.update.image;
+            } else {
+                try {
+                    // Compress image
+                    setSavingStatus('Compressing image ')
+                    let compressedImage = await compressImage(selectedFile);
+                    // Upload image to storage
+                    setSavingStatus('Uploading image ')
+                    savedFileName = await uploadFile(compressedImage, user);
+                    console.log("Saved image " + savedFileName)
+                } catch (e) {
+                    console.error(e)
+                }
+            }
+        }
         const update: Update = {
             title,
             description,
             dateCreated,
-            image: ''
+            image: savedFileName,
         }
         let didSave = false;
         if (props.updateId) {

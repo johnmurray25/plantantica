@@ -1,11 +1,10 @@
-import { DocumentSnapshot } from "@google-cloud/firestore";
 import { User } from "firebase/auth";
-import { addDoc, collection, deleteDoc, doc, DocumentData, getDoc, getDocs, query, QueryDocumentSnapshot, setDoc, where } from "firebase/firestore";
-import Plant from "../../domain/Plant";
-
+import { addDoc, collection, deleteDoc, doc, DocumentData, getDocs, QueryDocumentSnapshot, setDoc } from "firebase/firestore";
+import Plant from "../domain/Plant";
+import Update from "../domain/Update";
 import db from '../firebase/db';
 import { deleteImage } from "./FileService";
-import { getUserByUid, mapDocToUser } from "./UserService";
+import { docToPlant, docToUpdate } from './DBMappings';
 
 function userDoc(user: User) {
     return doc(db, 'users', user.uid);
@@ -15,67 +14,35 @@ function userDocFromUid(uid: string) {
     return doc(db, 'users', uid)
 }
 
-function mapDocsToPlants(docs: QueryDocumentSnapshot<DocumentData>[]) {
-    return docs.map((doc): Plant => {
-        return {
-            id: doc.id,
-            species: doc.get('species'),
-            dateObtained: new Date(doc.get('dateObtained')),
-            daysBetweenWatering: doc.get('daysBetweenWatering'),
-            dateLastWatered: new Date(doc.get('dateLastWatered')),
-            dateToWaterNext: new Date(doc.get('dateToWaterNext')),
-            dateLastFed: doc.get('dateLastFed'),
-            dateToFeedNext: doc.get('dateToFeedNext'),
-            lightRequired: doc.get('lightRequired'),
-            dateCreated: new Date(doc.get('dateCreated')),
-            picture: doc.get('picture'),
-            careInstructions: doc.get('careInstructions'),
-        }
-    })
-        .map((plant) => {
+export const mapDocsToPlants = async (docs: QueryDocumentSnapshot<DocumentData>[]): Promise<Plant[]> => {
+    if (!docs || !docs.length) {
+        return []
+    }
+    let uid = docs[0].ref.parent.parent.id;
+    // console.log(`uid: ${uid}`);
+    const plants = docs.map(docToPlant)
+        .map(async (p: Plant) => {
             // Only assign feeding dates if not null
-            if (plant.dateLastFed) {
-                plant.dateLastFed = new Date(plant.dateLastFed);
+            if (p.dateLastFed) {
+                p.dateLastFed = new Date(p.dateLastFed);
             }
-            if (plant.dateToFeedNext) {
-                plant.dateToFeedNext = new Date(plant.dateToFeedNext);
+            if (p.dateToFeedNext) {
+                p.dateToFeedNext = new Date(p.dateToFeedNext);
             }
-            return plant;
-        });
+            p.updates = await getUpdatesForPlant(uid, p.id);
+            return p;
+        })
+        
+    return Promise.all(plants);
 }
-
-// function mapDocToPlant(doc: QueryDocumentSnapshot<DocumentData>) {
-//     let plant = {
-//         id: doc.id,
-//         species: doc.get('species'),
-//         dateObtained: new Date(doc.get('dateObtained')),
-//         daysBetweenWatering: doc.get('daysBetweenWatering'),
-//         dateLastWatered: new Date(doc.get('dateLastWatered')),
-//         dateToWaterNext: new Date(doc.get('dateToWaterNext')),
-//         dateLastFed: doc.get('dateLastFed'),
-//         dateToFeedNext: doc.get('dateToFeedNext'),
-//         lightRequired: doc.get('lightRequired'),
-//         dateCreated: new Date(doc.get('dateCreated')),
-//         picture: doc.get('picture'),
-//     } 
-//     if (plant.dateLastFed) {
-//         plant.dateLastFed = new Date(plant.dateLastFed);
-//     }
-//     if (plant.dateToFeedNext) {
-//         plant.dateToFeedNext = new Date(plant.dateToFeedNext);
-//     }
-//     return plant
-// }
 
 export const getPlants = async (uid: string): Promise<Plant[]> => {
     if (!uid) {
         return [];
     }
     // Load all plant tracking data for current user
-    const collectionRef = collection(userDocFromUid(uid), 'plantTrackingDetails');
-    const queryRef = query(collectionRef);
-    const trackingDetails = await getDocs(queryRef);
-    return mapDocsToPlants(trackingDetails.docs);
+    const collectionRef = collection(db, `users/${uid}/plantTrackingDetails`);
+    return mapDocsToPlants((await getDocs(collectionRef)).docs);
 };
 
 export const deletePlant = async (plant: Plant, user: User) => {
@@ -118,17 +85,10 @@ export const getPlantById = async (uid: string, plantId: string): Promise<Plant>
 }
 
 //-------------------------------- UPDATES ----------------------------------------------------//
-export interface Update {
-    image?: string;
-    title: string;
-    description?: string;
-    dateCreated: Date;
-    id?: string;
-}
-
 export const getUpdatesForPlant = async (uid: string, plantId: string): Promise<Update[]> => {
     let snapshot = await getDocs(collection(db, `users/${uid}/plantTrackingDetails/${plantId}/updates`))
     return snapshot.docs
+        // .map(docToUpdate)
         .map(doc => ({
             image: doc.get('image'),
             title: doc.get('title'),
@@ -136,7 +96,7 @@ export const getUpdatesForPlant = async (uid: string, plantId: string): Promise<
             dateCreated: new Date(doc.get('dateCreated')),
             id: doc.id,
         }))
-        .sort((a,b) => a.dateCreated.getTime() < b.dateCreated.getTime() ? 1 : -1)
+        .sort((a, b) => a.dateCreated.getTime() < b.dateCreated.getTime() ? 1 : -1)
 }
 
 export const saveUpdateForPlant = async (uid: string, plantId: string, update: Update, id?: string) => {
@@ -164,4 +124,22 @@ export const saveUpdateForPlant = async (uid: string, plantId: string, update: U
 export const deleteUpdateForPlant = (uid: string, plantId: string, updateId: string) => {
     const docRef = doc(db, `users/${uid}/plantTrackingDetails/${plantId}/updates/${updateId}`);
     deleteDoc(docRef);
+}
+
+export const waterPlantInDB = async (uid: string, plantId: string, newWateringDateMs: number) => {
+    setDoc(
+        doc(db, `users/${uid}/plantTrackingDetails/${plantId}`),
+        { dateToWaterNext: newWateringDateMs, dateLastWatered: new Date().getTime() },
+        { merge: true }
+    );
+}
+
+export const feedPlantInDB = async (uid: string, plantId: string) => {
+    setDoc(
+        doc(
+            collection(doc(db, 'users', uid), 'plantTrackingDetails'),
+            plantId),
+        { dateLastFed: new Date().getTime() },
+        { merge: true }
+    );
 }

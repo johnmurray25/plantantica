@@ -3,24 +3,29 @@ import Link from "next/link";
 
 import { useAuthState } from "react-firebase-hooks/auth";
 import ReactLoading from 'react-loading';
-import { v4 as uuidv4 } from 'uuid';
 
 import auth from '../firebase/auth';
 import NavBar from "./components/NavBar";
-import Plant from "../../domain/Plant";
-import { getPlants, deletePlant } from "../service/PlantService";
+import Plant from "../domain/Plant";
+import { getPlants, deletePlant, waterPlantInDB, feedPlantInDB } from "../service/PlantService";
 import { User } from "firebase/auth";
-import { collection, doc, setDoc } from "firebase/firestore";
-import db from "../firebase/db";
 import NextHead from "./components/NextHead";
 import TextField from "./components/TextField";
 import TrackingCard from "./components/TrackingCard";
 import gridStyles from '../styles/grid.module.css';
 
 const loadPlantData = async (user: User): Promise<Plant[]> => {
+  if (!user) {
+    return null;
+  }
   // get plants from DB 
-  let results = await getPlants(user.uid);
-  return results;
+  try {
+    let results = await getPlants(user.uid);
+    return results;
+  } catch (e) {
+    console.error(e)
+    return []
+  }
 }
 
 const OK = 200;
@@ -32,13 +37,13 @@ const Home = () => {
   // const [filteredPlants, setFilteredPlants] = useState<Plant[]>([]);
   const [status, setStatus]: [number, any] = useState(OK);
   const [isLoading, setIsLoading] = useState(false);
-  const [user, loading, error] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
   const [refreshToggle, setRefreshToggle] = useState(false);
 
   const [searchText, setSearchText] = useState('')
   const [filterActive, setFilterActive] = useState(false)
 
-  const [trackingCards, setTrackingCards] = useState([])
+  const [trackingCards, setTrackingCards] = useState<JSX.Element[]>([])
 
   const remove = useCallback(async (plant: Plant) => {
     if (!confirm(`Delete ${plant.species}?`)) return;
@@ -47,9 +52,6 @@ const Home = () => {
       await deletePlant(plant, user);
       let filtered = plants.filter(p => p.species !== plant.species)
       setPlants(filtered);
-      // setFilteredPlants(filteredPlants)
-      // setPlants([]);
-      // if (totalPlants) setTotalPlants(totalPlants - 1);
       setRefreshToggle(!refreshToggle);
     } catch (e) {
       console.error(e);
@@ -57,74 +59,66 @@ const Home = () => {
     }
   }, [user, refreshToggle, plants]);
 
-  const waterPlant = useCallback(async (plant: Plant, user: User) => {
+  const waterPlant = useCallback(async (plant: Plant, uid: string) => {
     let today = new Date();
     let daysBetweenWatering = plant.daysBetweenWatering ? plant.daysBetweenWatering : 10;
     // Calculate next watering date
     let newWateringDate = today.getTime() + (daysBetweenWatering * 86400000);
     // Update DB
-    await setDoc(
-      doc(
-        collection(doc(db, 'users', user.uid), 'plantTrackingDetails'),
-        plant.id),
-      { dateToWaterNext: newWateringDate, dateLastWatered: today.getTime() },
-      { merge: true }
-    );
+    try {
+      await waterPlantInDB(uid, plant.id, newWateringDate);
+    } catch (e) {
+      console.error(e)
+      alert("An error occured...")
+      return;
+    }
     // Update state
     let newDate = new Date(newWateringDate);
     plant.dateToWaterNext = newDate;
     plant.dateLastWatered = today;
-    console.log(`plants:  ${plants}`)
-    let filtered = plants ?
-      plants.filter((p) => p.id !== plant.id)
-      : [];
-    filtered.push(plant);
-    let results = filtered
-      .sort((a, b) => {
-        if (a.species.toLocaleLowerCase() < b.species.toLocaleLowerCase()) {
-          return -1;
-        }
-        else if (a.species.toLocaleLowerCase() > b.species.toLocaleLowerCase()) {
-          return 1;
-        }
-        else return 0;
-      });
-    // if (results && results.length > 0) setPlants(results);
-  }, [plants]);
+    //   plants.filter((p) => p.id !== plant.id)
+    //   : [];
+    // filtered.push(plant);
+    // let results = filtered
+    //   .sort((a, b) => {
+    //     if (a.species.toLocaleLowerCase() < b.species.toLocaleLowerCase()) {
+    //       return -1;
+    //     }
+    //     else if (a.species.toLocaleLowerCase() > b.species.toLocaleLowerCase()) {
+    //       return 1;
+    //     }
+    //     else return 0;
+    //   });
+  }, []);
 
-  const feedPlant = useCallback(async (plant: Plant, user: User) => {
+  const feedPlant = useCallback(async (plant: Plant, uid: string) => {
     let today = new Date();
-    // let daysBetweenWatering = plant.daysBetweenWatering ? plant.daysBetweenWatering : 10;
-    // TODO ::::: Calculate next feeding date
-    // let newWateringDate = today.getTime() + (daysBetweenWatering * 86400000);
     // Update DB
-    await setDoc(
-      doc(
-        collection(doc(db, 'users', user.uid), 'plantTrackingDetails'),
-        plant.id),
-      { dateLastFed: today.getTime() },
-      { merge: true }
-    );
+    try {
+      await feedPlantInDB(uid, plant.id);
+    } catch (e) {
+      console.error(e)
+      alert("An error occured...")
+      return;
+    }
     // Update state
-    // let newDate = new Date(newWateringDate);
-    // plant.dateToWaterNext = newDate;
     plant.dateLastFed = today;
-    let filtered = plants ?
-      plants.filter((p) => p.id !== plant.id)
-      : [];
-    filtered.push(plant);
-    let results = filtered
-      .sort((a, b) => {
-        if (a.species.toLocaleLowerCase() < b.species.toLocaleLowerCase()) {
-          return -1;
-        }
-        else if (a.species.toLocaleLowerCase() > b.species.toLocaleLowerCase()) {
-          return 1;
-        }
-        else return 0;
-      });
-    if (results && results.length > 0) setPlants(results);
-  }, [plants]);
+    // let filtered = plants ?
+    //   plants.filter((p) => p.id !== plant.id)
+    //   : [];
+    // filtered.push(plant);
+    // let results = filtered
+    //   .sort((a, b) => {
+    //     if (a.species.toLocaleLowerCase() < b.species.toLocaleLowerCase()) {
+    //       return -1;
+    //     }
+    //     else if (a.species.toLocaleLowerCase() > b.species.toLocaleLowerCase()) {
+    //       return 1;
+    //     }
+    //     else return 0;
+    //   });
+    // if (results && results.length > 0) setPlants(results);
+  }, []);
 
   const filterPlants = useCallback(() => {
     // filter plants
@@ -149,16 +143,15 @@ const Home = () => {
     let filteredCards =
       filteredResults
         .map((plant) => (
-          // <div key={i} >
           <TrackingCard
-            key={uuidv4()}
+            key={plant.id}
             plant={plant}
-            waterPlant={() => waterPlant(plant, user)}
-            feedPlant={() => feedPlant(plant, user)}
+            waterPlant={() => waterPlant(plant, user.uid)}
+            feedPlant={() => feedPlant(plant, user.uid)}
             removePlant={remove}
             userID={user.uid}
+            updates={plant.updates}
           />
-          // </div>
         ))
     setTrackingCards(filteredCards)
     filteredResults.map(p => p.species).forEach(console.log)
@@ -167,10 +160,12 @@ const Home = () => {
 
 
   useEffect(() => {
+    console.log('Tracking: in useEffect')
     if (!user && !loading) {
       setStatus(UNAUTHORIZED);
       return
     }
+    // bind enter key to searchbar
     const handleKeyPress = (e) => {
       const key = e.key;
       if (key === 'Enter') {
@@ -178,40 +173,51 @@ const Home = () => {
       }
     };
     document.addEventListener('keydown', handleKeyPress)
-    if (plants === null) {
+    //
+    if (plants === null && user) {
       setIsLoading(true);
+      console.log("Loading plants...")
       loadPlantData(user)
         .then(data => {
+          console.log('loaded plants:')
+          console.log(data)
           setPlants(data)
           // setFilteredPlants(data)
-          if (data) {
-            // setTotalPlants(data.length)
-            setTrackingCards(
-              data
-                .sort((a, b) => {
-                  if (a.dateToWaterNext > b.dateToWaterNext) return 1
-                  else if (a.dateToWaterNext < b.dateToWaterNext) return -1
-                  return a.species < b.species ? -1 : 1
-                })
-                .map((plant) => (
-                  // <div key={i} >
-                  <TrackingCard
-                    key={uuidv4()}
-                    plant={plant}
-                    waterPlant={() => waterPlant(plant, user)}
-                    feedPlant={() => feedPlant(plant, user)}
-                    removePlant={remove}
-                    userID={user.uid}
-                  />
-                  // </div >
-                )))
+          if (!data) {
+            console.log("no data")
+            return;
           }
-        }, e => {
+          setTrackingCards(
+            data
+              .sort((a, b) => {
+                if (a.dateToWaterNext > b.dateToWaterNext) return 1
+                else if (a.dateToWaterNext < b.dateToWaterNext) return -1
+                return a.species < b.species ? -1 : 1
+              })
+              .map((plant) => (
+                // <div key={i} >
+                <TrackingCard
+                  key={plant.id}
+                  plant={plant}
+                  waterPlant={() => waterPlant(plant, user.uid)}
+                  feedPlant={() => feedPlant(plant, user.uid)}
+                  removePlant={remove}
+                  userID={user.uid}
+                  updates={plant.updates}
+                />
+                // </div >
+              ))
+          )
+        })
+        .catch(e => {
           console.error(e);
           setStatus(ERR_STATUS)
           setIsLoading(false)
         })
-        .finally(() => setIsLoading(false))
+        .finally(() => {
+          console.log("finished loading plants")
+          setIsLoading(false)
+        })
     }
     return () => {
       document.removeEventListener('keydown', handleKeyPress);

@@ -10,7 +10,8 @@ import logo from '../../public/tree-logo.png'
 import useWindowDimensions from '../../hooks/useWindowDimensions'
 import { getProfilePictureUrl } from '../../service/FileService'
 import customImageLoader from '../../util/customImageLoader'
-import { DBUser, getUserByUid, mapDocToUser } from '../../service/UserService'
+import { getUserByUid, mapDocToUser } from '../../service/UserService'
+import DBUser from '../../domain/DBUser'
 
 interface NavProps {
   hideUser?: boolean;

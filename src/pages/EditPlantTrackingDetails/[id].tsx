@@ -2,7 +2,7 @@ import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import db from '../../firebase/db';
 import auth from '../../firebase/auth';
 import AddPlantTrackingDetails from '../AddPlantTrackingDetails';
-import Plant from '../../../domain/Plant';
+import Plant from '../../domain/Plant';
 import { collection, doc, DocumentData, DocumentReference, getDoc } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { User } from 'firebase/auth';

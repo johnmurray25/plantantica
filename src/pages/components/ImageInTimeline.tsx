@@ -17,8 +17,8 @@ const ImageInTimeline: React.FC<Props> = (props) => {
             loader={customImageLoader}
             loading='lazy'
             width={props.width}
-            height={Math.min(props.height, props.width)}
-            className='rounded'
+            height={props.height}
+            className='rounded-3xl'
         // props={{}}    
         />
     )

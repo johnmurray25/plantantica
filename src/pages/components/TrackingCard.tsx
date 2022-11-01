@@ -8,16 +8,15 @@ import { IoLeaf } from '@react-icons/all-files/io5/IoLeaf';
 import { getDownloadURL, ref } from 'firebase/storage';
 
 import storage from '../../firebase/storage';
-import Plant from '../../../domain/Plant';
-import DropDownMenu from './DropDownMenu';
+import Plant from '../../domain/Plant';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import customImageLoader from '../../util/customImageLoader';
-import { User } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import { IoPencil } from '@react-icons/all-files/io5/IoPencil';
 import { IoTrash } from '@react-icons/all-files/io5/IoTrash';
 import TimelineInCard from './TimelineInCard';
 import { getUpdatesForPlant } from '../../service/PlantService';
+import Update from '../../domain/Update';
 
 interface Props {
     plant: Plant;
@@ -25,6 +24,7 @@ interface Props {
     removePlant;
     userID: string;
     feedPlant: () => Promise<void>;
+    updates: Update[];
 }
 
 const MILLIS_IN_DAY = 86400000;
@@ -42,7 +42,7 @@ const PlantCard: FC<Props> = (props) => {
 
     // props
     const [userID] = useState(props.userID);
-    const [plant, setPlant] = useState(props.plant);
+    const [plant] = useState(props.plant);
     const [dateToWaterNext] = useState(plant ? plant.dateToWaterNext : new Date(new Date().getTime() + MILLIS_IN_DAY));
 
     // state
@@ -50,13 +50,13 @@ const PlantCard: FC<Props> = (props) => {
     const [imageURL, setImageURL] = useState('');
     const [showInstructions, setShowInstructions] = useState(false);
     const [showUpdates, setShowUpdates] = useState(false);
-    const [updates, setUpdates] = useState([])
 
     const toggleInstructions = () => {
         setShowInstructions(!showInstructions);
     }
 
     useEffect(() => {
+        // console.log(`TrackingCard: in useEffect ${plant&&plant.species}`)
         if (!plant) {
             return;
         }
@@ -69,9 +69,6 @@ const PlantCard: FC<Props> = (props) => {
                     console.error('Failed to load image from storage bucket')
                 });
         }
-        getUpdatesForPlant(userID, plant.id)
-            .then(setUpdates)
-            .catch(console.error);
         let today = new Date();
         // CHECK state
         if (today.toLocaleDateString() == dateToWaterNext.toLocaleDateString()) {
@@ -90,7 +87,7 @@ const PlantCard: FC<Props> = (props) => {
         }
         // CHECK state
         setWateringState('check');
-    }, [userID, dateToWaterNext, plant, imageURL,]);
+    }, [dateToWaterNext, imageURL, plant, userID]);
 
     const getBgStyle = () => {
         if (!plant) return 'hidden';
@@ -164,6 +161,7 @@ const PlantCard: FC<Props> = (props) => {
                         alt={`photo of ${plant.species}`}
                         loader={customImageLoader}
                         loading='lazy'
+                        // layout='fill' 
                         width={imgWidth}
                         height={Math.min(imgHeight, imgWidth)}
                         className='rounded' />
@@ -227,9 +225,10 @@ const PlantCard: FC<Props> = (props) => {
                     {plant && plant.careInstructions}
                 </div>
                 <div className="py-2 flex justify-end">
-                    {showUpdates && 
-                        <TimelineInCard plantId={plant.id} updates={updates} height={height} width={width} 
-                            species={plant.species} uid={userID} key={plant.id}/>
+                    {showUpdates && plant && 
+                        <TimelineInCard plantId={plant.id} updates={plant.updates||[]}
+                            species={plant.species} uid={userID} key={plant.id}
+                            width={imgWidth / 3} height={imgHeight / 2.5} />
                     }
                 </div>
                 <div className='flex justify-start relative mt-3'>
@@ -254,7 +253,7 @@ const PlantCard: FC<Props> = (props) => {
                         </p>
                     </div>
                 </div>
-                {plant && plant.dateLastFed && plant.dateToFeedNext &&
+                {plant &&
                     <div className="flex justify-start relative">
                         <a
                             onClick={() => {
@@ -274,9 +273,9 @@ const PlantCard: FC<Props> = (props) => {
                             <IoLeaf className={`cursor-pointer ${wateringState == 'good' ? 'text-lime-500' : 'text-lime-800'}`} />
                         </a>
                         <div className='pt-2'>
-                            {`last fed ${plant.dateLastFed.toLocaleDateString()}`}
+                            {plant.dateLastFed && `last fed ${plant.dateLastFed.toLocaleDateString()}`}
                             <br></br>
-                            {`feed next ${plant.dateToFeedNext.toLocaleDateString()}`}
+                            {plant.dateToFeedNext && `feed next ${plant.dateToFeedNext.toLocaleDateString()}`}
                         </div>
                     </div>
                 }

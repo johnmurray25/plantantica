@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image';
 
-import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 // import { User } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth'
 import ReactLoading from 'react-loading'
@@ -16,29 +16,16 @@ import customImageLoader from '../util/customImageLoader';
 import sampleProfilePicture from '../public/sample-plant.png'
 import FileInput from './components/FileInput';
 import { compressImage, deleteImage, getProfilePictureUrl, updateProfilePicture, uploadFile } from '../service/FileService';
-import useWindowDimensions from '../hooks/useWindowDimensions';
 import { useRouter } from 'next/router';
-import { getUserDBRecord, saveDisplayName, saveUsername, DBUser as User, unsubscribeFromDailyEmails, subscribeToDailyEmails, deleteUser } from '../service/UserService';
+import { getUserDBRecord, saveDisplayName, saveUsername, unsubscribeFromDailyEmails, subscribeToDailyEmails, deleteUser } from '../service/UserService';
 import TextField from './components/TextField';
 import TextInput from './components/TextInput';
-
-// const getNumPlants = async (user: User) => {
-//     if (!user) return;
-//     let collectionRef = collection(doc(db, 'users', user.email), 'plantTrackingDetails');
-//     try {
-//         let results = await getDocs(collectionRef);
-//         return `You are tracking ${results.docs.length} plants.`
-//     } catch (e) {
-//         console.error(e);
-//         return '';
-//     }
-// }
-
+import DBUser from '../domain/DBUser';
 
 function Home() {
 
     const [currentUser] = useAuthState(auth); // Data in auth service
-    const [user, setUser] = useState<User>(null) // Data in DB
+    const [user, setUser] = useState<DBUser>(null) // Data in DB
     const [trackingMsg, setTrackingMsg] = useState('');
     const [profPicUrl, setProfPicUrl] = useState('')
     const [fileName, setFileName] = useState('')
@@ -49,7 +36,6 @@ function Home() {
     const [editMode, setEditMode] = useState(false)
     const [receiveDailyEmails, setReceiveDailyEmails] = useState(true);
 
-    const { width, height } = useWindowDimensions()
     const router = useRouter()
 
     const signOut = () => {

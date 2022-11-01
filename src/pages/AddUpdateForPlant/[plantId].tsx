@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth';
-import Plant from '../../../domain/Plant';
+import Plant from '../../domain/Plant';
 import auth from '../../firebase/auth';
 import { getPlantById } from '../../service/PlantService';
 import AddUpdateForPlant from '../AddUpdateForPlant';

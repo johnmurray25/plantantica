@@ -8,14 +8,15 @@ import NextHead from '../components/NextHead';
 import customImageLoader from '../../util/customImageLoader';
 import { getProfilePictureUrl } from '../../service/FileService';
 import { useRouter } from 'next/router';
-import { getUserDBRecord, DBUser as User, getUserByUsername } from '../../service/UserService';
-import Plant from '../../../domain/Plant';
+import { getUserDBRecord, getUserByUsername } from '../../service/UserService';
+import Plant from '../../domain/Plant';
 import DisplayCard from '../components/DisplayCard'
 import gridStyles from '../../styles/smallGrid.module.css'
+import DBUser from '../../domain/DBUser';
 
 function Home() {
 
-    const [user, setUser] = useState<User>(null) // Data in DB
+    const [user, setUser] = useState<DBUser>(null) // Data in DB
     const [uid, setUid] = useState('')
     const [trackingMsg, setTrackingMsg] = useState('');
     const [profPicUrl, setProfPicUrl] = useState('https://icongr.am/clarity/avatar.svg?size=128&color=ffffff')
@@ -105,7 +106,7 @@ function Home() {
                                 <ReactLoading type='spinningBubbles' color="#fff" />
                             </div>
                             :
-                            <div className='relative w-fit flex justify-center m-auto border rounded-xl p-3'>
+                            <div className='relative w-fit flex justify-center m-auto bg-[#473432] rounded-xl p-3'>
                                 <Image
                                     src={profPicUrl}
                                     loader={customImageLoader}

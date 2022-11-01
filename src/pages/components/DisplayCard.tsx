@@ -7,7 +7,7 @@ import { IoWater } from '@react-icons/all-files/io5/IoWater';
 import { getDownloadURL, ref } from 'firebase/storage';
 
 import storage from '../../firebase/storage';
-import Plant from '../../../domain/Plant';
+import Plant from '../../domain/Plant';
 import DropDownMenu from './DropDownMenu';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import customImageLoader from '../../util/customImageLoader';
@@ -17,7 +17,7 @@ interface Props {
     userID: string;
 }
 
-const MILLIS_IN_DAY = 86400000;
+// const MILLIS_IN_DAY = 86400000;
 // const wateringStates = ['good', 'check', 'bad']
 
 const SM_WIDTH = 650; // most phones are less than this width
@@ -31,7 +31,7 @@ const PlantCard: FC<Props> = (props) => {
 
     // props
     const [plant, setPlant] = useState(props.plant);
-    const [dateToWaterNext] = useState(plant ? plant.dateToWaterNext : new Date(new Date().getTime() + MILLIS_IN_DAY));
+    // const [dateToWaterNext] = useState(plant ? plant.dateToWaterNext : new Date(new Date().getTime() + MILLIS_IN_DAY));
 
     // state
     const [wateringState, setWateringState] = useState('good');
@@ -50,7 +50,7 @@ const PlantCard: FC<Props> = (props) => {
 
     const getBgStyle = () => {
         if (!plant) return 'hidden';
-        return (width > SM_WIDTH ? 'rounded-md p-0 m-2 ' : 'rounded p-0 ') + ' border border-yellow bg-green w-full'
+        return (width > SM_WIDTH ? 'rounded-md p-0 m-2 ' : 'rounded p-0 ') + ' w-full '
     }
 
     const getImageWidth = () => {
@@ -73,9 +73,9 @@ const PlantCard: FC<Props> = (props) => {
     }
 
     return plant && (
-        <div key={plant.id} className={getBgStyle()}>
+        <div key={plant.id} className={getBgStyle() + " bg-[#286314] "}>
             {plant.picture && imageURL && imageURL !== '' ?
-                <div className='flex px-0 mx-0 pb-0 w-full relative'>
+                <div className=' px-0 mx-0 pb-0 w-full relative'>
                     <Image
                         src={imageURL}
                         alt={`photo of ${plant.species}`}
@@ -84,13 +84,13 @@ const PlantCard: FC<Props> = (props) => {
                         width={getImageWidth()}
                         height={Math.min(getImageHeight(), getImageWidth())}
                         className='rounded' />
-                    <div className="absolute w-full bg-gray-900 text-white italic opacity-70 bottom-0 ">
+                    {/* <div className="absolute w-full bg-gray-900 text-white italic opacity-70 bottom-0 "> */}
                         <h1>
-                            <a className='hover:underline text-lg leading-loose pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
+                            <a className='hover:underline text-lg med:text-xl pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
                                 {plant.species}
                             </a>
                         </h1>
-                    </div>
+                    {/* </div> */}
                 </div>
                 :
                 <div className='relative'>
@@ -105,7 +105,7 @@ const PlantCard: FC<Props> = (props) => {
             <div className="px-1 py-1 ">
                 <div className='flex justify-between text-xs '>
                     <div className='flex text-base'>
-                        <IoWater className="cursor-pointer text-blue pr-1" />
+                        <IoWater className="cursor-pointer text-blue-400 pr-1" />
                         <p className='text-xs'>
                             every {plant.daysBetweenWatering} days
                         </p>

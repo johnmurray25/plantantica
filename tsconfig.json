@@ -32,7 +32,7 @@
     "firebaseFunctions.js",
     "functions/index.js",
     "functions/test/index.test.ts"
-  ],
+, "functions/DBMappings.js"  ],
   "exclude": [
     "node_modules"
   ],

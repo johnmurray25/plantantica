@@ -1,17 +1,11 @@
 import { User } from "firebase/auth";
 import { collection, deleteDoc, doc, DocumentData, DocumentSnapshot, getDoc, getDocs, query, QueryDocumentSnapshot, setDoc, where } from "firebase/firestore"
-import Plant from "../../domain/Plant";
+import DBUser from "../domain/DBUser";
+import Plant from "../domain/Plant";
+import Update from "../domain/Update";
 import db from "../firebase/db"
-import { getPlants, migratePlantData } from "./PlantService"
-
-export interface DBUser {
-    plantTrackingDetails?: Plant[];
-    profilePicture: string;
-    email: string;
-    username?: string;
-    displayName?: string;
-    dailyEmails?: boolean;
-}
+import { getPlants, getUpdatesForPlant, migratePlantData } from "./PlantService"
+import { docToUser } from "./DBMappings";
 
 // Should delete after data is merged
 export const getUserByEmailDeprecated = async (email: string) => {
@@ -60,7 +54,7 @@ export const initializeUser = async (user: User) => {
 
 export const getUserByUsername = async (username: string) => {
     let usersRef = collection(db, 'users')
-    let q = query(usersRef, where('username', '==', username))
+    let q = query(usersRef, where('username', '==', username.toLowerCase()))
     try {
         let result = await getDocs(q)
         if (result && result.docs && result.docs.length > 0) {
@@ -82,27 +76,23 @@ export const getUserByUid = async (uid: string) => {
 export const mapDocToUser = async (docSnap: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>): Promise<DBUser> => {
     let plants: Plant[] = []
     try {
+        // get plants
         plants = await getPlants(docSnap.id)
     } catch (e) {
         console.error(e)
     }
 
-    let email = docSnap.get('email')
-
     return {
-        plantTrackingDetails: plants,
-        profilePicture: docSnap.get('profilePicture'),
-        email: email ? email : docSnap.id,
-        username: docSnap.get('username'),
-        displayName: docSnap.get('displayName'),
-        dailyEmails: docSnap.get('dailyEmails')
-    }
+        ...docToUser(docSnap),
+        plantTrackingDetails: plants
+    };
 }
 
 export const mapDocToUserForMigration = async (docSnap: QueryDocumentSnapshot<DocumentData>): Promise<DBUser> => {
-    let uname = docSnap.get('username')
-    let profPic = docSnap.get('profilePicture')
-    let dname = docSnap.get('displayName')
+    const data = docSnap.data()
+    let uname = data.username
+    let profPic = data.profilePicture
+    let dname = data.displayName
     return {
         profilePicture: profPic ? profPic : '',
         email: docSnap.id,
@@ -129,7 +119,8 @@ export const existsByUsername = async (uname: string): Promise<boolean> => {
 }
 
 export const saveUsername = async (username: string, user: User): Promise<string> => {
-    if (await existsByUsername(username)) {
+    let uname = username.toLowerCase()
+    if (await existsByUsername(uname)) {
         return 'username';
     }
 
@@ -139,10 +130,11 @@ export const saveUsername = async (username: string, user: User): Promise<string
     }
 
     let docRef = userDoc.ref
-    console.log(`existing saved username: ${userDoc.get('username')}`)
+    const data = userDoc.data()
+    console.log(`existing saved username: ${data.username}`)
     try {
         await setDoc(docRef,
-            { username },
+            { username: uname },
             { merge: true })
         return 'ok'
     } catch (e) {
@@ -205,4 +197,12 @@ export const deleteUser = async (u: User) => {
         .then(() => u.delete())
         .catch(console.error);
     // TODO delete images in storage
+}
+
+export const getAllUserData = async (uid: string): Promise<DBUser> => {
+    let user = await getUserDBRecord(uid);
+
+
+
+    return null;
 }

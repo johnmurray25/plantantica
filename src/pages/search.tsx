@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import ReactLoading from 'react-loading';
 
@@ -9,49 +9,56 @@ import NavBar from './components/NavBar'
 import NextHead from './components/NextHead'
 import TextField from './components/TextField'
 import useWindowDimensions from '../hooks/useWindowDimensions';
-import { mapDocToUser, DBUser as User, getUserByUsername } from '../service/UserService';
+import { mapDocToUser, getUserByUsername } from '../service/UserService';
 import { useRouter } from 'next/router';
+import DBUser from '../domain/DBUser';
 
 const Home: React.FC = () => {
 
     const [searchText, setSearchText] = useState('')
     const [searchMessage, setSearchMessage] = useState('')
-    const [searchResult, setSearchResult] = useState<User>(null)
+    const [searchResult, setSearchResult] = useState<DBUser>(null)
     const [profPicUrl, setProfPicUrl] = useState('')
     const [isProfPicLoading, setIsProfPicLoading] = useState(false)
 
     const router = useRouter()
     const { width, height } = useWindowDimensions()
 
-    const searchUsers = async () => {
+    const searchUsers = useCallback(() => {
         if (!searchText) {
             return;
         }
-        let docSnap = await getUserByUsername(searchText)
-        if (docSnap.exists()) {
-            console.log(`username ${searchText} found in system`)
-            let result = await mapDocToUser(docSnap);
-            setSearchResult(result)
-            setSearchMessage('')
-            if (result.profilePicture) {
-                setIsProfPicLoading(true)
-                try {
-                    let url = await getImageUrl(result.profilePicture, docSnap.id)
-                    setProfPicUrl(url)
+        getUserByUsername(searchText)
+            .then(docSnap => {
+                if (!docSnap || !docSnap.exists()) {
+                    setSearchResult(null)
+                    setSearchMessage('No results found.')
                 }
-                catch (e) {
-                    console.error(e)
-                }
-                finally {
-                    setIsProfPicLoading(false)
-                }
+                mapDocToUser(docSnap)
+                    .then(result => {
+                        setSearchResult(result)
+                        setSearchMessage('')
+                        if (result.profilePicture) {
+                            setIsProfPicLoading(true)
+                            getImageUrl(result.profilePicture, docSnap.id)
+                                .then(setProfPicUrl)
+                                .catch(console.error)
+                                .finally(() => setIsProfPicLoading(false));
+                        }
+                    })
+                    .catch(console.error);
+            })
+    }, [searchText]) // End searchUsers
+
+    useEffect(() => {
+        const handleKeyPress = (e) => {
+            const key = e.key;
+            if (key === 'Enter') {
+                searchUsers()
             }
-        }
-        else {
-            setSearchResult(null)
-            setSearchMessage('No results found.')
-        }
-    } // End searchUsers
+        };
+        document.addEventListener('keydown', handleKeyPress)
+    }, [searchUsers])
 
     return (
         <div className='text-yellow bg-green min-w-full' /**Container */>
@@ -86,15 +93,15 @@ const Home: React.FC = () => {
                 }
 
                 {searchResult &&
-                    <div className='border border-yellow rounded w-full py-4 px-2'>
+                    <div className='rounded w-fit py-4 px-8 med:px-20 bg-[#473432]'>
                         <div
-                            className='flex justify-evenly items-center cursor-pointer'
+                            className='flex justify-between items-center cursor-pointer'
                             onClick={() => {
-                                if (searchResult.username) 
+                                if (searchResult.username)
                                     router.push(`users/${searchResult.username}`)
                             }}
                         >
-                            <p>
+                            <p className='px-4'>
                                 <a className='text-2xl'>
                                     {searchResult.displayName} <br />
                                 </a>

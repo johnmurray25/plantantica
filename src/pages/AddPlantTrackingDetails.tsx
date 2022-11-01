@@ -8,7 +8,7 @@ import ReactLoading from 'react-loading'
 
 import auth from '../firebase/auth';
 import db from '../firebase/db';
-import Plant from "../../domain/Plant";
+import Plant from "../domain/Plant";
 import styles from "../styles/tracking.module.css";
 import FileInput from "./components/FileInput";
 import Image from "next/image";
@@ -97,12 +97,12 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       daysBetweenWatering: daysBetweenWatering,
       dateLastWatered: dateLastWatered.getTime(),
       dateToWaterNext: dateToWaterNext.getTime(),
-      dateLastFed: dateLastFed ? dateLastFed.getTime() : null,
-      dateToFeedNext: dateToFeedNext ? dateToFeedNext.getTime() : null,
+      dateLastFed: dateLastFed && dateLastFed.getTime()>0 ? dateLastFed.getTime() : null,
+      dateToFeedNext: dateToFeedNext && dateToFeedNext.getTime()>0 ? dateToFeedNext.getTime() : null,
       lightRequired: lightRequired,
       dateCreated: (new Date()).getTime(),
       picture: savedFileName ? savedFileName : plant ? plant.picture ? plant.picture : '' : '',
-      careInstructions: careInstructions,
+      careInstructions: careInstructions || "",
     };
     let docRef: DocumentReference<DocumentData> = null;
     if (plant) {
