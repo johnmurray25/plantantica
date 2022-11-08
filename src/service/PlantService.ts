@@ -43,14 +43,17 @@ export const getPlants = async (uid: string): Promise<Plant[]> => {
     // Load all plant tracking data for current user
     const collectionRef = collection(db, `users/${uid}/plantTrackingDetails`);
     return mapDocsToPlants((await getDocs(collectionRef)).docs);
+    // return (await getDocs(collectionRef))
+    //         .docs
+    //         .map(docToPlant);
 };
 
-export const deletePlant = async (plant: Plant, user: User) => {
+export const deletePlant = async (plant: Plant, uid: string) => {
     if (plant.picture) {
-        deleteImage(plant.picture, user)
+        deleteImage(plant.picture, uid)
             .catch(console.error);
     }
-    await deleteDoc(doc(collection(userDoc(user), 'plantTrackingDetails'), plant.id));
+    await deleteDoc(doc(db, `users/${uid}/plantTrackingDetails/${plant.id}`));
     console.log('deleted plant');
 }
 

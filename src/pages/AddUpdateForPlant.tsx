@@ -43,7 +43,7 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
         if (!confirm('Remove the image?')) return;
         // if image was previously saved, delete from storage
         if (props.imageUrl && props.update && props.update.image && user && props.updateId) {
-            deleteImage(props.update.image, user)
+            deleteImage(props.update.image, user.uid)
                 .then(() => {
                     setSelectedFile(null)
                     setImageUrl('')

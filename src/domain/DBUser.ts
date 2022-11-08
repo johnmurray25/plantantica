@@ -7,4 +7,5 @@ export default interface DBUser {
     username?: string;
     displayName?: string;
     dailyEmails?: boolean;
+    following?: string[];
 }

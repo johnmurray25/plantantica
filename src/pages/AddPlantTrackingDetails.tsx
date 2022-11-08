@@ -131,7 +131,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
     if (!confirm('Remove the image?')) return;
     // if image was previously saved, delete from storage
     if (plant && plant.picture) {
-      deleteImage(plant.picture, user)
+      deleteImage(plant.picture, user.uid)
         .then(() => {
           plant.picture = '';
           setSelectedFile(null)

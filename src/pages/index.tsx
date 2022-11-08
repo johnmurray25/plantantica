@@ -60,11 +60,11 @@ export default function Home() {
                     {
                         userInDB ?
                             <a>
-                                Welcome {userInDB.displayName.split(' ')[0] || user.displayName.split(' ')[0]}!
+                                Welcome {userInDB.displayName.split(' ')[0] || user.displayName.split(' ')[0]}
                             </a>
                             :
                             <a>
-                                Welcome to Plantantica!
+                                Welcome to Plantantica
                             </a>
                     }
                 </h1>
@@ -100,7 +100,7 @@ export default function Home() {
                     </div>
 
                     <div className={styles.leaf + " bg-[#1f801f] hover:bg-[#259925]"}>
-                        <Link href="/search">
+                        <Link href="/social">
                             <a className={styles.card}>
                                 <h2 className="absolute top-10 left-14 text-left justify-start font-bold">Connect &rarr;</h2>
                                 <p className='absolute bottom-3 right-12 text-right w-3/5 p-2'>

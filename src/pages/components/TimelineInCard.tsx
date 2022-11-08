@@ -23,12 +23,16 @@ const TimelineInCard: React.FC<Props> = (props) => {
     const [species] = useState(props.species)
     const [uid] = useState(props.uid)
 
+    console.log('updates')
+    console.log(updates)
+
     const [updateItems, setUpdateItems] = useState<JSX.Element[]>([]);
 
     const timelineItemFromUpdate = useCallback(async (update: Update, updateItems: JSX.Element[]) => {
         const imageUrl = update && update.image ? await getDownloadURL(ref(storage, `${uid}/${update.image}`)) : "";
         return (
             <CustomTimelineItem
+                key={update?.id}
                 {...{ update, plantId, uid, width, height, species, imageUrl }}
                 onDelete={() => {
                     setUpdateItems(updateItems ? updateItems.filter(u => u.key != update.id) : [])

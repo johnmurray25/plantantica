@@ -13,14 +13,16 @@ import Plant from '../../domain/Plant';
 import DisplayCard from '../components/DisplayCard'
 import gridStyles from '../../styles/smallGrid.module.css'
 import DBUser from '../../domain/DBUser';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import auth from '../../firebase/auth';
 
 function Home() {
 
-    const [user, setUser] = useState<DBUser>(null) // Data in DB
+    const [currentUser, loading] = useAuthState(auth) // Current logged in user
+    const [user, setUser] = useState<DBUser>(null) // Data in DB [username]
     const [uid, setUid] = useState('')
     const [trackingMsg, setTrackingMsg] = useState('');
     const [profPicUrl, setProfPicUrl] = useState('https://icongr.am/clarity/avatar.svg?size=128&color=ffffff')
-    const [fileName, setFileName] = useState('')
     const [isProfPicLoading, setIsProfPicLoading] = useState(false);
     const [plants, setPlants] = useState<Plant[]>([])
     const [plantCards, setPlantCards] = useState<JSX.Element[]>([])
@@ -66,10 +68,7 @@ function Home() {
                             // console.log(`prof pic: ${record.profilePicture}`)
                             setIsProfPicLoading(true);
                             getProfilePictureUrl(doc.id)
-                                .then(data => {
-                                    setFileName(data.fileName)
-                                    setProfPicUrl(data.url)
-                                })
+                                .then(data => setProfPicUrl(data.url))
                                 .finally(() => setIsProfPicLoading(false))
                         }
 

@@ -10,7 +10,7 @@
     "esModuleInterop": true,
   },
   "compileOnSave": true,
-  "include": [ "src", "../firebaseFunctions.ts", "index.ts" ],
+  "include": [ "src", "../firebaseFunctions.ts", "index.ts", "DBMappings.ts", ],
   "typeAcquisition": {
     "include": [
       "jest"

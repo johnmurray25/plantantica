@@ -2,10 +2,11 @@ import {EventContext, pubsub} from "firebase-functions/v1";
 import admin, {firestore} from "firebase-admin";
 import nodemailer from "nodemailer";
 // import cors from "cors";
-import Plant from "../domain/Plant";
+import Plant from "../src/domain/Plant";
 import {DocumentSnapshot, QueryDocumentSnapshot}
   from "firebase-functions/v1/firestore";
 import moment from "moment";
+import {docToPlant} from "./DBMappings";
 
 // const crossOrigin = cors({origin: true});
 admin.initializeApp();
@@ -21,29 +22,15 @@ interface DBUser {
 }
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  service: process.env.EMAIL_SERVICE,
   auth: {
-    user: "plantantica@gmail.com",
-    pass: "eshghfpuzqyetawe",
+    user: process.env.EMAIL,
+    pass: process.env.EMAIL_PASSWORD,
   },
 });
 
 const mapDocsToPlants = (docs: QueryDocumentSnapshot[]) => {
-  return docs.map((doc): Plant =>
-    ({
-      id: doc.id,
-      species: doc.get("species"),
-      dateObtained: new Date(doc.get("dateObtained")),
-      daysBetweenWatering: doc.get("daysBetweenWatering"),
-      dateLastWatered: new Date(doc.get("dateLastWatered")),
-      dateToWaterNext: new Date(doc.get("dateToWaterNext")),
-      dateLastFed: doc.get("dateLastFed"),
-      dateToFeedNext: doc.get("dateToFeedNext"),
-      lightRequired: doc.get("lightRequired"),
-      dateCreated: new Date(doc.get("dateCreated")),
-      picture: doc.get("picture"),
-    })
-  );
+  return docs.map(docToPlant);
 };
 
 const docToUser = async (docSnap: QueryDocumentSnapshot |
@@ -52,7 +39,7 @@ const docToUser = async (docSnap: QueryDocumentSnapshot |
   try {
     // plants = await getPlants(docSnap.id);
     plants = mapDocsToPlants((await db.collection(
-        `users/${docSnap.id}/plantTrackingDetails`).get()).docs);
+        `users/${docSnap.id}/plantTrackingDetails`).get()).docs) as Plant[];
   } catch (e) {
     console.error(e);
   }

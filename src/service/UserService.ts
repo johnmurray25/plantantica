@@ -206,3 +206,23 @@ export const getAllUserData = async (uid: string): Promise<DBUser> => {
 
     return null;
 }
+
+export const getFollowingList = async (uid: string): Promise<DBUser[]> => {
+    const user = await getUserDBRecord(uid)
+
+    if (!user.following || !user.following.length) {
+        return []
+    }
+
+    console.log('following:')
+    console.log(user.following)
+
+    const results = await getDocs(
+        query(
+            collection(db, 'users'),
+            where('__name__', 'in', user.following)
+        )
+    )
+
+    return results.docs.map(docToUser);
+}

@@ -1,5 +1,9 @@
-export const docToPlant = (doc) => {
-    let data = doc.data();
+import { QueryDocumentSnapshot } from "firebase/firestore";
+import Plant from "../domain/Plant";
+import PlantInDB from "../domain/PlantInDB";
+
+export const docToPlant = (doc: QueryDocumentSnapshot): Plant => {
+    let data = doc.data() as PlantInDB;
     return {
         id: doc.id,
         species: data.species,
@@ -7,8 +11,8 @@ export const docToPlant = (doc) => {
         daysBetweenWatering: data.daysBetweenWatering,
         dateLastWatered: new Date(data.dateLastWatered),
         dateToWaterNext: new Date(data.dateToWaterNext),
-        dateLastFed: data.dateLastFed ? data.dateLastFed : null,
-        dateToFeedNext: data.dateToFeedNext ? data.dateToFeedNext : null,
+        dateLastFed: data.dateLastFed ? new Date(data.dateLastFed) : null,
+        dateToFeedNext: data.dateToFeedNext ? new Date(data.dateToFeedNext) : null,
         lightRequired: data.lightRequired,
         dateCreated: new Date(data.dateCreated),
         picture: data.picture,
@@ -36,6 +40,7 @@ export const docToUser = (docSnap) => {
         email: data.email ? data.email : docSnap.id,
         username: data.username,
         displayName: data.displayName,
-        dailyEmails: data.dailyEmails
+        dailyEmails: data.dailyEmails,
+        following: data.following,
     }
 }

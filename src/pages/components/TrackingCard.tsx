@@ -21,7 +21,7 @@ import Update from '../../domain/Update';
 interface Props {
     plant: Plant;
     waterPlant: () => Promise<void>;
-    removePlant;
+    removePlant: (plant: Plant) => Promise<void>;
     userID: string;
     feedPlant: () => Promise<void>;
     updates: Update[];
@@ -115,9 +115,7 @@ const PlantCard: FC<Props> = (props) => {
         return classNames;
     }
     const getIconStyle = () => {
-        if (wateringState != 'good')
-            return 'text-black';
-        return 'text-yellow';
+        return wateringState != 'good' ? 'text-black' : 'text-yellow';
     }
 
     const imgWidth: number = (() => {
@@ -140,7 +138,13 @@ const PlantCard: FC<Props> = (props) => {
     })();
 
     return plant && (
-        <div key={plant.id} className={getBgStyle()}>
+        <div 
+            key={plant.id} 
+            className={getBgStyle()}
+            style={{
+                transition: 'background-color 1s ease',
+            }}
+        >
             <div className='relative pt-2'>
                 <div className="w-full flex justify-between pt-2 pr-2">
                     {/* <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} /> */}
@@ -222,7 +226,7 @@ const PlantCard: FC<Props> = (props) => {
 
                 </div>
                 <div className={`py-2 pr-40 ${showInstructions ? 'opacity-100' : 'opacity-0 h-0'} transition ease-linear duration-100`}>
-                    {plant && plant.careInstructions}
+                    {plant?.careInstructions}
                 </div>
                 <div className="py-2 flex justify-end">
                     {showUpdates && plant && 

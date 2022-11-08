@@ -54,8 +54,8 @@ export const uploadFile = async (file: File, user: User) => {
     return fileRef.ref.name;
 }
 
-export const deleteImage = async (fileName: string, user: User) => {
-    const imgRef = ref(storage, `${user.uid}/${fileName}`);
+export const deleteImage = async (fileName: string, uid: string) => {
+    const imgRef = ref(storage, `${uid}/${fileName}`);
     await deleteObject(imgRef);
     console.log('Deleted image from bucket')
 }

@@ -121,7 +121,7 @@ function Home() {
         if (!confirm('Delete profile picture?')) return;
         // if image was previously saved, delete from storage
         if (fileName) {
-            deleteImage(fileName, currentUser)
+            deleteImage(fileName, currentUser.uid)
                 .then(() => {
                     setProfPicUrl('')
                     setFileName('')
