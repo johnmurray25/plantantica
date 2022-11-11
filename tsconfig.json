@@ -22,8 +22,13 @@
     "types": [
       "node",
       "jest",
-      "cypress",
+      "cypress"
     ],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",
@@ -31,8 +36,10 @@
     "**/*.tsx",
     "firebaseFunctions.js",
     "functions/index.js",
-    "functions/test/index.test.ts"
-, "functions/DBMappings.ts"  ],
+    "functions/test/index.test.ts",
+    "functions/DBMappings.ts",
+    ".next/types/**/*.ts"
+  ],
   "exclude": [
     "node_modules"
   ],

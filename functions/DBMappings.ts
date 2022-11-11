@@ -1,7 +1,7 @@
 /* eslint-disable linebreak-style */
 import {QueryDocumentSnapshot} from "firebase-functions/v1/firestore";
-import Plant from "../src/domain/Plant";
-import PlantInDB from "../src/domain/PlantInDB";
+import Plant from "../domain/Plant";
+import PlantInDB from "../domain/PlantInDB";
 
 export const docToPlant = (doc: QueryDocumentSnapshot): Plant => {
   const data = doc.data() as PlantInDB;
