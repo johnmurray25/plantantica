@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image';
 
 import { doc, setDoc } from 'firebase/firestore';
-// import { User } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth'
 import ReactLoading from 'react-loading'
 import { IoPencilOutline } from '@react-icons/all-files/io5/IoPencilOutline';

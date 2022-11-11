@@ -99,17 +99,17 @@ const NavBar: FC<NavProps> = (props) => {
                           className='rounded-3xl'
                         />
                       :
-                      <a className="inline-block text-xs lg:text-xs px-4 py-2 leading-none border rounded border-yellow text-yellow hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
+                      <p className="inline-block text-xs lg:text-xs px-4 py-2 leading-none border rounded border-yellow text-yellow hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
                         {userInDB.username ? `@${userInDB.username}` : user.email}
-                      </a>
+                      </p>
                     }
                   </div>
                 </Link>
                 :
                 <Link href="/auth" passHref>
-                  <a className="inline-block text-xs lg:text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow border-yello hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
+                  <p className="inline-block text-xs lg:text-sm px-4 py-2 leading-none border rounded border-yellow text-yellow border-yello hover:border-transparent hover:text-green hover:bg-yellow mt-4 lg:mt-0">
                     Login / Sign up
-                  </a>
+                  </p>
                 </Link>
             )
         )

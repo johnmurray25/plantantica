@@ -164,9 +164,9 @@ const TrackingPage: React.FC<Props> = (props) => {
                 }}
             >
                 <Link href="/AddPlantTrackingDetails" passHref>
-                    <a className='cursor-pointer p-2 m-2'>
+                    <p className='cursor-pointer p-2 m-2'>
                         Add a plant +
-                    </a>
+                    </p>
                 </Link>
             </div>
             <div className="flex justify-between items-center pr-2 pl-2 pb-1 pt-16">

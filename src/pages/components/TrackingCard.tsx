@@ -15,7 +15,6 @@ import { useRouter } from 'next/router';
 import { IoPencil } from '@react-icons/all-files/io5/IoPencil';
 import { IoTrash } from '@react-icons/all-files/io5/IoTrash';
 import TimelineInCard from './TimelineInCard';
-import { getUpdatesForPlant } from '../../service/PlantService';
 import Update from '../../domain/Update';
 
 interface Props {

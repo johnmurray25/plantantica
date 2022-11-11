@@ -10,6 +10,10 @@ const nextConfig = {
     ],
     loader: "custom"
   },
+  experimental: {
+    reactMode: "concurrent",
+    concurrentFeatures: true,
+  }
   // target: "serverless",
   // assetPrefix: isProd ? "https://us-central1-plantantica.cloudfunctions.net/handler" : "",
 }
