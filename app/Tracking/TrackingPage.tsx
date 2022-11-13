@@ -1,23 +1,21 @@
 "use client"
 import Link from 'next/link'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { use, useCallback, useEffect, useState } from 'react'
 import Plant from '../../domain/Plant'
-import { deletePlant, feedPlantInDB, waterPlantInDB } from '../../service/PlantService';
-import TextField from '../TextField';
-import TrackingCard from './TrackingCard';
+import { deletePlant, feedPlantInDB, getPlants, waterPlantInDB } from '../../service/PlantService';
+import TextField from '../components/TextField';
+import TrackingCard from '../components/TrackingCard';
 import gridStyles from '../../styles/grid.module.css';
 
 interface Props {
-    plants: Plant[];
     uid: string;
 }
 
 const TrackingPage: React.FC<Props> = (props) => {
-    console.log('rendering TrackingPage')
-    console.log(props.plants)
+    console.log(`rendering TrackingPage for user ${props.uid}`)
 
-    const uid = props.uid || "";
-    const [plants, setPlants] = useState(props.plants)
+    const uid = props?.uid;
+    const plants = use(getPlants(uid));
 
     const [searchText, setSearchText] = useState('')
     // const [filterActive, setFilterActive] = useState(false)
@@ -62,7 +60,7 @@ const TrackingPage: React.FC<Props> = (props) => {
         try {
             await deletePlant(plant, uid);
             let filtered = plants.filter(p => p.id !== plant.id)
-            setPlants({ ...filtered });
+            // setPlants({ ...filtered });
         } catch (e) {
             console.error(e);
         }
@@ -183,21 +181,6 @@ const TrackingPage: React.FC<Props> = (props) => {
                         placeholder="Search..."
                         width={24}
                     />
-                    {/* {filterActive ?
-                        <a
-                            className='cursor-pointer bg-red-900 text-yellow rounded justify-center h-12 w-8 text-center content-center'
-                            onClick={cancelFilter}
-                        >
-                            X
-                        </a>
-                        :
-                        <a
-                            className='cursor-pointer bg-[#145914] text-yellow rounded justify-center h-12 w-8 text-center content-center'
-                            onClick={filterPlants}
-                        >
-                            &rarr;
-                        </a>
-                    } */}
                 </div>
             </div>
             <div className={gridStyles.container}>

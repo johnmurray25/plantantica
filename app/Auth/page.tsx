@@ -8,7 +8,7 @@ import { browserLocalPersistence, EmailAuthProvider, FacebookAuthProvider, Googl
 import ReactLoading from "react-loading";
 
 import auth from '../../firebase/auth';
-import TreeLogo from '../TreeLogo';
+import TreeLogo from '../components/TreeLogo';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import customImageLoader from '../../util/customImageLoader';
 

@@ -39,7 +39,7 @@
     "functions/test/index.test.ts",
     "functions/DBMappings.ts",
     ".next/types/**/*.ts"
-  ],
+, "app/Tracking/[uid]"  ],
   "exclude": [
     "node_modules"
   ],

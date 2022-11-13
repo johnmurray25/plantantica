@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import db from "../firebase/db";
 import storage from "../firebase/storage";
+import DBUser from "../domain/DBUser";
 
 export const getImageUrl = async (fileName: string, uid: string): Promise<string> => {
     let imageUrl = getDownloadURL(ref(storage, `${uid}/${fileName}`))
@@ -73,6 +74,10 @@ export const getProfilePictureUrl = async (uid: string): Promise<{ url: string, 
         return { url: '', fileName: '' }
     let imageUrl = await getDownloadURL(ref(storage, `${uid}/${fileName}`))
     return { url: imageUrl, fileName };
+}
+
+export const getProfilePictureByFilename = async (uid: string, fileName: string) => {
+    return await getDownloadURL(ref(storage, `${uid}/${fileName}`));
 }
 
 // export const migratePhotos = (user) => {

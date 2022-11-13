@@ -11,6 +11,7 @@ const config = {
     databaseUrl: process.env.NEXT_PUBLIC_FIRESTORE_URL,
 }
 
+console.log('db url: ' + config.databaseUrl)
 // Initialize app
 const app = initializeApp(config);
 

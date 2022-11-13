@@ -4,9 +4,10 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "out",
+    "source": ".",
     "ignore": [
       "firebase.json",
+      "**/.*",
       "**/node_modules/**"
     ]
   },
@@ -29,5 +30,10 @@
       "npm --prefix \"$RESOURCE_DIR\" run build",
       "copy ./functions/lib/functions/index.js ./functions/lib/index.js"
     ]
+  },
+  "emulators": {
+    "ui": {
+      "enabled": true
+    }
   }
 }

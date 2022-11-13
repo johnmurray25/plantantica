@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image'
-import logo from '../public/tree-logo-with-text.png';
+import logo from '../../public/tree-logo-with-text.png';
 
 const imageLoader = ({src}) => {
     return src;
