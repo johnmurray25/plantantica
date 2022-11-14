@@ -163,10 +163,8 @@ const TrackingPage: React.FC<Props> = (props) => {
                     borderRadius: '0 222px'
                 }}
             >
-                <Link href="/AddPlantTrackingDetails" passHref>
-                    <a className='cursor-pointer p-2 m-2'>
+                <Link href="/AddPlantTrackingDetails" passHref className='cursor-pointer p-2 m-2'>
                         Add a plant +
-                    </a>
                 </Link>
             </div>
             <div className="flex justify-between items-center pr-2 pl-2 pb-1 pt-16">

@@ -88,25 +88,25 @@ export default function Home() {
 
                     <div className={styles.leaf + " bg-[#2bb32b] hover:bg-[#32cd32]"}>
                         <Link href="/Tracking">
-                            <a className={styles.card}>
+                            <div className={styles.card}>
                                 <h2 className="absolute top-10 left-14 text-left justify-start text-green font-bold"
                                 >
                                     Track &rarr;</h2>
                                 <p className='absolute bottom-14 right-16 text-right font-bold text-green w-1/2'>
                                     your plants&apos; watering/feeding
                                 </p>
-                            </a>
+                            </div>
                         </Link>
                     </div>
 
                     <div className={styles.leaf + " bg-[#1f801f] hover:bg-[#259925]"}>
                         <Link href="/social">
-                            <a className={styles.card}>
+                            <div className={styles.card}>
                                 <h2 className="absolute top-10 left-14 text-left justify-start font-bold">Connect &rarr;</h2>
                                 <p className='absolute bottom-3 right-12 text-right w-3/5 p-2'>
                                     Find people you know and see each other&apos;s plants
                                 </p>
-                            </a>
+                            </div>
                         </Link>
                     </div>
                 </div>
