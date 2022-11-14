@@ -38,8 +38,9 @@ export default function Home() {
                 <h1 className="m-0 text-center"
                     style={{ lineHeight: 1.15, fontSize: '2rem' }}
                 >
-                    <p>
-                        {userInDB ? userInDB.displayName.split(' ')[0] || user.displayName.split(' ')[0]
+                    <p className='py-6'>
+                        {userInDB ?
+                            `Welcome, ${userInDB.displayName.split(' ')[0] || user.displayName.split(' ')[0]}`
                             : 'Welcome to Plantantica'}
                     </p>
                 </h1>

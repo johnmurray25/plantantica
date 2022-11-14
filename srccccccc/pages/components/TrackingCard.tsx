@@ -7,16 +7,15 @@ import { IoWater } from '@react-icons/all-files/io5/IoWater';
 import { IoLeaf } from '@react-icons/all-files/io5/IoLeaf';
 import { getDownloadURL, ref } from 'firebase/storage';
 
-import storage from '../firebase/storage';
-import Plant from '../src/domain/Plant';
-import useWindowDimensions from '../src/hooks/useWindowDimensions';
-import customImageLoader from '../src/util/customImageLoader';
+import storage from '../../../firebase/storage';
+import Plant from '../../../domain/Plant';
+import useWindowDimensions from '../../../hooks/useWindowDimensions';
+import customImageLoader from '../../../util/customImageLoader';
 import { useRouter } from 'next/router';
 import { IoPencil } from '@react-icons/all-files/io5/IoPencil';
 import { IoTrash } from '@react-icons/all-files/io5/IoTrash';
 import TimelineInCard from './TimelineInCard';
-import { getUpdatesForPlant } from '../src/service/PlantService';
-import Update from '../src/domain/Update';
+import Update from '../../../domain/Update'
 
 interface Props {
     plant: Plant;

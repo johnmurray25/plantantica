@@ -1,4 +1,3 @@
-"use client"
 import React, { FC, useContext } from 'react'
 import Link from 'next/link'
 

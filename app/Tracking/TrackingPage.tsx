@@ -12,13 +12,12 @@ interface Props {
 }
 
 const TrackingPage: React.FC<Props> = (props) => {
-    console.log(`rendering TrackingPage for user ${props.uid}`)
+    console.log(`rendering TrackingPage ${props.uid}`)
 
     const uid = props?.uid;
     const plants = use(getPlants(uid));
 
     const [searchText, setSearchText] = useState('')
-    // const [filterActive, setFilterActive] = useState(false)
     const [trackingCards, setTrackingCards] = useState<JSX.Element[]>([])
 
     const waterPlant = useCallback(async (plant: Plant) => {
@@ -105,20 +104,6 @@ const TrackingPage: React.FC<Props> = (props) => {
     }, [plantToCard, plants, searchText])
     // end filterPlants
 
-    // const cancelFilter = () => {
-    //     setSearchText('')
-    //     filterPlants()
-    //     setFilterActive(false)
-    // } // end cancelFilter
-
-    // // bind enter key to searchbar
-    // const handleKeyPress = useCallback((e: { key: any; }) => {
-    //     const key = e.key;
-    //     if (key === 'Enter') {
-    //         filterPlants()
-    //     }
-    // }, [filterPlants])
-
     useEffect(() => {
         // effect
         // document.addEventListener('keydown', handleKeyPress)
@@ -134,11 +119,6 @@ const TrackingPage: React.FC<Props> = (props) => {
                 })
                     .map(plantToCard))
         }
-
-        // cleanup
-        // return () => {
-        //     document.removeEventListener('keydown', handleKeyPress);
-        // }
     }, [plantToCard, plants, trackingCards])
     // end useEffect
 
@@ -147,12 +127,12 @@ const TrackingPage: React.FC<Props> = (props) => {
         if (searchText) {
             filterPlants()
         } else {
-            if (props.plants && plants &&
-                props.plants.length > plants.length) {
-                setPlants(props.plants)
-            }
+            // if (props.plants && plants &&
+            //     props.plants.length > plants.length) {
+            //     setPlants(props.plants)
+            // }
         }
-    }, [filterPlants, plants, props.plants, searchText])
+    }, [filterPlants, plants, searchText])
 
     return (
         <div className="relative">

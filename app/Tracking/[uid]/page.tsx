@@ -1,12 +1,11 @@
 // "use client"
-import React, { Suspense, use } from "react";
+import React, { Suspense } from "react";
 import ReactLoading from 'react-loading';
 
 // import auth from '../../../firebase/auth';
-import { getPlants } from "../../../service/PlantService";
 import TrackingPage from "../TrackingPage";
 
-const Home = async ({ searchParams }) => {
+const Tracking = ({ searchParams }) => {
   console.log("rendering Tracking")
   // const [user] = useAuthState(auth)
 
@@ -22,4 +21,4 @@ const Home = async ({ searchParams }) => {
   );
 };
 
-export default Home;
+export default Tracking;
