@@ -13,6 +13,7 @@ function NextHead() {
             <link rel="preconnect" href="https://fonts.googleapis.com" />
             <link rel="preconnect" href="https://fonts.gstatic.com" />
             <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&family=Montserrat&display=swap" rel="stylesheet" />
+            <link rel='manifest' href='/site.webmanifest'/>
         </Head>
     )
 }

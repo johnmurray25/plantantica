@@ -48,7 +48,6 @@ export default function Home() {
                 backgroundImage: bgImage
             }}
         >
-            <NextHead />
             <NavBar />
 
             <main className="p-4 pt-28 flex flex-col items-center m-auto"

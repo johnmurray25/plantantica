@@ -85,7 +85,6 @@ const Home: React.FC = () => {
 
     return (
         <div className='text-yellow bg-green min-w-full' /**Container */>
-            <NextHead /**Header */ />
             <NavBar />
 
             <div className='min-h-screen p-4 pt-28 flex flex-col items-center m-auto'>

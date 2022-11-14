@@ -141,7 +141,6 @@ function Home() {
 
     return (
         <div className='bg-green text-yellow min-h-screen text-left'>
-            <NextHead />
             {
                 shouldAddUsername && user ?
                     <div className='text-center'>

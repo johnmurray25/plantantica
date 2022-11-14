@@ -56,7 +56,6 @@ const Home = () => {
 
   return (
     <div className='text-yellow min-w-screen bg-green' /**Container */>
-      <NextHead />
       <NavBar />
 
       <div className='min-h-screen p-4 pt-28 flex flex-col items-center m-auto mt-0'>
