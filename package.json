@@ -11,7 +11,8 @@
     "lint": "next lint",
     "start": "next start",
     "test": "jest --watchAll --verbose --coverage",
-    "e2e": "cypress open"
+    "e2e": "cypress open",
+    "generate-assets": "npx pwa-asset-generator public/favicon.png public -t png  --portrait-only --background #2f2f27"
   },
   "dependencies": {
     "@babel/preset-react": "^7.18.6",

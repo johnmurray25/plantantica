@@ -2,7 +2,7 @@ import {EventContext, pubsub} from "firebase-functions/v1";
 import admin, {firestore} from "firebase-admin";
 import nodemailer from "nodemailer";
 // import cors from "cors";
-import Plant from "../src/domain/Plant";
+import Plant from "../domain/Plant";
 import {DocumentSnapshot, QueryDocumentSnapshot}
   from "firebase-functions/v1/firestore";
 import moment from "moment";
