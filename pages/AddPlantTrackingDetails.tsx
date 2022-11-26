@@ -1,8 +1,8 @@
-import React, { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 
 import { collection, addDoc, doc, setDoc, DocumentReference, DocumentData } from "firebase/firestore";
-import { Input, Select, MenuItem } from "@mui/material";
+import { Select, MenuItem } from "@mui/material";
 import { useAuthState } from "react-firebase-hooks/auth";
 import ReactLoading from 'react-loading'
 
@@ -96,8 +96,8 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
       daysBetweenWatering: daysBetweenWatering,
       dateLastWatered: dateLastWatered.getTime(),
       dateToWaterNext: dateToWaterNext.getTime(),
-      dateLastFed: dateLastFed && dateLastFed.getTime()>0 ? dateLastFed.getTime() : null,
-      dateToFeedNext: dateToFeedNext && dateToFeedNext.getTime()>0 ? dateToFeedNext.getTime() : null,
+      dateLastFed: dateLastFed && dateLastFed.getTime() > 0 ? dateLastFed.getTime() : null,
+      dateToFeedNext: dateToFeedNext && dateToFeedNext.getTime() > 0 ? dateToFeedNext.getTime() : null,
       lightRequired: lightRequired,
       dateCreated: (new Date()).getTime(),
       picture: savedFileName ? savedFileName : plant ? plant.picture ? plant.picture : '' : '',
@@ -154,7 +154,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   }
 
   return (
-    <div className='text-yellow bg-green min-w-full min-h-screen' >
+    <div className='text-lg text-white bg-green min-w-full min-h-screen' >
       {loadingStatus ?
         <div className='flex justify-center items-center pt-60' >
           {loadingStatus} < ReactLoading type='bars' color="#fff" />
@@ -163,292 +163,174 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
         <div>
           <div className={styles.title}>
             <a className='pt-20 '>
-              {(() => {
-                switch (page) {
-                  case 1:
-                    return ((plant ? 'Edit' : 'Add') + ' Plant Info')
-                  case 2:
-                    return ((plant ? 'Edit' : 'Add') + ' Plant Info')
-                  case 3:
-                    return ((plant ? 'Edit' : 'Add') + ' Plant Info')
-                  case 4:
-                    return ((plant ? 'Edit' : 'Add') + ' Plant Info')
-                }
-              })()}
+              {`${plant ? 'Edit' : 'Add'} Plant Info`}
             </a>
           </div>
           <div className='flex flex-col items-center m-auto p-4 '>
             {/** Divide form content by page */}
             <div className=' min-h-100 top-50'>
-              {(() => {
-                switch (page) {
-                  case 1:
-                    return (
-                      // Page 1: General Plant Info
-                      <div>
-                        <div className="flex justify-center m-auto ">
-                          {imageUrl ?
-                            <div>
-                              <Image src={imageUrl} loader={customImageLoader} alt='photo of plant' width='150' height='190' />
-                              <a className='absolute top-2 right-32 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
-                                onClick={onRemoveFile} >
-                                &#10060;
-                              </a>
-                            </div>
-                            :
-                            <FileInput
-                              onAttachFile={(e) => {
-                                let f = e.target.files[0]
-                                setSelectedFile(f);
-                                setImageUrl(URL.createObjectURL(f))
-                              }}
-                              onRemoveFile={onRemoveFile}
-                              message='Add image? &nbsp; &#128247;'
-                            />
-                          }
-                        </div>
-                        < div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center' >
-                          <label htmlFor='species'>
-                            Species:
-                          </label>
-                          <TextField
-                            placeholder='Enter a species...'
-                            value={species}
-                            onChange={setSpecies}
-                            textarea={true}
-                            width={40}
-                          />
-                          <label htmlFor="lightReq">
-                            Requires
-                          </label>
-                          <Select
-                            id="lightReq"
-                            className="bg-lightGrayGreen"
-                            value={lightRequired}
-                            label="light required"
-                            onChange={(e) => setLightRequired(e.target.value)}
-                          >
-                            <MenuItem value={2}>Bright indirect light</MenuItem>
-                            <MenuItem value={10}>Bright light</MenuItem>
-                          </Select>
-                        </div>
-                      </div>)
-                  case 2:
-                    return (
-                      // Page 2: Watering
-                      <div>
-                        <div className="flex justify-center m-auto text-center">
-                          {imageUrl &&
-                            <div>
-                              <Image src={imageUrl} loader={customImageLoader} alt='photo of plant' width='150' height='190' />
-                              <a className='absolute top-2 right-32 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
-                                onClick={onRemoveFile} >
-                                &#10060;
-                              </a>
-                            </div>
-                          }
-                        </div>
-                        <div className='flex flex-row justify-center items-center'>
-                          <label htmlFor="minDays">
-                            Water every &nbsp;
-                          </label>
-                          <input
-                            className='bg-lightGrayGreen p-2 px-0 my-2 text-slate text-center w-14'
-                            type="text"
-                            name="minDays"
-                            id="minDays"
-                            value={String(daysBetweenWatering)}
-                            onChange={onChangeDaysBetweenWatering}
-                          />
-                          &nbsp; days
-                        </div>
-                        <div className="grid grid-cols-1 gap-x-2 gap-y-6 m-7 items-center px-10">
-                          {/* <label htmlFor="nextWater" >Last watered on</label> */}
-                          <GenericDatePicker
-                            label='Last watered on'
-                            value={dateLastWatered}
-                            onSelect={(d: Date) => {
-                              if (d) {
-                                setDateLastWatered(d);
-                                setDateToWaterNext(new Date(d.getTime() + daysBetweenWatering * MILLIS_IN_DAY));
-                              }
-                            }}
-                          />
-                          {/* <label htmlFor="nextWater">Water next on</label> */}
-                          <GenericDatePicker
-                            label='Water next on'
-                            value={dateToWaterNext}
-                            onSelect={(d: Date) => setDateToWaterNext(d)}
-                          />
-                        </div>
-                      </div>)
-                  case 3:
-                    return (
-                      // Page 3: Feeding info
-                      <div>
-                        <div className="flex justify-center m-auto ">
-                          {imageUrl &&
-                            <div className='relative'>
-                              <Image src={imageUrl} loader={customImageLoader} alt='photo of plant' width='150' height='190' />
-                              <a className='pt-2 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
-                                onClick={onRemoveFile} >
-                                &#10060;
-                              </a>
-                            </div>
-                          }
-                        </div>
-                        <h3 className="text-center">(This page is optional)</h3>
-                        <div className="grid grid-cols-1 gap-x-2 gap-y-6 m-7 items-center px-10">
-                          <div className='flex justify-center items-center '>
-                            <GenericDatePicker
-                              label='Last fed on'
-                              value={dateLastFed}
-                              onSelect={(d: Date) => {
-                                setDateLastFed(d)
-                              }}
-                            />
-                            {dateLastFed &&
-                              <a className='bg-yellow text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit text-xs'
-                                onClick={() => {
-                                  if (confirm('Remove date last fed?')) {
-                                    setDateLastFed(null);
-                                  }
-                                }} >
-                                &#10060;
-                              </a>}
-                          </div>
-                          <div className='flex justify-center items-center '>
-                            <GenericDatePicker
-                              label='Feed next on'
-                              value={dateToFeedNext}
-                              onSelect={(d: Date) => setDateToFeedNext(d)}
-                            />
-                            {dateToFeedNext &&
-                              <a className='bg-yellow text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit text-xs'
-                                onClick={() => {
-                                  if (confirm('Remove date to feed next?')) {
-                                    setDateToFeedNext(null);
-                                  }
-                                }} >
-                                &#10060;
-                              </a>
-                            }
-                          </div>
-                        </div>
-                      </div>)
-                  case 4:
-                    return (
-                      // Page 4: Other info
-                      <div>
-                        {/* Image */}
-                        <div className="flex justify-center m-auto ">
-                          {imageUrl &&
-                            <div>
-                              <Image
-                                src={imageUrl}
-                                loader={customImageLoader}
-                                alt='photo of plant'
-                                width='150'
-                                height='190'
-                              />
-                              <a className='absolute top-2 right-32 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
-                                onClick={onRemoveFile} >
-                                &#10060;
-                              </a>
-                            </div>
-                          }
-                        </div>
-                        {/* Date obtained */}
-                        <div className="grid grid-cols-1 gap-x-2 gap-y-6 m-7 items-center px-10 w-fit">
-                          <GenericDatePicker
-                            label='Obtained plant on'
-                            value={dateObtained}
-                            onSelect={(d: Date) => {
-                              setDateObtained(d)
-                            }}
-                          />
-                        </div>
-                        {/* Other care instructions */}
-                        <div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center pr-10' >
-                          <label htmlFor='species'>
-                            Other care instructions
-                          </label>
-                          <TextField
-                            placeholder=''
-                            value={careInstructions}
-                            onChange={setCareInstructions}
-                            textarea={true}
-                            width={40}
-                          />
-                        </div>
-                      </div>
-                    )
-                }
-              })()}
-            </div>
-            <div className="mx-3 mt-[15rem] ">
-              {page != 1 && page != 4 ?
-                <div className='flex justify-evenly '>
-                  <a
-                    className="bg-yellow text-green py-2.5 rounded px-7 mt-4 mx-8"
-                    onClick={() => setPage(page - 1)}>
-                    Prev
-                  </a>
-                  <a
-                    className="bg-yellow text-green py-2.5 rounded px-7 mt-4 mx-8"
-                    onClick={() => setPage(page + 1)}>
-                    Next
-                  </a>
+              {/* // Page 1: General Plant Info */}
+              <div>
+                <div className="relative  m-auto w-fit p-1">
+                  {imageUrl ?
+                    <div>
+                      <Image src={imageUrl} loader={customImageLoader} alt='photo of plant' width='150' height='190' />
+                      <a className='absolute top-2 right-2 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
+                        onClick={onRemoveFile} >
+                        &#10060;
+                      </a>
+                    </div>
+                    :
+                    <FileInput
+                      onAttachFile={(e) => {
+                        let f = e.target.files[0]
+                        setSelectedFile(f);
+                        setImageUrl(URL.createObjectURL(f))
+                      }}
+                      onRemoveFile={onRemoveFile}
+                      message='Add image? &nbsp; &#128247;'
+                    />
+                  }
                 </div>
-                :
-                page == 1 ?
-                  <div className='flex justify-evenly'>
-                    <a
-                      className="bg-yellow text-green py-2.5 rounded px-7 mt-4 mx-8"
-                      onClick={router.back}>
-                      Cancel
-                    </a>
-                    <a
-                      className="bg-yellow text-green py-2.5 rounded px-7 mt-4"
-                      onClick={() => setPage(page + 1)}>
-                      Next
-                    </a>
+                < div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center' >
+                  <label htmlFor='species'>
+                    Species:
+                  </label>
+                  <TextField
+                    placeholder='Enter a species...'
+                    value={species}
+                    onChange={setSpecies}
+                    textarea={true}
+                    width={40}
+                  />
+                  <label htmlFor="lightReq">
+                    Requires
+                  </label>
+                  <Select
+                    id="lightReq"
+                    className="bg-lightGrayGreen"
+                    value={lightRequired}
+                    label="light required"
+                    onChange={(e) => setLightRequired(e.target.value)}
+                  >
+                    <MenuItem value={2}>Bright indirect light</MenuItem>
+                    <MenuItem value={10}>Bright light</MenuItem>
+                  </Select>
+                </div>
+              </div>
+              <div>
+                <div className='flex flex-row justify-center items-center'>
+                  <label htmlFor="minDays">
+                    Water every &nbsp;
+                  </label>
+                  <input
+                    className='bg-lightGrayGreen p-2 px-0 my-2 text-slate text-center w-14'
+                    type="text"
+                    name="minDays"
+                    id="minDays"
+                    value={String(daysBetweenWatering)}
+                    onChange={onChangeDaysBetweenWatering}
+                  />
+                  &nbsp; days
+                </div>
+                <div className="m-auto items-center w-fit pt-6">
+                  {/* <label htmlFor="nextWater" >Last watered on</label> */}
+                  <GenericDatePicker
+                    label='Last watered on'
+                    value={dateLastWatered}
+                    onSelect={(d: Date) => {
+                      if (d) {
+                        setDateLastWatered(d);
+                        setDateToWaterNext(new Date(d.getTime() + daysBetweenWatering * MILLIS_IN_DAY));
+                      }
+                    }}
+                  />
+                  {/* <label htmlFor="nextWater">Water next on</label> */}
+                  <GenericDatePicker
+                    label='Water next on'
+                    value={dateToWaterNext}
+                    onSelect={(d: Date) => setDateToWaterNext(d)}
+                  />
+                </div>
+              </div>
+              <div>
+                <div className="m-auto items-center  py-6 w-fit">
+                  <div className='flex justify-center items-center '>
+                    <GenericDatePicker
+                      label='Last fed on'
+                      value={dateLastFed}
+                      onSelect={(d: Date) => {
+                        setDateLastFed(d)
+                      }}
+                    />
+                    {dateLastFed &&
+                      <a className='bg-yellow text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit text-xs'
+                        onClick={() => {
+                          if (confirm('Remove date last fed?')) {
+                            setDateLastFed(null);
+                          }
+                        }} >
+                        &#10060;
+                      </a>}
                   </div>
-                  :
-                  <div className='flex justify-evenly '>
-                    <a
-                      className="bg-yellow text-green py-2.5 rounded px-7 mt-4 mx-8"
-                      onClick={() => setPage(page - 1)}>
-                      Prev
-                    </a>
-                    <button
-                      className="bg-lightGrayGreen text-green py-2.5 rounded px-7 mt-4 mx-8"
-                      onClick={savePlantTrackingDetails}>
-                      Save
-                    </button>
+                  <div className='flex justify-center items-center '>
+                    <GenericDatePicker
+                      label='Feed next on'
+                      value={dateToFeedNext}
+                      onSelect={(d: Date) => setDateToFeedNext(d)}
+                    />
+                    {dateToFeedNext &&
+                      <a className='bg-yellow text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit text-xs'
+                        onClick={() => {
+                          if (confirm('Remove date to feed next?')) {
+                            setDateToFeedNext(null);
+                          }
+                        }} >
+                        &#10060;
+                      </a>
+                    }
                   </div>
-              }
-            </div>
-            {/** Page Indicator Circles */}
-            <div className="flex justify-center m-auto mt-5 ">
-              {[1, 2, 3, 4].map(i =>
-                // Circle outline 
-                <div key={i}
-                  className='w-8 h-8 relative border border-lightGrayGreen mr-3 overflow-hidden cursor-pointer '
-                  style={{ borderRadius: '20px' }}
-                  onClick={() => setPage(i)}
-                >
-                  {/** Color fill */}
-                  <div
-                    className='absolute top-0 left-0 w-8 h-8 bg-lightGrayGreen '
-                    style={{
-                      transition: 'transform 0.3s ease',
-                      transform: `translateX(${(page - i) * 40}px)`,
-                      borderRadius: '20px',
+                </div>
+              </div>
+              <div>
+                {/* Date obtained */}
+                <div className="m-auto w-fit">
+                  <GenericDatePicker
+                    label='Obtained plant on'
+                    value={dateObtained}
+                    onSelect={(d: Date) => {
+                      setDateObtained(d)
                     }}
                   />
                 </div>
-              )}
+                {/* Other care instructions */}
+                <div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center pr-10' >
+                  <label htmlFor='species'>
+                    Other care instructions
+                  </label>
+                  <TextField
+                    placeholder=''
+                    value={careInstructions}
+                    onChange={setCareInstructions}
+                    textarea={true}
+                    width={40}
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="mx-3 mt-8 ">
+              <div className='flex justify-evenly '>
+                <a
+                  className="bg-yellow text-green py-2.5 rounded px-7 mt-4 mx-8"
+                  onClick={router.back}>
+                  Cancel
+                </a>
+                <button
+                  className="bg-lightGrayGreen text-green py-2.5 rounded px-7 mt-4 mx-8"
+                  onClick={savePlantTrackingDetails}>
+                  Save
+                </button>
+              </div>
             </div>
           </div>
         </div>

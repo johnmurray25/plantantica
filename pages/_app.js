@@ -14,10 +14,8 @@ function Plantantica({ Component, pageProps }) {
   return <>
     <Head>
       <title>Plantantica</title>
-      <meta
-        name="description"
-        content="A place to track your plants' maintenance"
-      />
+      <meta name="description"
+        content="A place to track your plants' maintenance" />
       <link rel="icon" href="./tree-logo.ico" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" />

@@ -170,10 +170,10 @@ const PlantCard: FC<Props> = (props) => {
                 {/* Edit/Delete buttons */}
                 <div className="flex-col pr-2 pb-2 ">
                     {/* <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} /> */}
-                    <div className={`flex items-center mx-4 px-6 py-1 mb-2 mt-1 hover:bg-white hover:text-black hover:border-white cursor-pointer border rounded-full p-2 
+                    <div className={`flex items-center border mx-4 px-6 py-1 mb-2 mt-1 hover:bg-white hover:text-black hover:border-white cursor-pointer rounded-full p-2 
                     ${wateringState == 'good' ?
                             'border-[#ffe894] //text-[#ffe894]' :
-                            'border-stone-800 text-stone-800'}`}
+                            'border-black'}`}
                         onClick={() => router.push(`/EditPlantTrackingDetails/${plant.id}`)}>
                         <IoPencil />
                     </div>
@@ -232,16 +232,17 @@ const PlantCard: FC<Props> = (props) => {
                                 className={`hover:bg-[#ffaf63] hover:text-black hover:border-[#ffaf63] cursor-pointer rounded-full py-2 px-5 mx-1 
                                     ${wateringState == 'good' ?
                                         'border border-[#ffe894] text-[#ffe894] ' :
-                                        'bg-orange-300'}`}
+                                        'bg-darkYellow '}`}
                                 onClick={() => setShowUpdates(!showUpdates)}
                             >
                                 Updates
                             </div>
                             <div
                                 className={`hover:bg-[#29bc29] hover:text-white hover:border-[#29bc29] cursor-pointer rounded-full py-2 px-3 ml-2 
-                                    ${wateringState == 'good' ?
-                                        'border border-[#ffe894] text-[#ffe894]' :
-                                        'bg-orange-300'}`}
+                                        ${wateringState == 'good' ?
+                                            'border border-[#ffe894] text-[#ffe894]' :
+                                            'bg-darkYellow '}
+                                        `}
                                 onClick={() => router.push(`/AddUpdateForPlant/${plant.id}`)}
                             >
                                 +

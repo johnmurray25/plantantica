@@ -10,6 +10,7 @@ module.exports = {
         'olive': '#4C6049',
         'yellow': 'rgb(248, 245, 240)',
         'lightYellow': '#ccae62',
+        'darkYellow': '#ba8f25',
         'lighterYellow': 'rgb(248, 245, 240)',
         'lightGrayGreen': '#e8ffec',
         // 'blue': '#7ed6df',

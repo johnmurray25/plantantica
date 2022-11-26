@@ -13,7 +13,7 @@ interface Props {
 const GenericDatePicker: React.FC<Props> = (props) => {
 
     return (
-        <div className='bg-lightGrayGreen text-green p-3'>
+        <div className='bg-lightGrayGreen text-green p-3 m-auto'>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
                     className='bg-yellow'
