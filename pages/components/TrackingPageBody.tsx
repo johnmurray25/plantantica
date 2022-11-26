@@ -1,10 +1,20 @@
 import Link from 'next/link'
 import React, { useCallback, useEffect, useState } from 'react'
 import Plant from '../../domain/Plant'
-import { deletePlant, feedPlantInDB, waterPlantInDB } from '../../service/PlantService';
 import TextField from './TextField';
 import TrackingCard from './TrackingCard';
 import gridStyles from '../../styles/grid.module.css';
+import { AnimatePresence, motion } from "framer-motion";
+
+const byDateToWaterNext = (a: Plant, b: Plant) => {
+    if (a.dateToWaterNext > b.dateToWaterNext) {
+        return 1
+    }
+    else if (a.dateToWaterNext < b.dateToWaterNext) {
+        return -1
+    }
+    return a.species < b.species ? -1 : 1
+}
 
 interface Props {
     plants: Plant[];
@@ -22,37 +32,52 @@ const TrackingPage: React.FC<Props> = (props) => {
     // const [filterActive, setFilterActive] = useState(false)
     const [trackingCards, setTrackingCards] = useState<JSX.Element[]>([])
 
-    const plantToCard = useCallback((p: Plant): JSX.Element => {
+    const plantToCard = useCallback((p: Plant, index: number): JSX.Element => {
+        // console.log("i = " + index)
         return (
-            <TrackingCard
-                key={p.id}
-                plant={p}
-                userID={uid}
-                updates={p.updates}
-            />
+            // <motion.div
+            //     variants={{
+            //         hidden: (i) => ({
+            //             opacity: 0,
+            //             y: -50 * i,
+            //         }),
+            //         visible: (i) => ({
+            //             opacity: 1,
+            //             y: 0,
+            //             transition: {
+            //                 delay: i * 0.025,
+            //             }
+            //         }),
+            //         removed: {
+            //             opacity: 0,
+            //         },
+            //     }}
+            //     initial={
+            //         plants?.length > 0 ? "visible" : "hidden"
+            //     }
+            //     animate="visible"
+            //     exit="removed"
+            //     custom={index}
+            // >
+                <TrackingCard
+                    key={p.id}
+                    plant={p}
+                    userID={uid}
+                    updates={p.updates}
+                />
+            // </motion.div>
         )
     }, [uid])
 
     const filterPlants = useCallback(() => {
-        console.log('filterPlants')
         let filteredResults =
-            (searchText ?
-                plants.filter(plant => {
-                    return plant.species.toLowerCase().includes(searchText.toLowerCase())
-                })
+            searchText ?
+                plants.filter(p => p.species.toLowerCase().includes(searchText.toLowerCase()))
                 :
                 { ...plants }
-            ).sort((a, b) => {
-                if (a.dateToWaterNext > b.dateToWaterNext) return 1
-                else if (a.dateToWaterNext < b.dateToWaterNext) return -1
-                return a.species < b.species ? -1 : 1
-            })
-
+                    .sort(byDateToWaterNext)
         // map results to TrackingCard[]
-        let filteredCards = filteredResults.map(plantToCard)
-        setTrackingCards(filteredCards)
-        filteredResults.map(p => p.species).forEach(console.log)
-        // if (searchText) setFilterActive(true)
+        setTrackingCards(filteredResults.map((p, i) => plantToCard(p, i)))
     }, [plantToCard, plants, searchText])
     // end filterPlants
 
@@ -61,11 +86,8 @@ const TrackingPage: React.FC<Props> = (props) => {
         if (!trackingCards.length && plants && plants.length) {
             console.log('setting tracking cards')
             setTrackingCards(
-                plants.sort((a, b) => {
-                    if (a.dateToWaterNext > b.dateToWaterNext) return 1
-                    else if (a.dateToWaterNext < b.dateToWaterNext) return -1
-                    return a.species < b.species ? -1 : 1
-                }).map(plantToCard))
+                plants.sort(byDateToWaterNext)
+                    .map((p, i) => plantToCard(p, i)))
         }
     }, [plantToCard, plants, trackingCards])
     // end useEffect
@@ -91,7 +113,7 @@ const TrackingPage: React.FC<Props> = (props) => {
                 }}
             >
                 <Link href="/AddPlantTrackingDetails" passHref className='cursor-pointer p-2 m-2'>
-                        Add a plant +
+                    Add a plant +
                 </Link>
             </div>
             <div className="flex justify-between items-center pr-2 pl-2 pb-1 pt-16">
@@ -110,7 +132,9 @@ const TrackingPage: React.FC<Props> = (props) => {
                 </div>
             </div>
             <div className={gridStyles.container}>
-                {trackingCards}
+                {/* <AnimatePresence> */}
+                    {trackingCards}
+                {/* </AnimatePresence> */}
             </div>
         </div>
     )

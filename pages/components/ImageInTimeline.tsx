@@ -18,7 +18,7 @@ const ImageInTimeline: React.FC<Props> = (props) => {
             loading='lazy'
             width={props.width}
             height={props.height}
-            className='rounded-3xl'
+            className='rounded-3xl object-cover object-center'
         // props={{}}    
         />
     )

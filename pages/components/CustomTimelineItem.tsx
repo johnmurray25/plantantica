@@ -36,11 +36,11 @@ const CustomTimelineItem: React.FC<Props> = (props) => {
 
     return (
         <>
-            <TimelineItem key={update ? update.id : Math.random()}>
+            <TimelineItem key={update ? update.id + "_item" : Math.random()}>
                 <TimelineOppositeContent
                     sx={{ m: 'auto 0', px: "0px", }}
                     align="right"
-                // variant="body1"
+                    variant="body2"
                 >
                     {update && update.dateCreated && update.dateCreated.toUTCString().substring(0, 17)}
                     <a
@@ -64,7 +64,7 @@ const CustomTimelineItem: React.FC<Props> = (props) => {
                     }}>
                         {update && update.image && imageUrl &&
                             <div
-                                className='flex justify-center items-center m-auto cursor-pointer '
+                                className='relative flex justify-center items-center m-auto cursor-pointer '
                                 onClick={toggleZoomImage}
                             >
                                 <ImageInTimeline
@@ -74,9 +74,12 @@ const CustomTimelineItem: React.FC<Props> = (props) => {
                                     species={species}
                                 />
                                 <div className={`absolute ${!zoomImage && 'hidden'} m-auto p-2
-                                    flex justify-center items-center bg-gray-900`}
-                                    style={{ width: '100vw', height: '100vh', zIndex: 1000 }}
+                                    flex justify-center items-center bg-gray-900 object-cover object-center z-40`}
+                                    style={{ width: '100vw', height: '60vh', }}
                                 >
+                                    <button className='absolute top-2 right-4 z-10 text-white rounded-full bg-red-800 px-3 py-1'>
+                                        x
+                                    </button>
                                     <Image
                                         src={imageUrl}
                                         loading='lazy'

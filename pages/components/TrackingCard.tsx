@@ -110,7 +110,8 @@ const PlantCard: FC<Props> = (props) => {
         if (!plant || hidden) {
             return 'hidden';
         }
-        let sharedStyle = width > SM_WIDTH ? 'rounded-md p-0 m-2 ' : 'rounded p-0 '
+        let sharedStyle = "antialiased " +
+            (width > SM_WIDTH ? 'rounded-md p-0 m-2 ' : 'rounded p-0 ')
         if (wateringState == 'good') {
             return sharedStyle + ' bg-lime-900 border-[#29bc29] ';
         }
@@ -140,7 +141,7 @@ const PlantCard: FC<Props> = (props) => {
 
     return plant && !isImageLoading && (
         <div
-            key={plant.id}
+            // key={plant.id}
             className={getBgStyle()}
             style={{ transition: 'background-color 1s ease', }}
         >
@@ -156,7 +157,7 @@ const PlantCard: FC<Props> = (props) => {
                             // layout='fill' 
                             width={imgWidth}
                             height={Math.min(imgHeight, imgWidth)}
-                            className='rounded' />
+                            className='rounded object-cover object-center' />
                     </div>
                 }
             </div>
@@ -226,27 +227,22 @@ const PlantCard: FC<Props> = (props) => {
                         &nbsp;
                         {showInstructions ? <span>&nbsp;&darr;</span> : <span>&rarr;</span>}
                     </div>
-                    <div className='absolute top-2 right-2 text-sm '>
-                        <div className="flex ">
-                            <div
-                                className={`hover:bg-[#ffaf63] hover:text-black hover:border-[#ffaf63] cursor-pointer rounded-full py-2 px-5 mx-1 
+                    <div className="flex justify-end text-sm">
+                        <div
+                            className={`hover:bg-[#ffaf63] hover:text-black hover:border-[#ffaf63] cursor-pointer rounded-full py-2 px-5 mx-1 
                                     ${wateringState == 'good' ?
-                                        'border border-[#ffe894] text-[#ffe894] ' :
-                                        'bg-darkYellow '}`}
-                                onClick={() => setShowUpdates(!showUpdates)}
-                            >
-                                Updates
-                            </div>
-                            <div
-                                className={`hover:bg-[#29bc29] hover:text-white hover:border-[#29bc29] cursor-pointer rounded-full py-2 px-3 ml-2 
-                                        ${wateringState == 'good' ?
-                                            'border border-[#ffe894] text-[#ffe894]' :
-                                            'bg-darkYellow '}
-                                        `}
-                                onClick={() => router.push(`/AddUpdateForPlant/${plant.id}`)}
-                            >
-                                +
-                            </div>
+                                    'border border-[#ffe894] text-[#ffe894] ' :
+                                    'border border-darkYellow '}`}
+                            onClick={() => setShowUpdates(!showUpdates)}
+                        >
+                            Updates
+                        </div>
+                        <div
+                            className={"hover:bg-[#29bc29] hover:text-white hover:border-[#29bc29] cursor-pointer rounded-full py-2 px-3 ml-2 " +
+                                (wateringState == 'good' ? 'border border-[#ffe894] text-[#ffe894]' : ' border border-darkYellow  ')}
+                            onClick={() => router.push(`/AddUpdateForPlant/${plant.id}`)}
+                        >
+                            +
                         </div>
                     </div>
 
@@ -260,7 +256,7 @@ const PlantCard: FC<Props> = (props) => {
                     <div className="py-2 flex justify-end">
                         {plant.updates?.length > 0 ?
                             <TimelineInCard plantId={plant.id} updates={plant.updates || []}
-                                species={plant.species} uid={userID} key={plant.id}
+                                species={plant.species} uid={userID} key={plant.id + "_timeline"}
                                 width={imgWidth / 3} height={imgHeight / 2.5}
                             />
                             :
@@ -269,14 +265,13 @@ const PlantCard: FC<Props> = (props) => {
                             </p>
                         }
                     </div>
-
                 }
-                <div className='flex justify-between items-center relative pt-3'>
+                <div className='flex justify-between items-center relative '>
                     {/* Water dates */}
                     <div className='pt-4'>
                         last watered {plant.dateLastWatered.toLocaleDateString()}
                         <br></br>
-                        <p className={wateringState != 'good' ? 'font-extrabold' : ''}>
+                        <p className={wateringState != 'good' ? 'font-bold ' : ''}>
                             water next {plant.dateToWaterNext.toLocaleDateString()}
                         </p>
                     </div>
@@ -294,24 +289,24 @@ const PlantCard: FC<Props> = (props) => {
                                 })
                                 .catch(e => { console.error(e); console.error("Failed to mark plant as watered") })
                         }}
-                        className={`flex items-center hover:text-white //bg-blue-500 hover:bg-blue-400 
-                        cursor-pointer text-sm px-8 py-2 mt-6 lg:mt-2 border rounded-full 
-                        ${wateringState == 'good' ? 'border-blue-300' : 'border-blue-500'}`}
+                        className={`flex items-center hover:text-white hover:bg-blue-400 
+                            cursor-pointer text-sm px-8 py-2  lg:mt-2 border rounded-full h-fit
+                            ${wateringState == 'good' ? 'border-blue-300' : 'border-blue-500'}`}
                     >
                         Water
                         &nbsp;
-                        <IoWater className={`cursor-pointer text-lg
+                        <IoWater className={`text-lg
                             ${wateringState == 'good' ? 'text-blue-200' : 'text-blue-600'}`} />
                     </button>
                 </div>
-                {/* Feed button: */}
                 <div className="flex justify-between items-center relative">
                     <div className={`pt-2 ${(!plant.dateLastFed || !plant.dateToFeedNext) && 'pb-8'}`}>
                         {plant.dateLastFed && `last fed ${plant.dateLastFed.toLocaleDateString()}`}
                         <br></br>
                         {plant.dateToFeedNext && `feed next ${plant.dateToFeedNext.toLocaleDateString()}`}
                     </div>
-                    <a
+                    {/* Feed button: */}
+                    <button
                         onClick={() => {
                             if (!confirm('Mark as fed today?')) {
                                 return;
@@ -322,13 +317,13 @@ const PlantCard: FC<Props> = (props) => {
                                     setPlant(updatedPlant)
                                 }).catch(console.error);
                         }}
-                        className="flex items-center hover:text-white //bg-lime-500 hover:bg-lime-600 cursor-pointer text-sm px-8 py-2 mt-4 lg:mt-2 border border-lime-600 rounded-full "
+                        className="flex items-center hover:text-white //bg-lime-500 hover:bg-lime-600 cursor-pointer text-sm px-8 py-2 border border-lime-600 rounded-full "
                     >
                         Feed
                         &nbsp;
                         <IoLeaf className={`cursor-pointer text-lg
                             ${wateringState == 'good' ? 'text-lime-200' : 'text-lime-900'}`} />
-                    </a>
+                    </button>
                 </div>
             </div>
         </div>)
