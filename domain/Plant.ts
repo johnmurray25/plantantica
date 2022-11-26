@@ -1,3 +1,5 @@
+import Update from "./Update";
+
 export default interface Plant {
     id: string;
     species: string;
@@ -10,4 +12,6 @@ export default interface Plant {
     lightRequired: string | number;
     picture?: string;
     dateCreated?: Date;
+    careInstructions?: string;
+    updates?: Update[];
 }

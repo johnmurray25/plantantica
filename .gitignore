@@ -131,3 +131,10 @@ package-lock.json
 
 # Firebase deployment output
 .firebase/
+*.pdf
+
+# Functions directory
+.functions/
+.functions\
+.firebase/hosting.b3V0.cache
+.firebaserc

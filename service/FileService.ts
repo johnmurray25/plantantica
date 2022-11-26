@@ -4,15 +4,14 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 
-import db from "../src/firebase/db";
-import storage from "../src/firebase/storage";
+import db from "../firebase/db";
+import storage from "../firebase/storage";
 
-export const getImageUrl = async (fileName: string, user: User): Promise<string> => {
-    let imageUrl = getDownloadURL(ref(storage, `${user.email}/${fileName}`))
+export const getImageUrl = async (fileName: string, uid: string): Promise<string> => {
+    let imageUrl = getDownloadURL(ref(storage, `${uid}/${fileName}`))
         .then(downloadUrl => { return downloadUrl })
-        .catch(e => {
-            console.debug(e);
-            console.error('Failed to load image from storage bucket');
+        .catch((e) => {
+            console.error(e)
             return '';
         });
     return imageUrl;
@@ -34,6 +33,7 @@ export const compressImage = async (imageFile: File) => {
     }
     catch (error) {
         console.log(error);
+        return null;
     }
 }
 
@@ -47,36 +47,41 @@ export const createFileFromUrl = async (url: string, fileName: string, defaultTy
 
 export const uploadFile = async (file: File, user: User) => {
     let fileName = uuidv4();
-     let storageRef = ref(storage, `${user.email}/${fileName}`);
+    let storageRef = ref(storage, `${user.uid}/${fileName}`);
     let bytes = await file.arrayBuffer();
     let fileRef = await uploadBytes(storageRef, bytes);
     console.log(`uploaded image: ${fileRef.ref.fullPath}`)
     return fileRef.ref.name;
 }
 
-export const deleteImage = async (fileName: string, user: User) => {
-    const imgRef = ref(storage, `${user.email}/${fileName}`);
+export const deleteImage = async (fileName: string, uid: string) => {
+    const imgRef = ref(storage, `${uid}/${fileName}`);
     await deleteObject(imgRef);
     console.log('Deleted image from bucket')
 }
 
-export const updateProfilePicture = async (fileName: string, email: string) => {
-    let userDocRef = doc(db, 'users', email)
+export const updateProfilePicture = async (fileName: string, uid: string) => {
+    let userDocRef = doc(db, 'users', uid)
     setDoc(userDocRef, { profilePicture: fileName }, { merge: true })
         .catch(console.error)
 }
 
-export const getProfilePictureUrl = async (email: string): Promise<{ url: Promise<string>, fileName: string }> => {
-    let userDoc = await getDoc(doc(db, 'users', email))
-    let fileName = userDoc.get('profilePicture')
+export const getProfilePictureUrl = async (uid: string): Promise<{ url: string, fileName: string }> => {
+    const data = (await getDoc(doc(db, 'users', uid))).data()
+    let fileName = data.profilePicture
     if (!fileName)
-        return { url: null, fileName: '' }
-    let imageUrl = getDownloadURL(ref(storage, `${email}/${fileName}`))
-        .then(downloadUrl => { return downloadUrl })
-        .catch(e => {
-            console.debug(e);
-            console.error('Failed to load image from storage bucket');
-            return '';
-        });
+        return { url: '', fileName: '' }
+    let imageUrl = await getDownloadURL(ref(storage, `${uid}/${fileName}`))
     return { url: imageUrl, fileName };
 }
+
+// export const migratePhotos = (user) => {
+//     let oldDir = ref(storage, user.email)
+//     listAll(oldDir)
+//         .then(images => {
+//             images.items.forEach(image => {
+//                 let fileName = image.name;
+//                 uploadFile(image)
+//             })
+//         }, console.error)
+// }

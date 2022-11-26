@@ -5,7 +5,7 @@ const nextConfig = {
   images: {
     domains: [
       'firebasestorage.googleapis.com',
-      process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+      'plantantica.appspot.com',
       'www.gstatic.com',
     ],
     loader: "custom"

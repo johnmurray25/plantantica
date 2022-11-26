@@ -1,8 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "src/pages/**/*.{js,ts,jsx,tsx}",
-    "src/pages/components/**/*.{js,ts,jsx,tsx}",
+    "pages/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -10,10 +9,12 @@ module.exports = {
         'green': 'rgb(39, 47, 39)',
         'olive': '#4C6049',
         'yellow': 'rgb(248, 245, 240)',
+        'lightYellow': '#ccae62',
+        'darkYellow': '#af9349',
         'lighterYellow': 'rgb(248, 245, 240)',
         'lightGrayGreen': '#e8ffec',
-        'blue': '#7ed6df',
-        'slate': 'darkslategrey'
+        // 'blue': '#7ed6df',
+        'slate': 'darkslategrey',
       },
       backgroundImage: {
         'blue-tree': 'url(../img/blue-tree.png)'
