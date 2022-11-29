@@ -23,13 +23,7 @@ interface Props {
 }
 
 const CustomTimelineItem: React.FC<Props> = (props) => {
-    const update = props.update;
-    const plantId = props.plantId;
-    const uid = props.uid;
-    const width = props.width;
-    const height = props.height;
-    const species = props.species;
-    const imageUrl = props.imageUrl;
+    const { update, plantId, uid, width, height, species, imageUrl } = props;
 
     const [zoomImage, setZoomImage] = useState(false);
     const toggleZoomImage = () => { setZoomImage(!zoomImage) }

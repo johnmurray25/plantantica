@@ -19,11 +19,10 @@ const TreeLogo = (props: Props) => {
     return (
         <Image
             src={logo}
-            alt='Plantantica logo'
+            alt='Plantantica'
             loader={customImageLoader}
             {...{width}}
             {...{height}}
-            loading='lazy'
         />
     )
 }

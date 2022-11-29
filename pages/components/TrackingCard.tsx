@@ -271,7 +271,7 @@ const PlantCard: FC<Props> = (props) => {
                     <div className='pt-4'>
                         last watered {plant.dateLastWatered.toLocaleDateString()}
                         <br></br>
-                        <p className={wateringState != 'good' ? 'font-bold ' : ''}>
+                        <p className={wateringState != 'good' ? 'font-extrabold' : ''}>
                             water next {plant.dateToWaterNext.toLocaleDateString()}
                         </p>
                     </div>
@@ -296,7 +296,7 @@ const PlantCard: FC<Props> = (props) => {
                         Water
                         &nbsp;
                         <IoWater className={`text-lg
-                            ${wateringState == 'good' ? 'text-blue-200' : 'text-blue-600'}`} />
+                            ${wateringState == 'good' ? 'text-blue-200' : 'text-blue-600 animate-bounce text-xl'}`} />
                     </button>
                 </div>
                 <div className="flex justify-between items-center relative">
@@ -317,7 +317,8 @@ const PlantCard: FC<Props> = (props) => {
                                     setPlant(updatedPlant)
                                 }).catch(console.error);
                         }}
-                        className="flex items-center hover:text-white //bg-lime-500 hover:bg-lime-600 cursor-pointer text-sm px-8 py-2 border border-lime-600 rounded-full "
+                        className={"flex items-center hover:text-white //bg-lime-500 hover:bg-lime-600 cursor-pointer text-sm px-8 py-2 border rounded-full "
+                                    + (wateringState == 'good' ? " border-lime-600" : " border-lime-900")}
                     >
                         Feed
                         &nbsp;
