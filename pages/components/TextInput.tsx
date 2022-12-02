@@ -25,7 +25,7 @@ const TextInput: React.FC<Props> = (props) => {
                 width={props.width}
             />
             <a
-                className='cursor-pointer bg-[#53984D] text-yellow rounded justify-center h-12 w-8 text-center content-center'
+                className='cursor-pointer bg-[#53984D] text-stone-100 rounded justify-center h-12 w-8 text-center content-center'
                 onClick={props.onSubmit}
             >
                 &rarr;

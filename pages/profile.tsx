@@ -18,8 +18,11 @@ import { getUserDBRecord, saveDisplayName, saveUsername, unsubscribeFromDailyEma
 import TextField from './components/TextField';
 import TextInput from './components/TextInput';
 import DBUser from '../domain/DBUser';
+import useAuthRedirect from '../hooks/useAuthRedirect';
 
 function Home() {
+
+    useAuthRedirect()
 
     const [currentUser] = useAuthState(auth); // Data in auth service
     const [user, setUser] = useState<DBUser>(null) // Data in DB
@@ -137,7 +140,7 @@ function Home() {
     }
 
     return (
-        <div className='bg-green text-yellow min-h-screen text-left'>
+        <div className='bg-green text-stone-200 min-h-screen text-left'>
             {
                 shouldAddUsername && user ?
                     <div className='text-center'>
@@ -165,7 +168,7 @@ function Home() {
                                 width={48}
                             />
                             <a
-                                className='cursor-pointer bg-[#53984D] text-yellow rounded justify-center h-12 w-8 text-center content-center'
+                                className='cursor-pointer bg-[#53984D] text-stone-200 rounded justify-center h-12 w-8 text-center content-center'
                                 onClick={() => handleSaveUsername(true)}
                             >
                                 &rarr;
@@ -184,14 +187,14 @@ function Home() {
                             <div className='pt-24 relative w-full med:w-3/6 m-auto text-center justify-center pb-14 px-6  '>
                                 {editMode ?
                                     <a
-                                        className='m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border border-yellow rounded w-fit p-3 hover:text-green hover:bg-yellow'
+                                        className='m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border border-stone-100 rounded w-fit p-3 hover:text-green hover:bg-stone-100'
                                         onClick={() => setEditMode(false)}
                                     >
                                         Cancel
                                     </a>
                                     :
                                     <a
-                                        className='m-auto mr-4 mb-5 mt-8 med:mr-64 lg:mr-80 self-center flex items-center border border-yellow rounded w-fit p-3 hover:text-green hover:bg-yellow'
+                                        className='m-auto mr-4 mb-5 mt-8 med:mr-64 lg:mr-80 self-center flex items-center border border-stone-100s rounded w-fit p-3 hover:text-green hover:bg-stone-100'
                                         onClick={() => setEditMode(true)}
                                     >
                                         Edit &nbsp; <IoPencilOutline />
@@ -211,7 +214,7 @@ function Home() {
                                                 height={180}
                                             />
                                             {editMode &&
-                                                <a className='absolute top-2 right-2 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
+                                                <a className='absolute top-2 right-2 bg-stone-100 text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
                                                     onClick={onRemoveFile} >
                                                     &#10060;
                                                 </a>
@@ -223,7 +226,7 @@ function Home() {
                                             <ReactLoading type='spinningBubbles' color="#fff" />
                                         </div>
                                         :
-                                        <div className='relative m-auto pt-6 h-32 w-32 rounded-3xl bg-yellow '>
+                                        <div className='relative m-auto pt-6 h-32 w-32 rounded-3xl bg-stone-100 '>
                                             <div className='absolute flex items-center cursor-pointer mt-2 top-0 right-3 text-green text-xs'>
                                                 <FileInput
                                                     onAttachFile={async (e: { target: { files: File[]; }; }) => {
@@ -337,7 +340,7 @@ function Home() {
                                 </div>
                                 <div className="flex justify-evenly text-center pb-0 pt-10 w-full">
                                     <a
-                                        className='cursor-pointer hover:bg-yellow hover:text-green border border-[#29bc29] py-4 px-7 mx-2'
+                                        className='cursor-pointer hover:bg-stone-100 hover:text-green border border-[#29bc29] py-4 px-7 mx-2'
                                         style={{
                                             borderRadius: "0 222px",
                                         }}

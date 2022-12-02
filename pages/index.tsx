@@ -38,7 +38,7 @@ export default function Home() {
     }, [user, getUserInfo])
 
     return (
-        <div className=" text-yellow" style={{ minWidth: '100vw', }} >
+        <div className=" text-stone-200" style={{ minWidth: '100vw', }} >
             <NavBar hideLogo />
 
             <main className="p-4 pt-20 flex flex-col items-center m-auto"

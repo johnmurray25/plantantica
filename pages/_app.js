@@ -19,7 +19,9 @@ function Plantantica({ Component, pageProps }) {
       <link rel="icon" href="./tree-logo.ico" />
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" />
+      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <link href="https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@600&display=swap" rel="stylesheet"/>
+      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
       <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&family=Montserrat&display=swap" rel="stylesheet" />
       <link rel='manifest' href='./manifest.json' />
       <meta name="apple-mobile-web-app-status-bar" content="rgb(39, 47, 39)" />

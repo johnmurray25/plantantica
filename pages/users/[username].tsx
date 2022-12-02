@@ -91,12 +91,12 @@ function Home() {
     }, [profPicUrl, username, uid]);
 
     return (
-        <div className='bg-green text-yellow min-h-screen text-left'>
+        <div className='bg-green text-stone-100 min-h-screen text-left'>
             <NavBar />
             {
                 user &&
                 <div>
-                    <div className='relative w-full med:w-3/6 m-auto text-center justify-center pt-28 px-6 med:border border-yellow rounded '>
+                    <div className='relative w-full med:w-3/6 m-auto text-center justify-center pt-28 px-6 med:border border-stone-100 rounded '>
                         {profPicUrl && profPicUrl != '' &&
                             isProfPicLoading ?
                             <div className='relative w-fit flex justify-center m-auto border rounded-xl p-3'>

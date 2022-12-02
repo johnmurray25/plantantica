@@ -83,7 +83,7 @@ const Home: React.FC = () => {
     }, [currentUser, following, handleKeyPress, searchUsers])
 
     return (
-        <div className='text-yellow bg-green min-w-full' /**Container */>
+        <div className='text-stone-200 bg-green min-w-full' /**Container */>
             <NavBar />
 
             <div className='min-h-screen p-4 pt-28 flex flex-col items-center m-auto'>
@@ -99,7 +99,7 @@ const Home: React.FC = () => {
                         width={80}
                     />
                     <a
-                        className='cursor-pointer bg-[#53984D] text-yellow rounded justify-center h-12 w-8 text-center content-center'
+                        className='cursor-pointer bg-[#53984D] text-stone-200 rounded justify-center h-12 w-8 text-center content-center'
                         onClick={searchUsers}
                     >
                         &rarr;

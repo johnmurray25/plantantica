@@ -71,7 +71,7 @@ export const migratePlantData = async (user: User) => {
         // add each plant as a new document in updated db document
         let destinationDoc = doc(destCol, plant.id)
         setDoc(destinationDoc, plant.data())
-            .then(() => console.log('saved plant document'), console.error)
+            .then(() => console.log('migrated plant document'), console.error)
     })
 }
 

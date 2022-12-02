@@ -33,21 +33,26 @@ export const getUser = async (user: User) => {
     return getDoc(uidRef)
 }
 
-export const initializeUser = async (user: User) => {
+export const initializeUser = async (user: User, username?: string) => {
     let userDoc = doc(db, 'users', user.uid)
     let userData = {
         email: user.email,
         displayName: user.displayName,
         dailyEmails: true,
+        username
     }
     try {
         await setDoc(userDoc, userData, { merge: true })
         console.log('initialized user in DB for email ' + user.email)
+    } catch (e) {
+        console.error(e)
+        return false
+    }
+    try {
         await migratePlantData(user)
         console.log('migrated plant data')
     } catch (e) {
         console.error(e)
-        return false
     }
     return true
 }
@@ -71,6 +76,17 @@ export const getUserByUid = async (uid: string) => {
     let docSnap = await getDoc(uidRef)
     // check if result exists or not using docSnap.exists()
     return docSnap
+}
+
+export const getUserByEmail = async (email: string) => {
+    const usersRef = collection(db, 'users')
+    const q = query(usersRef, where('email', '==', email))
+    const result = await getDocs(q)
+    if (result?.docs?.length > 0) {
+        return result.docs.at(0);
+    } else {
+        return null;
+    }
 }
 
 export const mapDocToUser = async (docSnap: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>): Promise<DBUser> => {

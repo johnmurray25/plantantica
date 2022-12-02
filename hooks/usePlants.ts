@@ -14,7 +14,7 @@ const usePlants = () => {
             return;
         }
         setIsLoading(true);
-        console.log("Loading plants...")
+        // console.log("Loading plants...")
         try {
             const res = await getPlants(user.uid)
             setPlants(res)
@@ -23,7 +23,7 @@ const usePlants = () => {
             // setStatus(ERR_STATUS)
         } finally {
             setIsLoading(false)
-            console.log("finished loading plants")
+            // console.log("finished loading plants")
         }
     }, [user])
 

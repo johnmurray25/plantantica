@@ -1,14 +1,11 @@
 import React, { FC, useEffect, useState } from 'react'
 import Image from 'next/image';
 
-import { IoPartlySunnySharp } from '@react-icons/all-files/io5/IoPartlySunnySharp';
-import { IoSunnySharp } from '@react-icons/all-files/io5/IoSunnySharp';
 import { IoWater } from '@react-icons/all-files/io5/IoWater';
 import { getDownloadURL, ref } from 'firebase/storage';
 
 import storage from '../../firebase/storage';
 import Plant from '../../domain/Plant';
-import DropDownMenu from './DropDownMenu';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import customImageLoader from '../../util/customImageLoader';
 
@@ -86,7 +83,7 @@ const PlantCard: FC<Props> = (props) => {
                         className='rounded' />
                     {/* <div className="absolute w-full bg-gray-900 text-white italic opacity-70 bottom-0 "> */}
                         <h1>
-                            <a className='hover:underline text-lg med:text-xl pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
+                            <a className='text-lg med:text-xl pl-2 ' >
                                 {plant.species}
                             </a>
                         </h1>
@@ -95,7 +92,7 @@ const PlantCard: FC<Props> = (props) => {
                 :
                 <div className='relative'>
                     <h1>
-                        <a className='hover:underline text-2xl leading-loose pl-2 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
+                        <a className='text-2xl leading-loose pl-2 ' >
                             {plant.species}
                         </a>
                     </h1>

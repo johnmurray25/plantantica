@@ -5,6 +5,7 @@ import TimelineItem from '@mui/lab/TimelineItem';
 import TimelineOppositeContent from '@mui/lab/TimelineOppositeContent';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import { Typography } from '@mui/material';
+import { IoTrash } from '@react-icons/all-files/io5/IoTrash';
 import Image from 'next/image';
 import React, { useState } from 'react'
 import Update from '../../domain/Update';
@@ -38,7 +39,7 @@ const CustomTimelineItem: React.FC<Props> = (props) => {
                 >
                     {update && update.dateCreated && update.dateCreated.toUTCString().substring(0, 17)}
                     <a
-                        className="flex w-fit justify-end items-center text-red-900 border border-red-900 rounded text-sm p-1 cursor-pointer "
+                        className="text-white bg-red-800 hover:bg-red-700 flex w-fit justify-end items-center rounded-full text-sm p-1 px-2 cursor-pointer "
                         onClick={() => {
                             if (!confirm("Delete this update?")) {
                                 return;
@@ -47,7 +48,7 @@ const CustomTimelineItem: React.FC<Props> = (props) => {
                             props.onDelete();
                         }}
                     >
-                        x
+                        <IoTrash />
                     </a>
                 </TimelineOppositeContent>
                 <TimelineSeparator>
@@ -58,7 +59,7 @@ const CustomTimelineItem: React.FC<Props> = (props) => {
                     }}>
                         {update && update.image && imageUrl &&
                             <div
-                                className='relative flex justify-center items-center m-auto cursor-pointer '
+                                className=' flex justify-center items-center m-auto cursor-pointer '
                                 onClick={toggleZoomImage}
                             >
                                 <ImageInTimeline
@@ -67,9 +68,9 @@ const CustomTimelineItem: React.FC<Props> = (props) => {
                                     height={height}
                                     species={species}
                                 />
-                                <div className={`absolute ${!zoomImage && 'hidden'} m-auto p-2
+                                <div className={`absolute ${!zoomImage && 'hidden'} m-auto p-2 w-full
                                     flex justify-center items-center bg-gray-900 object-cover object-center z-40`}
-                                    style={{ width: '100vw', height: '60vh', }}
+                                    style={{ height: '60vh', }}
                                 >
                                     <button className='absolute top-2 right-4 z-10 text-white rounded-full bg-red-800 px-3 py-1'>
                                         x

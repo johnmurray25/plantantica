@@ -16,7 +16,7 @@ const GenericDatePicker: React.FC<Props> = (props) => {
         <div className='bg-lightGrayGreen text-green p-3 m-auto'>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                    className='bg-yellow'
+                    className='bg-stone-100'
                     label={props.label}
                     value={props.value}
                     onChange={(newValue) => props.onSelect(newValue)}

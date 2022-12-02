@@ -175,7 +175,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                   {imageUrl ?
                     <div>
                       <Image src={imageUrl} loader={customImageLoader} alt='photo of plant' width='150' height='190' />
-                      <a className='absolute top-2 right-2 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
+                      <a className='absolute top-2 right-2 bg-stone-100 text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
                         onClick={onRemoveFile} >
                         &#10060;
                       </a>
@@ -264,7 +264,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                       }}
                     />
                     {dateLastFed &&
-                      <a className='bg-yellow text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit text-xs'
+                      <a className='bg-stone-100 text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit text-xs'
                         onClick={() => {
                           if (confirm('Remove date last fed?')) {
                             setDateLastFed(null);
@@ -280,7 +280,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                       onSelect={(d: Date) => setDateToFeedNext(d)}
                     />
                     {dateToFeedNext &&
-                      <a className='bg-yellow text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit text-xs'
+                      <a className='bg-stone-100 text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit text-xs'
                         onClick={() => {
                           if (confirm('Remove date to feed next?')) {
                             setDateToFeedNext(null);
@@ -321,7 +321,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
             <div className="mx-3 mt-8 ">
               <div className='flex justify-evenly '>
                 <a
-                  className="bg-yellow text-green py-2.5 rounded px-7 mt-4 mx-8"
+                  className="bg-stone-100 text-green py-2.5 rounded px-7 mt-4 mx-8"
                   onClick={router.back}>
                   Cancel
                 </a>

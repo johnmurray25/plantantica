@@ -1,8 +1,6 @@
 import React, { FC, useEffect, useState } from 'react'
 import Image from 'next/image';
 
-import { IoPartlySunnySharp } from '@react-icons/all-files/io5/IoPartlySunnySharp';
-import { IoSunnySharp } from '@react-icons/all-files/io5/IoSunnySharp';
 import { IoWater } from '@react-icons/all-files/io5/IoWater';
 import { IoLeaf } from '@react-icons/all-files/io5/IoLeaf';
 import { getDownloadURL, ref } from 'firebase/storage';
@@ -116,7 +114,7 @@ const PlantCard: FC<Props> = (props) => {
             return sharedStyle + ' bg-lime-900 border-[#29bc29] ';
         }
         else {
-            return sharedStyle + ' bg-[#ccae62] text-black ';
+            return sharedStyle + ' bg-dry text-stone-800 ';
         }
     }
 
@@ -140,15 +138,11 @@ const PlantCard: FC<Props> = (props) => {
     })();
 
     return plant && !isImageLoading && (
-        <div
-            // key={plant.id}
-            className={getBgStyle()}
-            style={{ transition: 'background-color 1s ease', }}
-        >
+        <div className={getBgStyle()} style={{ transition: 'background-color 1s ease', }}>
             {/* Picture */}
             <div className='relative pt-2'>
                 {plant.picture && imageURL && imageURL !== '' &&
-                    <div className={` flex px-0 mx-0 py-1 w-full relative h-[${width}px]`}>
+                    <div className={` flex px-0 mx-0 py-1 w-full relative ]`}>
                         <Image
                             src={imageURL}
                             alt={`photo of ${plant.species}`}
@@ -156,15 +150,15 @@ const PlantCard: FC<Props> = (props) => {
                             loading='lazy'
                             // layout='fill' 
                             width={imgWidth}
-                            height={Math.min(imgHeight, imgWidth)}
-                            className='rounded object-cover object-center' />
+                            height={height/2.5}
+                            className='object-cover object-center' />
                     </div>
                 }
             </div>
             <div className="w-full flex justify-between items-center">
                 {/* Species */}
                 <h1 className='text-left p-1 '>
-                    <a className='hover:underline text-3xl italic pl-2 pt-5 leading-7' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
+                    <a className='hover:underline text-3xl italic pl-2 pt-5 leading-7 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
                         {plant.species}
                     </a>
                 </h1>
@@ -217,7 +211,7 @@ const PlantCard: FC<Props> = (props) => {
                 {/* Instructions & Updates buttons */}
                 <div className='relative'>
                     <div
-                        className={`w-fit top-2 left-2 text-sm hover:bg-[#ffff63] hover:border-[#ffff63] cursor-pointer //border rounded-full py-1 px-5  
+                        className={`w-fit top-2 left-2 text-sm hover:bg-[#ffff63] hover:border-[#ffff63] cursor-pointer rounded-full py-1 px-5  
                             ${wateringState == "good" ? "border-white hover:text-black" : "border-black"}
                             ${plant && plant.careInstructions ? "opacity-100" : "opacity-0 h-0"}
                             `}
@@ -289,7 +283,7 @@ const PlantCard: FC<Props> = (props) => {
                                 })
                                 .catch(e => { console.error(e); console.error("Failed to mark plant as watered") })
                         }}
-                        className={`flex items-center hover:text-white hover:bg-blue-400 
+                        className={`flex items-center hover:text-white hover:bg-blue-400  hover:border-blue-400
                             cursor-pointer text-sm px-8 py-2  lg:mt-2 border rounded-full h-fit
                             ${wateringState == 'good' ? 'border-blue-300' : 'border-blue-500'}`}
                     >
@@ -317,7 +311,7 @@ const PlantCard: FC<Props> = (props) => {
                                     setPlant(updatedPlant)
                                 }).catch(console.error);
                         }}
-                        className={"flex items-center hover:text-white //bg-lime-500 hover:bg-lime-600 cursor-pointer text-sm px-8 py-2 border rounded-full "
+                        className={"flex items-center hover:text-white hover:bg-lime-600 hover:border-lime-600 cursor-pointer text-sm px-8 py-2 border rounded-full "
                                     + (wateringState == 'good' ? " border-lime-600" : " border-lime-900")}
                     >
                         Feed
