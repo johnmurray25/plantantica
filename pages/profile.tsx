@@ -295,7 +295,7 @@ function Home() {
                                             />
                                         </div>
                                         :
-                                        <p className='font-bold p-3 pl-10 rounded-lg m-2 ml-0 text-white'>
+                                        <p className='font-bold p-3 pl-10 rounded-lg m-2 ml-0 text-stone-100'>
                                             {user ? `@${user.username}` : ''}
                                         </p>
                                     }
@@ -349,7 +349,7 @@ function Home() {
                                         Sign out
                                     </a>
                                     <a
-                                        className='cursor-pointer hover:bg-red-600 hover:text-white border border-red-600 py-4 px-7 mx-2'
+                                        className='cursor-pointer hover:bg-red-600 hover:text-stone-100 border border-red-600 py-4 px-7 mx-2'
                                         style={{
                                             borderRadius: "222px 0",
                                         }}

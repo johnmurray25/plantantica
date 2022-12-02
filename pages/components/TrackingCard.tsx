@@ -172,7 +172,7 @@ const PlantCard: FC<Props> = (props) => {
                         onClick={() => router.push(`/EditPlantTrackingDetails/${plant.id}`)}>
                         <IoPencil />
                     </div>
-                    <div className={`flex items-center mx-4 px-6 py-1 my-1 hover:bg-red-500 hover:text-white hover:border-red-500 cursor-pointer border rounded-full p-2 
+                    <div className={`flex items-center mx-4 px-6 py-1 my-1 hover:bg-red-500 hover:text-stone-100 hover:border-red-500 cursor-pointer border rounded-full p-2 
                     ${wateringState == 'good' ?
                             'border-red-400' :
                             'border-red-900 text-red-900'}`}
@@ -232,7 +232,7 @@ const PlantCard: FC<Props> = (props) => {
                             Updates
                         </div>
                         <div
-                            className={"hover:bg-[#29bc29] hover:text-white hover:border-[#29bc29] cursor-pointer rounded-full py-2 px-3 ml-2 " +
+                            className={"hover:bg-[#29bc29] hover:text-stone-100 hover:border-[#29bc29] cursor-pointer rounded-full py-2 px-3 ml-2 " +
                                 (wateringState == 'good' ? 'border border-[#ffe894] text-[#ffe894]' : ' border border-darkYellow  ')}
                             onClick={() => router.push(`/AddUpdateForPlant/${plant.id}`)}
                         >
@@ -283,7 +283,7 @@ const PlantCard: FC<Props> = (props) => {
                                 })
                                 .catch(e => { console.error(e); console.error("Failed to mark plant as watered") })
                         }}
-                        className={`flex items-center hover:text-white hover:bg-blue-400  hover:border-blue-400
+                        className={`flex items-center hover:text-stone-100 hover:bg-blue-400  hover:border-blue-400
                             cursor-pointer text-sm px-8 py-2  lg:mt-2 border rounded-full h-fit
                             ${wateringState == 'good' ? 'border-blue-300' : 'border-blue-500'}`}
                     >
@@ -311,7 +311,7 @@ const PlantCard: FC<Props> = (props) => {
                                     setPlant(updatedPlant)
                                 }).catch(console.error);
                         }}
-                        className={"flex items-center hover:text-white hover:bg-lime-600 hover:border-lime-600 cursor-pointer text-sm px-8 py-2 border rounded-full "
+                        className={"flex items-center hover:text-stone-100 hover:bg-lime-600 hover:border-lime-600 cursor-pointer text-sm px-8 py-2 border rounded-full "
                                     + (wateringState == 'good' ? " border-lime-600" : " border-lime-900")}
                     >
                         Feed

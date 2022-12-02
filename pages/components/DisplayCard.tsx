@@ -81,7 +81,7 @@ const PlantCard: FC<Props> = (props) => {
                         width={getImageWidth()}
                         height={Math.min(getImageHeight(), getImageWidth())}
                         className='rounded' />
-                    {/* <div className="absolute w-full bg-gray-900 text-white italic opacity-70 bottom-0 "> */}
+                    {/* <div className="absolute w-full bg-gray-900 text-stone-100 italic opacity-70 bottom-0 "> */}
                         <h1>
                             <a className='text-lg med:text-xl pl-2 ' >
                                 {plant.species}

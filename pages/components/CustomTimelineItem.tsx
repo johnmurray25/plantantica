@@ -39,7 +39,7 @@ const CustomTimelineItem: React.FC<Props> = (props) => {
                 >
                     {update && update.dateCreated && update.dateCreated.toUTCString().substring(0, 17)}
                     <a
-                        className="text-white bg-red-800 hover:bg-red-700 flex w-fit justify-end items-center rounded-full text-sm p-1 px-2 cursor-pointer "
+                        className="text-stone-100 bg-red-800 hover:bg-red-700 flex w-fit justify-end items-center rounded-full text-sm p-1 px-2 cursor-pointer "
                         onClick={() => {
                             if (!confirm("Delete this update?")) {
                                 return;
@@ -72,7 +72,7 @@ const CustomTimelineItem: React.FC<Props> = (props) => {
                                     flex justify-center items-center bg-gray-900 object-cover object-center z-40`}
                                     style={{ height: '60vh', }}
                                 >
-                                    <button className='absolute top-2 right-4 z-10 text-white rounded-full bg-red-800 px-3 py-1'>
+                                    <button className='absolute top-2 right-4 z-10 text-stone-100 rounded-full bg-red-800 px-3 py-1'>
                                         x
                                     </button>
                                     <Image
