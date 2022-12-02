@@ -154,14 +154,14 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   }
 
   return (
-    <div className='text-lg text-white bg-green min-w-full min-h-screen' >
+    <div className='antialiased text-lg text-white bg-green ' >
       {loadingStatus ?
         <div className='flex justify-center items-center pt-60' >
           {loadingStatus} < ReactLoading type='bars' color="#fff" />
         </div>
         :
         <div>
-          <div className={styles.title}>
+          <div className="text-3xl text-center italic text-stone-100 border-4 border-x-0 border-t-0 border-stone-200 border-dotted w-full p-6 bg-lime-900">
             <a className='pt-20 '>
               {`${plant ? 'Edit' : 'Add'} Plant Info`}
             </a>
@@ -192,7 +192,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                     />
                   }
                 </div>
-                < div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center' >
+                < div className='grid grid-cols-2 gap-x-1 gap-y-6 items-center pt-6' >
                   <label htmlFor='species'>
                     Species:
                   </label>
@@ -201,14 +201,14 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                     value={species}
                     onChange={setSpecies}
                     textarea={true}
-                    width={40}
+                    width={"full"}
                   />
                   <label htmlFor="lightReq">
                     Requires
                   </label>
                   <Select
                     id="lightReq"
-                    className="bg-lightGrayGreen"
+                    className="bg-orange-50"
                     value={lightRequired}
                     label="light required"
                     onChange={(e) => setLightRequired(e.target.value)}
@@ -219,12 +219,12 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                 </div>
               </div>
               <div>
-                <div className='flex flex-row justify-center items-center'>
+                <div className='flex flex-row justify-center items-center pt-6'>
                   <label htmlFor="minDays">
                     Water every &nbsp;
                   </label>
                   <input
-                    className='bg-lightGrayGreen p-2 px-0 my-2 text-slate text-center w-14'
+                    className='bg-orange-50 p-2 px-0 my-2 text-slate text-center w-14'
                     type="text"
                     name="minDays"
                     id="minDays"
@@ -273,7 +273,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                         &#10060;
                       </a>}
                   </div>
-                  <div className='flex justify-center items-center '>
+                  <div className='flex justify-center items-center'>
                     <GenericDatePicker
                       label='Feed next on'
                       value={dateToFeedNext}
@@ -313,20 +313,20 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                     value={careInstructions}
                     onChange={setCareInstructions}
                     textarea={true}
-                    width={40}
+                    width={"full"}
                   />
                 </div>
               </div>
             </div>
-            <div className="mx-3 mt-8 ">
+            <div className="mx-3 mt-0 ">
               <div className='flex justify-evenly '>
                 <a
-                  className="bg-stone-100 text-green py-2.5 rounded px-7 mt-4 mx-8"
+                  className="bg-lime-100 text-green py-2.5 rounded px-7 mt-4 mx-8"
                   onClick={router.back}>
                   Cancel
                 </a>
                 <button
-                  className="bg-lightGrayGreen text-green py-2.5 rounded px-7 mt-4 mx-8"
+                  className="bg-lime-700 text-stone-50 font-bold py-2.5 rounded px-7 mt-4 mx-8"
                   onClick={savePlantTrackingDetails}>
                   Save
                 </button>

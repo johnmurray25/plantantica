@@ -1,10 +1,9 @@
-import { createUserWithEmailAndPassword, deleteUser, sendEmailVerification, User } from 'firebase/auth'
+import { createUserWithEmailAndPassword, deleteUser, User } from 'firebase/auth'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
-import { isIdentifier } from 'typescript'
 import auth from '../firebase/auth'
-import { getUserByEmail, getUserByEmailDeprecated, getUserByUsername, initializeUser } from '../service/UserService'
+import { getUserByEmail, getUserByUsername, initializeUser } from '../service/UserService'
 import TextField from './components/TextField'
 import TreeLogo from './components/TreeLogo'
 

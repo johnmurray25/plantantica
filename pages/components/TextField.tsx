@@ -11,7 +11,7 @@ interface TextFieldProps {
     name?: string;
     type?: "email" | "password" | "text";
     textarea?: boolean;
-    width: number;
+    width: string | number;
 }
 
 const TextField = React.forwardRef<InputElement, TextFieldProps>(
@@ -21,7 +21,7 @@ const TextField = React.forwardRef<InputElement, TextFieldProps>(
             <div>
                 <InputElement
                     ref={ref as any}
-                    className={`rounded-md w-${props.width ? props.width : 24} p-3 mb-3 bg-orange-50 text-black ${textarea ? "h-32" : ""
+                    className={`rounded-md w-${props.width ? props.width : 24} p-3 mb-3 bg-orange-50 text-black ${textarea ? "h-28" : ""
                         }`}
                     onChange={({ target: { value } }: InputChangeEvent) => onChange(value)}
                     {...props}

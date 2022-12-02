@@ -32,11 +32,17 @@ const signIn = async (identifier: string, password: string) => {
     if (!identifier.includes("@")) {
         // Sign in with username
         email = (await getUserByUsername(identifier.toLocaleLowerCase()))?.data().email;
+        if (!email?.length) {
+            alert("Could not find account for username " + identifier)
+            return
+        }
         console.log(`found email ${email} for username ${identifier}`)
     }
-    const credential = signInWithEmailAndPassword(auth, email, password).catch(console.error)
-    console.log("Signed in ")
-    console.log(credential)
+    const credential = signInWithEmailAndPassword(auth, email, password)
+        .catch((e) => {
+            console.error(e)
+            alert(`Error: ${e.code}`)
+        })
 }
 
 function SignInScreen(props: Props) {
@@ -83,64 +89,53 @@ function SignInScreen(props: Props) {
                             </span>
                         </Link>
                     }
-                    {user ?
-                        <div>
-                            <p>
-                                Welcome {user.displayName}! You are now signed in.
-                            </p>
-                            <a onClick={signOut}>
-                                Sign out
-                            </a>
-                        </div>
-                        :
-                        <div className='flex flex-col items-center justify-center'>
-                            <p className='pb-4'>Please sign in:</p>
-                            <TextField
-                                onChange={setIdentifier}
-                                value={identifier}
-                                width={150}
-                                placeholder="Username or email"
-                            />
-                            <TextField
-                                onChange={setPassword}
-                                value={password}
-                                width={150}
-                                placeholder="Password"
-                                type='password'
-                            />
-                            <div className="flex items-center">
-                                <Link href='/ResetPassword'
-                                    className='text-sm text-stone-300 -translate-x-2 cursor-pointer hover:text-lime-300'
-                                >
-                                    Forgot password?
-                                </Link>
-                                <button className='bg-lime-700 text-zinc-100 px-4 py-2 w-28 
+                    <div className='flex flex-col items-center justify-center'>
+                        <p className='pb-4'>Please sign in:</p>
+                        <TextField
+                            onChange={setIdentifier}
+                            value={identifier}
+                            width={150}
+                            placeholder="Username or email"
+                        />
+                        <TextField
+                            onChange={setPassword}
+                            value={password}
+                            width={150}
+                            placeholder="Password"
+                            type='password'
+                        />
+                        <div className="flex items-center">
+                            <Link href='/ResetPassword'
+                                className='text-sm text-stone-300 -translate-x-2 cursor-pointer hover:text-lime-300'
+                            >
+                                Forgot password?
+                            </Link>
+                            <button className='bg-lime-700 text-zinc-100 px-4 py-2 w-28 
                                             rounded text-center translate-x-2 hover:bg-lime-400 hover:text-green'
-                                    onClick={() => signIn(identifier, password)}
-                                >
-                                    &rarr;
-                                </button>
-                            </div>
-                            <p className='text-sm text-right pb-6 pt-2'>
-                                Don&apos; have an account yet? &nbsp;
-                                <Link href="/SignUp" passHref>
-                                    <span className='text-lime-400 cursor-pointer hover:underline'>
-                                        Sign up
-                                    </span>
-                                </Link>
-                            </p>
-                            <div className='border border-b-stone-600 border-t-0 border-x-0 w-1/3'>
-                            </div>
-                            <div className="pt-6 pb-2">
-                                Or (recommended):
-                            </div>
-                            <SignInWithGoogleButton />
-                            {/* <button className='flex flex-row justify-evenly items-center bg-[#3B5998] text-white font-sans font-semibold px-2 py-3 m-2 text-sm  w-52 rounded-sm' >
+                                onClick={() => signIn(identifier, password)}
+                            >
+                                &rarr;
+                            </button>
+                        </div>
+                        <p className='text-sm text-right pb-6 pt-2'>
+                            Don&apos; have an account yet? &nbsp;
+                            <Link href="/SignUp" passHref>
+                                <span className='text-lime-400 cursor-pointer hover:underline'>
+                                    Sign up
+                                </span>
+                            </Link>
+                        </p>
+                        <div className='border border-b-stone-600 border-t-0 border-x-0 w-1/3'>
+                        </div>
+                        <div className="pt-6 pb-2">
+                            Or (recommended):
+                        </div>
+                        <SignInWithGoogleButton />
+                        {/* <button className='flex flex-row justify-evenly items-center bg-[#3B5998] text-white font-sans font-semibold px-2 py-3 m-2 text-sm  w-52 rounded-sm' >
                                 <Image alt="Google logo" loader={customImageLoader} src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/facebook.svg" width={17} height={17} />
                                 Sign in with Facebook
                             </button> */}
-                        </div>
-                    }
+                    </div>
                 </div>)
             }
         </div >
