@@ -9,7 +9,7 @@ import Image from 'next/image'
 import useWindowDimensions from '../../hooks/useWindowDimensions'
 import { getProfilePictureUrl } from '../../service/FileService'
 import customImageLoader from '../../util/customImageLoader'
-import { getUserByUid, mapDocToUser } from '../../service/UserService'
+import { getUserByUid, getUserDBRecord, mapDocToUser } from '../../service/UserService'
 import DBUser from '../../domain/DBUser'
 import TreeLogo from './TreeLogo'
 
@@ -28,30 +28,33 @@ const NavBar: FC<NavProps> = (props) => {
 
   const [profPicUrl, setProfPicUrl] = useState('')
   const [fileName, setFileName] = useState('')
-  const [isProfPicLoading, setIsProfPicLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true)
   const [userInDB, setUserInDB] = useState<DBUser>(null);
 
   useEffect(() => {
     if (!user) {
-      return
+      if (!loading) {
+        setIsLoading(false)
+      }
+      return;
     }
 
     if (!profPicUrl) {
-      setIsProfPicLoading(true);
-      getProfilePictureUrl(user.uid)
-        .then(data => {
-          setFileName(data.fileName)
-          setProfPicUrl(data.url)
+      getUserDBRecord(user?.uid)
+        .then((u) => {
+          setUserInDB(u)
+          getProfilePictureUrl(user.uid)
+            .then(data => {
+              setFileName(data.fileName)
+              setProfPicUrl(data.url)
+            })
+            .catch(console.error)
         })
         .catch(console.error)
-        .finally(() => setIsProfPicLoading(false))
-      getUserByUid(user.uid)
-        .then(mapDocToUser)
-        .then(setUserInDB)
-        .catch(console.error);
+        .finally(() => setIsLoading(false));
     }
 
-  }, [user, profPicUrl]);
+  }, [user, profPicUrl, loading, isLoading]);
 
   return (
     <nav className="z-10 fixed bg-transparent flex justify-between flex-wrap px-4 pt-4 pb-2 items-center w-full">
@@ -66,30 +69,26 @@ const NavBar: FC<NavProps> = (props) => {
         }
       </div>
       {!hideUser &&
-        loading ?
-        <div className='flex w-full pr-16 justify-end absolute'>
-          <ReactLoading type='cylon' color="#fff" />
-        </div>
+        loading || isLoading ?
+        <ReactLoading type='cylon' color="#fff" />
         :
         user && userInDB ?
           <Link href="/profile" passHref>
             <div className='cursor-pointer lg:pr-8'>
-              {isProfPicLoading ? <ReactLoading type='spinningBubbles' color="#fff" />
+              {userInDB.profilePicture ?
+                <Image
+                  src={profPicUrl}
+                  loader={customImageLoader}
+                  // alt='Profile picture'
+                  alt=''
+                  width={height ? height / 14 : 40}
+                  height={height ? height / 13 : 40}
+                  className='rounded-3xl'
+                />
                 :
-                userInDB.profilePicture ?
-                  <Image
-                    src={profPicUrl}
-                    loader={customImageLoader}
-                    // alt='Profile picture'
-                    alt=''
-                    width={height ? height / 14 : 40}
-                    height={height ? height / 13 : 40}
-                    className='rounded-3xl'
-                  />
-                  :
-                  <div className="inline-block text-xs lg:text-xs px-4 py-2 leading-none border rounded border-stone-100 text-stone-100 hover:border-transparent hover:text-green hover:bg-stone-100 mt-4 lg:mt-0">
-                    {userInDB.username ? `@${userInDB.username}` : user.email}
-                  </div>
+                <div className="inline-block text-xs lg:text-xs px-4 py-2 leading-none border rounded border-stone-100 text-stone-100 hover:border-transparent hover:text-green hover:bg-stone-100 mt-4 lg:mt-0">
+                  {userInDB.username ? `@${userInDB.username}` : user.email}
+                </div>
               }
             </div>
           </Link>

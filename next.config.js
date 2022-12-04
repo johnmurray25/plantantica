@@ -14,4 +14,8 @@ const nextConfig = {
   // assetPrefix: isProd ? "https://us-central1-plantantica.cloudfunctions.net/handler" : "",
 }
 
-module.exports = nextConfig
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
+
+module.exports = withBundleAnalyzer(nextConfig)

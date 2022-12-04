@@ -124,11 +124,6 @@ export const saveUpdateForPlant = async (uid: string, plantId: string, update: U
     }
 }
 
-export const deleteUpdateForPlant = (uid: string, plantId: string, updateId: string) => {
-    const docRef = doc(db, `users/${uid}/plantTrackingDetails/${plantId}/updates/${updateId}`);
-    deleteDoc(docRef);
-}
-
 export const waterPlantInDB = async (uid: string, plantId: string, newWateringDateMs: number) => {
     setDoc(
         doc(db, `users/${uid}/plantTrackingDetails/${plantId}`),

@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Image from 'next/image';
 
 import { IoWater } from '@react-icons/all-files/io5/IoWater';
@@ -15,6 +15,7 @@ import { IoTrash } from '@react-icons/all-files/io5/IoTrash';
 import TimelineInCard from './TimelineInCard';
 import Update from '../../domain/Update';
 import { deletePlant, feedPlantInDB, waterPlantInDB } from '../../service/PlantService';
+import ResizablePanel from './ResizablePanel';
 
 const MILLIS_IN_DAY = 86400000
 
@@ -43,7 +44,7 @@ interface Props {
     updates: Update[];
 }
 
-const PlantCard: FC<Props> = (props) => {
+const PlantCard = (props: Props) => {
     const router = useRouter();
 
     // dimensions
@@ -142,15 +143,14 @@ const PlantCard: FC<Props> = (props) => {
             {/* Picture */}
             <div className='relative pt-2'>
                 {plant.picture && imageURL && imageURL !== '' &&
-                    <div className={` flex px-0 mx-0 py-1 w-full relative ]`}>
+                    <div className="flex px-0 mx-0 py-1 w-full h-fit relative">
                         <Image
                             src={imageURL}
                             alt={`photo of ${plant.species}`}
                             loader={customImageLoader}
                             loading='lazy'
-                            // layout='fill' 
                             width={imgWidth}
-                            height={height/2.5}
+                            height={height / 1.8}
                             className='object-cover object-center' />
                     </div>
                 }
@@ -211,9 +211,9 @@ const PlantCard: FC<Props> = (props) => {
                 {/* Instructions & Updates buttons */}
                 <div className='relative'>
                     <div
-                        className={`w-fit top-2 left-2 text-sm hover:bg-[#ffff63] hover:border-[#ffff63] cursor-pointer rounded-full py-1 px-5  
+                        className={`w-fit top-2 left-2 text-sm hover:bg-[#ffff63] hover:border-[#ffff63] rounded-full py-1 px-5  
                             ${wateringState == "good" ? "border-white hover:text-black" : "border-black"}
-                            ${plant && plant.careInstructions ? "opacity-100" : "opacity-0 h-0"}
+                            ${plant && plant.careInstructions ? "opacity-100 cursor-pointer" : "hidden"}
                             `}
                         onClick={toggleInstructions}
                     >
@@ -247,18 +247,20 @@ const PlantCard: FC<Props> = (props) => {
                 </div>
                 {/* Updates: */}
                 {showUpdates && plant &&
-                    <div className="py-2 flex justify-end">
-                        {plant.updates?.length > 0 ?
-                            <TimelineInCard plantId={plant.id} updates={plant.updates || []}
-                                species={plant.species} uid={userID} key={plant.id + "_timeline"}
-                                width={imgWidth / 3} height={imgHeight / 2.5}
-                            />
-                            :
-                            <p className='text-lg bg-red'>
-                                No updates for this plant.
-                            </p>
-                        }
-                    </div>
+                    <ResizablePanel>
+                        <div className="py-2 flex justify-end">
+                            {plant.updates?.length > 0 ?
+                                <TimelineInCard plantId={plant.id} updates={plant.updates || []}
+                                    species={plant.species} uid={userID} key={plant.id + "_timeline"}
+                                    width={imgWidth / 3} height={imgHeight / 3}
+                                />
+                                :
+                                <p className='text-lg bg-red'>
+                                    No updates for this plant.
+                                </p>
+                            }
+                        </div>
+                    </ResizablePanel>
                 }
                 <div className='flex justify-between items-center relative '>
                     {/* Water dates */}
@@ -312,7 +314,7 @@ const PlantCard: FC<Props> = (props) => {
                                 }).catch(console.error);
                         }}
                         className={"flex items-center hover:text-stone-100 hover:bg-lime-600 hover:border-lime-600 cursor-pointer text-sm px-8 py-2 border rounded-full "
-                                    + (wateringState == 'good' ? " border-lime-600" : " border-lime-900")}
+                            + (wateringState == 'good' ? " border-lime-600" : " border-lime-900")}
                     >
                         Feed
                         &nbsp;

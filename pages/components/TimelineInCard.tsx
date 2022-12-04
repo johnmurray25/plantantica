@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import Timeline from '@mui/lab/Timeline';
+import { useCallback, useEffect, useState } from 'react';
 import { getDownloadURL, ref } from 'firebase/storage';
 import storage from '../../firebase/storage';
 import Update from '../../domain/Update';
-import CustomTimelineItem from './CustomTimelineItem';
+import TimelineItem from './TimelineItem';
 
 interface Props {
     updates: Update[];
@@ -14,7 +13,7 @@ interface Props {
     height: number;
 }
 
-const TimelineInCard: React.FC<Props> = (props) => {
+const TimelineInCard = (props: Props) => {
 
     const [updates] = useState(props.updates);
     const [height] = useState(props.height)
@@ -23,15 +22,12 @@ const TimelineInCard: React.FC<Props> = (props) => {
     const [species] = useState(props.species)
     const [uid] = useState(props.uid)
 
-    console.log('updates')
-    console.log(updates)
-
     const [updateItems, setUpdateItems] = useState<JSX.Element[]>([]);
 
     const timelineItemFromUpdate = useCallback(async (update: Update, updateItems: JSX.Element[]) => {
         const imageUrl = update && update.image ? await getDownloadURL(ref(storage, `${uid}/${update.image}`)) : "";
         return (
-            <CustomTimelineItem
+            <TimelineItem
                 key={update?.id}
                 {...{ update, plantId, uid, width, height, species, imageUrl }}
                 onDelete={() => {
@@ -52,9 +48,9 @@ const TimelineInCard: React.FC<Props> = (props) => {
     }, [timelineItemFromUpdate, updateItems, updates])
 
     return (
-        <Timeline position="right" sx={{ padding: "0px" }}>
+        <div id="timeline">
             {updateItems}
-        </Timeline>
+        </div>
     );
 }
 
