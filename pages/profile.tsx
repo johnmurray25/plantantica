@@ -1,20 +1,17 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import Image from 'next/image';
 
-import { doc, setDoc } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth'
 import ReactLoading from 'react-loading'
 import { IoPencilOutline } from '@react-icons/all-files/io5/IoPencilOutline';
 
 import auth from '../firebase/auth';
-import db from '../firebase/db';
 import NavBar from './components/NavBar';
 import toggleStyles from '../styles/toggle-switch.module.css';
 import customImageLoader from '../util/customImageLoader';
 import FileInput from './components/FileInput';
 import { compressImage, deleteImage, getProfilePictureUrl, updateProfilePicture, uploadFile } from '../service/FileService';
 import { useRouter } from 'next/router';
-import { getUserDBRecord, saveDisplayName, saveUsername, unsubscribeFromDailyEmails, subscribeToDailyEmails, deleteUser } from '../service/UserService';
+import { getUserDBRecord, saveDisplayName, saveUsername, unsubscribeFromDailyEmails, subscribeToDailyEmails, deleteUser, deleteProfilePictureInDB } from '../service/UserService';
 import TextField from './components/TextField';
 import TextInput from './components/TextInput';
 import DBUser from '../domain/DBUser';
@@ -47,7 +44,6 @@ function Home() {
 
     const handleSaveUsername = useCallback(async (reload: boolean) => {
         let username = inputUsername
-        let emailAddress = user ? user.email : ''
         saveUsername(username, user)
             .then((result) => {
                 switch (result) {
@@ -80,23 +76,25 @@ function Home() {
         }
 
         // setIsLoading(true)
-        getUserDBRecord(user.uid)
-            .then(record => {
-                if (!record) {
-                    console.error(`Could not find record for email ${user.email}`)
-                    return
-                }
+        if (!DBUser) {
+            getUserDBRecord(user.uid)
+                .then(record => {
+                    if (!record) {
+                        console.error(`Could not find record for email ${user.email}`)
+                        return
+                    }
 
-                setDBUser(record)
-                setTrackingMsg(`Tracking ${record.plantTrackingDetails ? record.plantTrackingDetails.length : 0} plants`)
-                setReceiveDailyEmails(record.dailyEmails ? true : false);
+                    setDBUser(record)
+                    setTrackingMsg(`Tracking ${record.plantTrackingDetails ? record.plantTrackingDetails.length : 0} plants`)
+                    setReceiveDailyEmails(record.dailyEmails ? true : false);
 
-                if (!record.username) {
-                    // Prompt DBUser to add username
-                    setShouldAddUsername(true)
-                }
-            }, console.error)
-        // .finally(() => setIsLoading(false))
+                    if (!record.username) {
+                        // Prompt DBUser to add username
+                        setShouldAddUsername(true)
+                    }
+                })
+                .catch(console.error)
+        }
 
         if (!profPicUrl) {
             setIsProfPicLoading(true);
@@ -109,7 +107,7 @@ function Home() {
                 .finally(() => setIsProfPicLoading(false))
         }
 
-    }, [user, profPicUrl]);
+    }, [user, profPicUrl, DBUser]);
 
     const deleteAccount = () => {
         if (confirm('Are you sure you want to delete your account?')
@@ -119,18 +117,16 @@ function Home() {
     }
 
     const onRemoveFile = () => {
-        if (!confirm('Delete profile picture?')) return;
+        if (!confirm('Delete profile picture?')) {
+            return;
+        }
         // if image was previously saved, delete from storage
         if (fileName) {
             deleteImage(fileName, user.uid)
                 .then(() => {
                     setProfPicUrl('')
                     setFileName('')
-                    setDoc(
-                        doc(db, 'users', user.email),
-                        { profilePicture: '' },
-                        { merge: true }
-                    ).then(() => console.log('Deleted profile picture'))
+                    deleteProfilePictureInDB(user.uid)
                 })
                 .catch(console.error);
         }
@@ -182,96 +178,95 @@ function Home() {
                         } */}
                     </div>
                     :
-                    user ?
-                        <div>
-                            <NavBar hideUser />
-                            <div className='pt-24 relative w-full med:w-3/6 m-auto text-center justify-center pb-14 px-6  '>
-                                {editMode ?
-                                    <a
-                                        className='m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border border-stone-100 rounded w-fit p-3 hover:text-green hover:bg-stone-100'
-                                        onClick={() => setEditMode(false)}
-                                    >
-                                        Cancel
-                                    </a>
+                    <div>
+                        <NavBar hideUser />
+                        <div className='pt-24 relative w-full med:w-3/6 m-auto text-center justify-center pb-14 px-6  '>
+                            {editMode ?
+                                <a
+                                    className='m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border border-stone-100 rounded w-fit p-3 hover:text-green hover:bg-stone-100'
+                                    onClick={() => setEditMode(false)}
+                                >
+                                    Cancel
+                                </a>
+                                :
+                                <a
+                                    className='m-auto mr-4 mb-5 mt-8 med:mr-64 lg:mr-80 self-center flex items-center border border-stone-100s rounded w-fit p-3 hover:text-green hover:bg-stone-100'
+                                    onClick={() => setEditMode(true)}
+                                >
+                                    Edit &nbsp; <IoPencilOutline />
+                                </a>
+                            }
+                            {profPicUrl ?
+                                // User has saved profile picture
+                                isProfPicLoading ?
+                                    <ReactLoading type='spinningBubbles' color="#fff" />
                                     :
-                                    <a
-                                        className='m-auto mr-4 mb-5 mt-8 med:mr-64 lg:mr-80 self-center flex items-center border border-stone-100s rounded w-fit p-3 hover:text-green hover:bg-stone-100'
-                                        onClick={() => setEditMode(true)}
-                                    >
-                                        Edit &nbsp; <IoPencilOutline />
-                                    </a>
-                                }
-                                {profPicUrl ?
-                                    // User has saved profile picture
-                                    isProfPicLoading ?
+                                    <div className='relative w-fit flex justify-center m-auto'>
+                                        <Image
+                                            src={profPicUrl}
+                                            loader={customImageLoader}
+                                            alt='Profile picture'
+                                            width={150}
+                                            height={180}
+                                        />
+                                        {editMode &&
+                                            <a className='absolute top-2 right-2 bg-stone-100 text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
+                                                onClick={onRemoveFile} >
+                                                &#10060;
+                                            </a>
+                                        }
+                                    </div>
+                                :
+                                isProfPicLoading ?
+                                    <div className='flex justify-center'>
                                         <ReactLoading type='spinningBubbles' color="#fff" />
-                                        :
-                                        <div className='relative w-fit flex justify-center m-auto'>
-                                            <Image
-                                                src={profPicUrl}
-                                                loader={customImageLoader}
-                                                alt='Profile picture'
-                                                width={150}
-                                                height={180}
-                                            />
-                                            {editMode &&
-                                                <a className='absolute top-2 right-2 bg-stone-100 text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
-                                                    onClick={onRemoveFile} >
-                                                    &#10060;
-                                                </a>
-                                            }
-                                        </div>
+                                    </div>
                                     :
-                                    isProfPicLoading ?
-                                        <div className='flex justify-center'>
-                                            <ReactLoading type='spinningBubbles' color="#fff" />
-                                        </div>
-                                        :
-                                        <div className='relative m-auto pt-6 h-32 w-32 rounded-3xl bg-stone-100 '>
-                                            <div className='absolute flex items-center cursor-pointer mt-2 top-0 right-3 text-green text-xs'>
-                                                <FileInput
-                                                    onAttachFile={async (e: { target: { files: File[]; }; }) => {
-                                                        let f: File = e.target.files[0]
-                                                        let compressedImage = await compressImage(f)
-                                                        setProfPicUrl(URL.createObjectURL(f))
-                                                        uploadFile(compressedImage, user)
-                                                            .then(fileName => updateProfilePicture(fileName, user.uid))
-                                                            .catch(console.log)
-                                                    }}
-                                                    onRemoveFile={onRemoveFile}
-                                                    message='Add picture &#10133;'
-                                                />
-                                            </div>
-                                        </div>
-                                }
-                                <h1 className='m-10 mb-3 text-lightYellow' >
-                                    {editMode ?
-                                        <div className='m-auto flex justify-center'>
-                                            <TextInput
-                                                value={inputDisplayName}
-                                                onChange={setInputDisplayName}
-                                                onSubmit={() => {
-                                                    // Save display name to DB
-                                                    saveDisplayName(user.uid, inputDisplayName)
-                                                        .then(() => {
-                                                            setDBUser({ ...DBUser, displayName: inputDisplayName })
-                                                            setEditMode(false)
-                                                        })
+                                    <div className='relative m-auto pt-6 h-32 w-32 rounded-3xl bg-stone-100 '>
+                                        <div className='absolute flex items-center cursor-pointer mt-2 top-0 right-3 text-green text-xs'>
+                                            <FileInput
+                                                onAttachFile={async (e: { target: { files: File[]; }; }) => {
+                                                    let f: File = e.target.files[0]
+                                                    let compressedImage = await compressImage(f)
+                                                    setProfPicUrl(URL.createObjectURL(f))
+                                                    uploadFile(compressedImage, user)
+                                                        .then(fileName => updateProfilePicture(fileName, user.uid))
+                                                        .catch(console.log)
                                                 }}
-                                                width={10}
-                                                placeholder={DBUser && DBUser.displayName ? DBUser.displayName : user.displayName}
-                                                autoFocus={false}
-                                                name='editDisplayName'
-                                                type='text'
+                                                onRemoveFile={onRemoveFile}
+                                                message='Add picture &#10133;'
                                             />
                                         </div>
-                                        :
-                                        <h2 className='text-3xl' >
-                                            {DBUser && DBUser.displayName ? DBUser.displayName : user.displayName}
-                                        </h2>
-                                    }
-                                </h1>
-                                <div className=''>
+                                    </div>
+                            }
+                            <h1 className='m-10 mb-3 text-lightYellow' >
+                                {editMode ?
+                                    <div className='m-auto flex justify-center'>
+                                        <TextInput
+                                            value={inputDisplayName}
+                                            onChange={setInputDisplayName}
+                                            onSubmit={() => {
+                                                // Save display name to DB
+                                                saveDisplayName(user.uid, inputDisplayName)
+                                                    .then(() => {
+                                                        setDBUser({ ...DBUser, displayName: inputDisplayName })
+                                                        setEditMode(false)
+                                                    })
+                                            }}
+                                            width={10}
+                                            placeholder={DBUser && DBUser.displayName ? DBUser.displayName : user.displayName}
+                                            autoFocus={false}
+                                            name='editDisplayName'
+                                            type='text'
+                                        />
+                                    </div>
+                                    :
+                                    <h2 className='text-3xl' >
+                                        {DBUser && DBUser.displayName ? DBUser.displayName : user.displayName}
+                                    </h2>
+                                }
+                            </h1>
+                            <div className=''>
                                 <h3 className='pb-5 pt-0 flex justify-center w-full items-center text-xl '>
                                     <p className='text-[#29bc29] '>
                                         username:
@@ -309,73 +304,58 @@ function Home() {
                                         {user.email}
                                     </p>
                                 </h3>
-                                </div>
-                                <h3 className='pt-10 text-[#29bc29]'>
-                                    {trackingMsg}
-                                </h3>
-                                <div className='mt-10 '>
-                                    Receive daily emails if my plants need water &nbsp;&nbsp;&nbsp;
-                                    <label className="relative inline-block w-14 h-8">
-                                        <input type="checkbox"
-                                            checked={receiveDailyEmails}
-                                            onClick={() => {
-                                                if (!(user && DBUser)) {
-                                                    return;
-                                                }
-                                                // unsubscribe
-                                                if (receiveDailyEmails) {
-                                                    unsubscribeFromDailyEmails(user.uid)
-                                                        .then(() => setReceiveDailyEmails(false))
-                                                    console.log('Unsubscribed from daily emails')
-                                                }
-                                                // subscribe
-                                                else {
-                                                    subscribeToDailyEmails(user.uid)
-                                                        .then(() => setReceiveDailyEmails(true))
-                                                    console.log('Subscribed to daily emails')
-                                                }
-                                            }}
-                                        />
-                                        <span className={`${toggleStyles.slider} ${toggleStyles.round}`}></span>
-                                    </label>
-                                </div>
-                                <div className="flex justify-evenly text-center pb-0 pt-10 w-full">
-                                    <a
-                                        className='cursor-pointer hover:bg-stone-100 hover:text-green border border-[#29bc29] py-4 px-7 mx-2'
-                                        style={{
-                                            borderRadius: "0 222px",
+                            </div>
+                            <h3 className='pt-10 text-[#29bc29]'>
+                                {trackingMsg}
+                            </h3>
+                            <div className='mt-10 '>
+                                Receive daily emails if my plants need water &nbsp;&nbsp;&nbsp;
+                                <label className="relative inline-block w-14 h-8">
+                                    <input type="checkbox"
+                                        checked={receiveDailyEmails}
+                                        onClick={() => {
+                                            if (!(user && DBUser)) {
+                                                return;
+                                            }
+                                            // unsubscribe
+                                            if (receiveDailyEmails) {
+                                                unsubscribeFromDailyEmails(user.uid)
+                                                    .then(() => setReceiveDailyEmails(false))
+                                                console.log('Unsubscribed from daily emails')
+                                            }
+                                            // subscribe
+                                            else {
+                                                subscribeToDailyEmails(user.uid)
+                                                    .then(() => setReceiveDailyEmails(true))
+                                                console.log('Subscribed to daily emails')
+                                            }
                                         }}
-                                        onClick={signOut}
-                                    >
-                                        Sign out
-                                    </a>
-                                    <a
-                                        className='cursor-pointer hover:bg-red-600 hover:text-stone-100 border border-red-600 py-4 px-7 mx-2'
-                                        style={{
-                                            borderRadius: "222px 0",
-                                        }}
-                                        onClick={deleteAccount}
-                                    >
-                                        Delete account
-                                    </a>
-                                </div>
-                                {/* <div className={toggleStyles.toggleButtonCover}>
-                                    <div className={toggleStyles.buttonCover}>
-                                        <div className={toggleStyles.button + ' ' + toggleStyles.b2} id="boxFlip">
-                                            <input type="checkbox" className={toggleStyles.checkbox} />
-                                            <div className={toggleStyles.knobs}>
-                                                <span>YES</span>
-                                            </div>
-                                            <div className={toggleStyles.layer}></div>
-                                        </div>
-                                    </div>
-                                </div> */}
+                                    />
+                                    <span className={`${toggleStyles.slider} ${toggleStyles.round}`}></span>
+                                </label>
+                            </div>
+                            <div className="flex justify-evenly text-center pb-0 pt-10 w-full">
+                                <a
+                                    className='cursor-pointer hover:bg-stone-100 hover:text-green border border-[#29bc29] py-4 px-7 mx-2'
+                                    style={{
+                                        borderRadius: "0 222px",
+                                    }}
+                                    onClick={signOut}
+                                >
+                                    Sign out
+                                </a>
+                                <a
+                                    className='cursor-pointer hover:bg-red-600 hover:text-stone-100 border border-red-600 py-4 px-7 mx-2'
+                                    style={{
+                                        borderRadius: "222px 0",
+                                    }}
+                                    onClick={deleteAccount}
+                                >
+                                    Delete account
+                                </a>
                             </div>
                         </div>
-                        :
-                        <div>
-                            <NavBar />
-                        </div>
+                    </div>
             }
         </div>
     )

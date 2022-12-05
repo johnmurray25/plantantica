@@ -242,3 +242,11 @@ export const getFollowingList = async (uid: string): Promise<DBUser[]> => {
 
     return results.docs.map(docToUser);
 }
+
+export const deleteProfilePictureInDB = (uid: string) => {
+    setDoc(
+        doc(db, 'users', uid),
+        { profilePicture: '' },
+        { merge: true }
+    )
+}
