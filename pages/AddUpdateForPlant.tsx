@@ -1,22 +1,18 @@
-import { Input } from '@mui/material';
 import Image from 'next/image';
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import ReactLoading from 'react-loading'
 import customImageLoader from '../util/customImageLoader';
 import FileInput from './components/FileInput';
 
 import styles from "../styles/tracking.module.css";
-import { saveUpdateForPlant } from '../service/PlantService';
+import { deleteUpdatePictureInDB, saveUpdateForPlant } from '../service/PlantService';
 import { compressImage, deleteImage, uploadFile } from '../service/FileService';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import auth from '../firebase/auth';
-import { collection, doc, setDoc } from 'firebase/firestore';
-import db from '../firebase/db';
 import TextField from './components/TextField';
 import Plant from '../domain/Plant';
 import { useRouter } from 'next/router';
 import GenericDatePicker from './components/GenericDatePicker';
 import Update from '../domain/Update';
+import UserContext from '../context/UserContext';
 
 interface Props {
     plantId: string;
@@ -28,7 +24,7 @@ interface Props {
 
 const AddUpdateForPlant: React.FC<Props> = (props) => {
 
-    const [user] = useAuthState(auth);
+    const { user } = useContext(UserContext)
     const router = useRouter();
 
     const [selectedFile, setSelectedFile] = useState<File>(null);
@@ -46,13 +42,7 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
                 .then(() => {
                     setSelectedFile(null)
                     setImageUrl('')
-                    setDoc(
-                        doc(
-                            collection(db, `users/${user.uid}/plantTrackingDetails/${props.plantId}/updates`),
-                            props.updateId),
-                        { picture: '' },
-                        { merge: true }
-                    )
+                    deleteUpdatePictureInDB(user?.uid, props.plant?.id, props.update?.id)
                 }).catch(console.error);
         }
         // otherwise just remove from UI
@@ -122,7 +112,7 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
                 :
                 <div>
                     <div className={styles.title}>
-                        <a className='pt-20 '>
+                        <a className='pt-20'>
                             Add Update for {props.plant ? props.plant.species : 'plant'}
                         </a>
                     </div>
@@ -154,15 +144,13 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
                                     <label htmlFor='species'>
                                         Title:
                                     </label>
-                                    <Input
-                                        className={styles.input}
+                                    <TextField
                                         type="text"
                                         name="title"
-                                        id="title"
                                         placeholder=""
                                         value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
-                                        required={true}
+                                        onChange={setTitle}
+                                        width={40}
                                     />
                                 </div>
                                 <div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center pr-10' >

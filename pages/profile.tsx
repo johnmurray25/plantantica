@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import Image from 'next/image';
 
 import { doc, setDoc } from 'firebase/firestore';
@@ -19,13 +19,14 @@ import TextField from './components/TextField';
 import TextInput from './components/TextInput';
 import DBUser from '../domain/DBUser';
 import useAuthRedirect from '../hooks/useAuthRedirect';
+import UserContext from '../context/UserContext';
 
 function Home() {
 
     useAuthRedirect()
 
-    const [currentUser] = useAuthState(auth); // Data in auth service
-    const [user, setUser] = useState<DBUser>(null) // Data in DB
+    const { user } = useContext(UserContext)
+    const [DBUser, setDBUser] = useState<DBUser>(null) // Data in DB
     const [trackingMsg, setTrackingMsg] = useState('');
     const [profPicUrl, setProfPicUrl] = useState('')
     const [fileName, setFileName] = useState('')
@@ -46,8 +47,8 @@ function Home() {
 
     const handleSaveUsername = useCallback(async (reload: boolean) => {
         let username = inputUsername
-        let emailAddress = currentUser ? currentUser.email : ''
-        saveUsername(username, currentUser)
+        let emailAddress = user ? user.email : ''
+        saveUsername(username, user)
             .then((result) => {
                 switch (result) {
                     case 'ok':
@@ -70,28 +71,28 @@ function Home() {
                 }
             }, console.error)
 
-    }, [inputUsername, router, currentUser])
+    }, [inputUsername, router, user])
 
 
     useEffect(() => {
-        if (!currentUser) {
+        if (!user) {
             return
         }
 
         // setIsLoading(true)
-        getUserDBRecord(currentUser.uid)
+        getUserDBRecord(user.uid)
             .then(record => {
                 if (!record) {
-                    console.error(`Could not find record for email ${currentUser.email}`)
+                    console.error(`Could not find record for email ${user.email}`)
                     return
                 }
 
-                setUser(record)
+                setDBUser(record)
                 setTrackingMsg(`Tracking ${record.plantTrackingDetails ? record.plantTrackingDetails.length : 0} plants`)
                 setReceiveDailyEmails(record.dailyEmails ? true : false);
 
                 if (!record.username) {
-                    // Prompt user to add username
+                    // Prompt DBUser to add username
                     setShouldAddUsername(true)
                 }
             }, console.error)
@@ -99,7 +100,7 @@ function Home() {
 
         if (!profPicUrl) {
             setIsProfPicLoading(true);
-            getProfilePictureUrl(currentUser.uid)
+            getProfilePictureUrl(user.uid)
                 .then(data => {
                     setFileName(data.fileName)
                     setProfPicUrl(data.url)
@@ -108,12 +109,12 @@ function Home() {
                 .finally(() => setIsProfPicLoading(false))
         }
 
-    }, [currentUser, profPicUrl]);
+    }, [user, profPicUrl]);
 
     const deleteAccount = () => {
         if (confirm('Are you sure you want to delete your account?')
             && confirm('Are you really sure you want to delete your account?')) {
-            deleteUser(currentUser);
+            deleteUser(user);
         }
     }
 
@@ -121,12 +122,12 @@ function Home() {
         if (!confirm('Delete profile picture?')) return;
         // if image was previously saved, delete from storage
         if (fileName) {
-            deleteImage(fileName, currentUser.uid)
+            deleteImage(fileName, user.uid)
                 .then(() => {
                     setProfPicUrl('')
                     setFileName('')
                     setDoc(
-                        doc(db, 'users', currentUser.email),
+                        doc(db, 'users', user.email),
                         { profilePicture: '' },
                         { merge: true }
                     ).then(() => console.log('Deleted profile picture'))
@@ -142,7 +143,7 @@ function Home() {
     return (
         <div className='bg-green text-stone-200 min-h-screen text-left'>
             {
-                shouldAddUsername && user ?
+                shouldAddUsername && DBUser ?
                     <div className='text-center'>
                         <h2
                             className='italic '
@@ -181,7 +182,7 @@ function Home() {
                         } */}
                     </div>
                     :
-                    currentUser ?
+                    user ?
                         <div>
                             <NavBar hideUser />
                             <div className='pt-24 relative w-full med:w-3/6 m-auto text-center justify-center pb-14 px-6  '>
@@ -233,8 +234,8 @@ function Home() {
                                                         let f: File = e.target.files[0]
                                                         let compressedImage = await compressImage(f)
                                                         setProfPicUrl(URL.createObjectURL(f))
-                                                        uploadFile(compressedImage, currentUser)
-                                                            .then(fileName => updateProfilePicture(fileName, currentUser.uid))
+                                                        uploadFile(compressedImage, user)
+                                                            .then(fileName => updateProfilePicture(fileName, user.uid))
                                                             .catch(console.log)
                                                     }}
                                                     onRemoveFile={onRemoveFile}
@@ -251,14 +252,14 @@ function Home() {
                                                 onChange={setInputDisplayName}
                                                 onSubmit={() => {
                                                     // Save display name to DB
-                                                    saveDisplayName(currentUser.uid, inputDisplayName)
+                                                    saveDisplayName(user.uid, inputDisplayName)
                                                         .then(() => {
-                                                            setUser({ ...user, displayName: inputDisplayName })
+                                                            setDBUser({ ...DBUser, displayName: inputDisplayName })
                                                             setEditMode(false)
                                                         })
                                                 }}
                                                 width={10}
-                                                placeholder={user && user.displayName ? user.displayName : currentUser.displayName}
+                                                placeholder={DBUser && DBUser.displayName ? DBUser.displayName : user.displayName}
                                                 autoFocus={false}
                                                 name='editDisplayName'
                                                 type='text'
@@ -266,7 +267,7 @@ function Home() {
                                         </div>
                                         :
                                         <h2 className='text-3xl' >
-                                            {user && user.displayName ? user.displayName : currentUser.displayName}
+                                            {DBUser && DBUser.displayName ? DBUser.displayName : user.displayName}
                                         </h2>
                                     }
                                 </h1>
@@ -283,12 +284,12 @@ function Home() {
                                                 onSubmit={() => {
                                                     handleSaveUsername(false)
                                                         .then(() => {
-                                                            setUser({ ...user, username: inputUsername })
+                                                            setDBUser({ ...DBUser, username: inputUsername })
                                                             setEditMode(false)
                                                         })
                                                 }}
                                                 width={10}
-                                                placeholder={user ? `${user.username}` : ''}
+                                                placeholder={DBUser ? `${DBUser.username}` : ''}
                                                 autoFocus={false}
                                                 name='editUsername'
                                                 type='text'
@@ -296,7 +297,7 @@ function Home() {
                                         </div>
                                         :
                                         <p className='font-bold p-3 pl-10 rounded-lg m-2 ml-0 text-stone-100'>
-                                            {user ? `@${user.username}` : ''}
+                                            {DBUser ? `@${DBUser.username}` : ''}
                                         </p>
                                     }
                                 </h3>
@@ -305,7 +306,7 @@ function Home() {
                                         email:
                                     </p>
                                     <p className='italic pl-8 text-lightYellow'>
-                                        {currentUser.email}
+                                        {user.email}
                                     </p>
                                 </h3>
                                 </div>
@@ -318,18 +319,18 @@ function Home() {
                                         <input type="checkbox"
                                             checked={receiveDailyEmails}
                                             onClick={() => {
-                                                if (!(currentUser && user)) {
+                                                if (!(user && DBUser)) {
                                                     return;
                                                 }
                                                 // unsubscribe
                                                 if (receiveDailyEmails) {
-                                                    unsubscribeFromDailyEmails(currentUser.uid)
+                                                    unsubscribeFromDailyEmails(user.uid)
                                                         .then(() => setReceiveDailyEmails(false))
                                                     console.log('Unsubscribed from daily emails')
                                                 }
                                                 // subscribe
                                                 else {
-                                                    subscribeToDailyEmails(currentUser.uid)
+                                                    subscribeToDailyEmails(user.uid)
                                                         .then(() => setReceiveDailyEmails(true))
                                                     console.log('Subscribed to daily emails')
                                                 }

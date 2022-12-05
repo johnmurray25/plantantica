@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { useCallback, useContext, useEffect, useState } from 'react'
+import UserContext from '../context/UserContext';
 import Plant from '../domain/Plant';
-import auth from '../firebase/auth';
 import { getPlants } from '../service/PlantService';
 
 const usePlants = () => {
     const [plants, setPlants] = useState<Plant[]>(null);
-  const [isLoading, setIsLoading] = useState(true);
-    const [user] = useAuthState(auth)
+    const [isLoading, setIsLoading] = useState(true);
+    const { user } = useContext(UserContext)
+
 
     const loadPlants = useCallback(async () => {
         if (!user) {

@@ -1,17 +1,16 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import Link from 'next/link';
 
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { browserLocalPersistence, signInWithEmailAndPassword, User } from 'firebase/auth';
+import { browserLocalPersistence, signInWithEmailAndPassword } from 'firebase/auth';
 import ReactLoading from "react-loading";
 
 import auth from '../firebase/auth';
-import useWindowDimensions from '../hooks/useWindowDimensions';
 import SignInWithGoogleButton from './components/SignInWithGoogleButton';
 import TreeLogo from './components/TreeLogo';
 import TextField from './components/TextField';
 import { getUserByUsername } from '../service/UserService';
 import { useRouter } from 'next/router';
+import UserContext from '../context/UserContext';
 
 // const fbAuthProvider = new FacebookAuthProvider();
 
@@ -47,7 +46,7 @@ const signIn = async (identifier: string, password: string) => {
 
 function SignInScreen(props: Props) {
     const router = useRouter()
-    const [user, loading, error] = useAuthState(auth);
+    const { user, loading } = useContext(UserContext)
     const [isLoading, setIsLoading] = useState(false)
 
     const [identifier, setIdentifier] = useState('')

@@ -1,11 +1,10 @@
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import auth from '../firebase/auth'
+import { useContext, useEffect, useState } from 'react'
+import UserContext from '../context/UserContext'
 
 const useAuthRedirect = () => {
     const router = useRouter()
-    const [user, loading] = useAuthState(auth);
+    const { user, loading } = useContext(UserContext)
     const [signedIn, setSignedIn] = useState(false)
 
     useEffect(() => {

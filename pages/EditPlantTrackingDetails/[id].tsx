@@ -1,12 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import db from '../../firebase/db';
-import auth from '../../firebase/auth';
 import AddPlantTrackingDetails from '../AddPlantTrackingDetails';
 import Plant from '../../domain/Plant';
 import { collection, doc, DocumentData, DocumentReference, DocumentSnapshot, getDoc } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
 import { User } from 'firebase/auth';
 import { useRouter } from 'next/router';
+import UserContext from '../../context/UserContext';
 
 const getPlantDetails = async (id: string | any, user: User) => {
     let docRef: DocumentReference<DocumentData> = null;
@@ -53,7 +52,7 @@ const getPlantDetails = async (id: string | any, user: User) => {
 
 const Home = () => {
     const [plant, setPlant] = useState<Plant>();
-    const [user] = useAuthState(auth);
+    const { user } = useContext(UserContext)
     const router = useRouter();
     const plantId = router.query.id;
 
@@ -66,8 +65,8 @@ const Home = () => {
 
     return (
         <>
-            {plant && 
-                <AddPlantTrackingDetails {...{plant}} />
+            {plant &&
+                <AddPlantTrackingDetails {...{ plant }} />
             }
         </>
     )

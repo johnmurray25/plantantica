@@ -1,21 +1,21 @@
 import { useEffect, useState } from 'react'
 import Image from 'next/image';
+import dynamic from 'next/dynamic'
 
 import { IoWater } from '@react-icons/all-files/io5/IoWater';
 import { IoLeaf } from '@react-icons/all-files/io5/IoLeaf';
-import { getDownloadURL, ref } from 'firebase/storage';
 
-import storage from '../../firebase/storage';
 import Plant from '../../domain/Plant';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import customImageLoader from '../../util/customImageLoader';
-import { useRouter } from 'next/router';
 import { IoPencil } from '@react-icons/all-files/io5/IoPencil';
 import { IoTrash } from '@react-icons/all-files/io5/IoTrash';
-import TimelineInCard from './TimelineInCard';
+// import TimelineInCard from './TimelineInCard';
+const TimelineInCard = dynamic(() => import('./TimelineInCard'))
 import Update from '../../domain/Update';
 import { deletePlant, feedPlantInDB, waterPlantInDB } from '../../service/PlantService';
 import ResizablePanel from './ResizablePanel';
+import { getImageUrl } from '../../service/FileService';
 
 const MILLIS_IN_DAY = 86400000
 
@@ -42,11 +42,11 @@ interface Props {
     plant: Plant;
     userID: string;
     updates: Update[];
+    goToEditScreen: (plantId: string) => void;
+    goToAddUpdateScreen: (plantId: string) => void;
 }
 
 const PlantCard = (props: Props) => {
-    const router = useRouter();
-
     // dimensions
     const { width, height } = useWindowDimensions();
 
@@ -61,21 +61,16 @@ const PlantCard = (props: Props) => {
     const [isImageLoading, setIsImageLoading] = useState(true);
     const [showInstructions, setShowInstructions] = useState(false);
     const [showUpdates, setShowUpdates] = useState(false);
-    const [hidden, setHidden] = useState(false)
+    const [hidden, setHidden] = useState(false);
 
-    const toggleInstructions = () => {
-        setShowInstructions(!showInstructions);
-    }
+    const toggleInstructions = () => { setShowInstructions(!showInstructions) }
 
     useEffect(() => {
-        // console.log(`TrackingCard: in useEffect ${plant&&plant.species}`)
         if (!plant) {
             return;
         }
         if (imageURL == '' && userID && plant.picture && plant.picture !== '') {
-            // setIsImageLoading(false)
-            // console.log('getting download url...')
-            getDownloadURL(ref(storage, `${userID}/${plant.picture}`))
+            getImageUrl(plant.picture, userID)
                 .then(downloadUrl => setImageURL(downloadUrl))
                 .catch(e => {
                     console.debug(e);
@@ -169,7 +164,7 @@ const PlantCard = (props: Props) => {
                     ${wateringState == 'good' ?
                             'border-[#ffe894] //text-[#ffe894]' :
                             'border-black'}`}
-                        onClick={() => router.push(`/EditPlantTrackingDetails/${plant.id}`)}>
+                        onClick={() => props.goToEditScreen(plant.id)}>
                         <IoPencil />
                     </div>
                     <div className={`flex items-center mx-4 px-6 py-1 my-1 hover:bg-red-500 hover:text-stone-100 hover:border-red-500 cursor-pointer border rounded-full p-2 
@@ -211,7 +206,7 @@ const PlantCard = (props: Props) => {
                 {/* Instructions & Updates buttons */}
                 <div className='relative'>
                     <div
-                        className={`w-fit top-2 left-2 text-sm hover:bg-[#ffff63] hover:border-[#ffff63] rounded-full py-1 px-5  
+                        className={`absolute top-0 left-2 text-sm hover:bg-[#ffff63] hover:border-[#ffff63] rounded-full py-1 px-5  
                             ${wateringState == "good" ? "border-white hover:text-black" : "border-black"}
                             ${plant && plant.careInstructions ? "opacity-100 cursor-pointer" : "hidden"}
                             `}
@@ -221,7 +216,7 @@ const PlantCard = (props: Props) => {
                         &nbsp;
                         {showInstructions ? <span>&nbsp;&darr;</span> : <span>&rarr;</span>}
                     </div>
-                    <div className="flex justify-end text-sm">
+                    <div className="flex justify-end text-sm mt-4">
                         <div
                             className={`hover:bg-[#ffaf63] hover:text-black hover:border-[#ffaf63] cursor-pointer rounded-full py-2 px-5 mx-1 
                                     ${wateringState == 'good' ?
@@ -234,7 +229,7 @@ const PlantCard = (props: Props) => {
                         <div
                             className={"hover:bg-[#29bc29] hover:text-stone-100 hover:border-[#29bc29] cursor-pointer rounded-full py-2 px-3 ml-2 " +
                                 (wateringState == 'good' ? 'border border-[#ffe894] text-[#ffe894]' : ' border border-darkYellow  ')}
-                            onClick={() => router.push(`/AddUpdateForPlant/${plant.id}`)}
+                            onClick={() => props.goToAddUpdateScreen(plant.id)}
                         >
                             +
                         </div>

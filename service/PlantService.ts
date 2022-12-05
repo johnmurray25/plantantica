@@ -141,3 +141,11 @@ export const feedPlantInDB = async (uid: string, plantId: string) => {
         { merge: true }
     );
 }
+
+export const deleteUpdatePictureInDB = (uid: string, plantId: string, updateId: string) => {
+    setDoc(
+        doc(db, `users/${uid}/plantTrackingDetails/${plantId}/updates/${updateId}`),
+        { picture: '' },
+        { merge: true }
+    )
+}

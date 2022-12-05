@@ -1,22 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 
-import { useAuthState } from "react-firebase-hooks/auth";
 import ReactLoading from 'react-loading';
 
-import auth from '../firebase/auth';
-import AuthScreen from './auth'
 import NavBar from "./components/NavBar";
 import TrackingPageBody from "./components/TrackingPageBody";
 import Link from "next/link";
 import usePlants from "../hooks/usePlants";
 import useAuthRedirect from "../hooks/useAuthRedirect";
+import UserContext from "../context/UserContext";
 
 const Home = () => {
 
   useAuthRedirect()
 
   const { plants, isLoading } = usePlants();
-  const [user] = useAuthState(auth);
+  const { user } = useContext(UserContext)
 
   return (
     <div className='text-stone-100 min-w-screen bg-green' /**Container */>
@@ -32,7 +30,7 @@ const Home = () => {
             isLoading ?
               <ReactLoading
                 type='bars'
-                color="#fff"
+                color="#FFF7ED"
               />
               :
               // If user doesn't have plants, show message

@@ -1,21 +1,18 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 
 import { collection, addDoc, doc, setDoc, DocumentReference, DocumentData } from "firebase/firestore";
-import { Select, MenuItem } from "@mui/material";
-import { useAuthState } from "react-firebase-hooks/auth";
 import ReactLoading from 'react-loading'
 
-import auth from '../firebase/auth';
 import db from '../firebase/db';
 import Plant from "../domain/Plant";
-import styles from "../styles/tracking.module.css";
 import FileInput from "./components/FileInput";
 import Image from "next/image";
 import { compressImage, uploadFile, getImageUrl, deleteImage } from "../service/FileService";
 import GenericDatePicker from "./components/GenericDatePicker";
 import customImageLoader from "../util/customImageLoader";
 import TextField from "./components/TextField";
+import UserContext from "../context/UserContext";
 
 const MILLIS_IN_DAY = 86400000;
 
@@ -25,7 +22,7 @@ interface Props {
 
 const AddPlantTrackingDetails: FC<Props> = (props) => {
   const router = useRouter();
-  const [user] = useAuthState(auth);
+  const { user } = useContext(UserContext)
   const todaysDate = new Date();
 
   const [plant] = useState<Plant>(props.plant);
@@ -42,7 +39,6 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const [selectedFile, setSelectedFile] = useState<File>(null);
   const [imageUrl, setImageUrl] = useState('');
   const [loadingStatus, setLoadingStatus] = useState(null);
-  const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (imageUrl === '' && user && plant && plant.picture) {
@@ -157,12 +153,12 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
     <div className='antialiased text-lg text-stone-100 bg-green ' >
       {loadingStatus ?
         <div className='flex justify-center items-center pt-60' >
-          {loadingStatus} < ReactLoading type='bars' color="#fff" />
+          {loadingStatus} <ReactLoading type='bars' color="#FFF7ED" />
         </div>
         :
         <div>
-          <div className="text-3xl text-center italic text-stone-100 border-4 border-x-0 border-t-0 border-stone-200 border-dotted w-full p-6 bg-lime-900">
-            <a className='pt-20 '>
+          <div className="text-3xl text-center italic text-zinc-100 border-4 border-x-0 border-t-0 border-zinc-200 border-dotted w-full p-6 bg-lime-900">
+            <a className='pt-20'>
               {`${plant ? 'Edit' : 'Add'} Plant Info`}
             </a>
           </div>
@@ -201,12 +197,12 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                     value={species}
                     onChange={setSpecies}
                     textarea={true}
-                    width={"full"}
+                    width="full"
                   />
-                  <label htmlFor="lightReq">
+                  {/* <label htmlFor="lightReq">
                     Requires
-                  </label>
-                  <Select
+                  </label> */}
+                  {/* <Select
                     id="lightReq"
                     className="bg-orange-50"
                     value={lightRequired}
@@ -215,7 +211,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                   >
                     <MenuItem value={2}>Bright indirect light</MenuItem>
                     <MenuItem value={10}>Bright light</MenuItem>
-                  </Select>
+                  </Select> */}
                 </div>
               </div>
               <div>

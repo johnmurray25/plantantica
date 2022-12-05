@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 
 import ReactLoading from 'react-loading'
@@ -12,12 +12,9 @@ import Plant from '../../domain/Plant';
 import DisplayCard from '../components/DisplayCard'
 import gridStyles from '../../styles/smallGrid.module.css'
 import DBUser from '../../domain/DBUser';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import auth from '../../firebase/auth';
 
 function Home() {
 
-    const [currentUser, loading] = useAuthState(auth) // Current logged in user
     const [user, setUser] = useState<DBUser>(null) // Data in DB [username]
     const [uid, setUid] = useState('')
     const [trackingMsg, setTrackingMsg] = useState('');

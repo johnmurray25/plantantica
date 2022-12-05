@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 
 import ReactLoading from 'react-loading';
 
@@ -11,12 +11,11 @@ import useWindowDimensions from '../hooks/useWindowDimensions';
 import { mapDocToUser, getUserByUsername } from '../service/UserService';
 import { useRouter } from 'next/router';
 import DBUser from '../domain/DBUser';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import auth from '../firebase/auth';
+import UserContext from '../context/UserContext';
 
 const Home: React.FC = () => {
 
-    const [currentUser, loading] = useAuthState(auth)
+    const { user, loading } = useContext(UserContext)
     const [searchText, setSearchText] = useState('')
     const [searchActive, setSearchActive] = useState(false)
     const [searchMessage, setSearchMessage] = useState('')
@@ -68,8 +67,8 @@ const Home: React.FC = () => {
     useEffect(() => {
         document.addEventListener('keydown', handleKeyPress)
 
-        // if (currentUser && (!following || !following.length)) {
-        //     getFollowingList(currentUser.uid)
+        // if (user && (!following || !following.length)) {
+        //     getFollowingList(user.uid)
         //         .then(res => {
         //             setFollowing(res)
         //             console.log(res)
@@ -80,7 +79,7 @@ const Home: React.FC = () => {
         return () => {
             document.removeEventListener('keydown', handleKeyPress)
         }
-    }, [currentUser, following, handleKeyPress, searchUsers])
+    }, [user, following, handleKeyPress, searchUsers])
 
     return (
         <div className='text-stone-200 bg-green min-w-full' /**Container */>
@@ -154,7 +153,7 @@ const Home: React.FC = () => {
                         </p>
                     </div>
                     :
-                    currentUser &&
+                    user &&
                     <div>
                         {/* <h1>Who you&apos;re following</h1> */}
                         {following

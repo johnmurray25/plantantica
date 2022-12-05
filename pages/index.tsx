@@ -1,20 +1,18 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import Link from "next/link";
-
-import { useAuthState } from "react-firebase-hooks/auth";
 
 import styles from "../styles/Home.module.css";
 import NavBar from "./components/NavBar";
-import auth from '../firebase/auth';
 import { getUser, mapDocToUser } from '../service/UserService';
 import { User } from "firebase/auth";
 import { useRouter } from "next/router";
 import DBUser from "../domain/DBUser";
 import TreeLogo from "./components/TreeLogo";
+import UserContext from "../context/UserContext";
 
 export default function Home() {
 
-    const [user] = useAuthState(auth);
+    const { user } = useContext(UserContext)
     const router = useRouter()
     const [userInDB, setUserInDB] = useState<DBUser>(null);
 

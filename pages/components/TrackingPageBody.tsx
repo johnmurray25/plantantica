@@ -11,6 +11,7 @@ import useWindowDimensions from '../../hooks/useWindowDimensions';
 import ResizablePanel from './ResizablePanel';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import db from '../../firebase/db';
+import { useRouter } from 'next/router';
 // import { AnimatePresence, motion } from "framer-motion";
 
 const saveViewPreference = async (uid: string, cols: number) => {
@@ -41,6 +42,7 @@ interface Props {
 
 const TrackingPageBody: React.FC<Props> = (props) => {
 
+    const router = useRouter()
     const { width } = useWindowDimensions()
 
     const uid = props.uid || "";
@@ -84,6 +86,8 @@ const TrackingPageBody: React.FC<Props> = (props) => {
                     plant={p}
                     userID={uid}
                     updates={p.updates}
+                    goToEditScreen={(plantId) => router.push(`/EditPlantTrackingDetails/${plantId}`)}
+                    goToAddUpdateScreen={(plantId) => router.push(`/AddUpdateForPlant/${plantId}`)}
                 />
                 // </motion.div>
             )
@@ -96,7 +100,7 @@ const TrackingPageBody: React.FC<Props> = (props) => {
                 />
             )
         }
-    }, [columns, uid, width])
+    }, [columns, router, uid, width])
 
     const filterPlants = useCallback(() => {
         let filteredResults =
