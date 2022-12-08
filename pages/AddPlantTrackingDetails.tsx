@@ -1,4 +1,4 @@
-import React, { FC, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 
 import { collection, addDoc, doc, setDoc, DocumentReference, DocumentData } from "firebase/firestore";
@@ -12,7 +12,7 @@ import { compressImage, uploadFile, getImageUrl, deleteImage } from "../service/
 import GenericDatePicker from "./components/GenericDatePicker";
 import customImageLoader from "../util/customImageLoader";
 import TextField from "./components/TextField";
-import UserContext from "../context/UserContext";
+import useAuth from "../hooks/useAuth";
 
 const MILLIS_IN_DAY = 86400000;
 
@@ -20,9 +20,9 @@ interface Props {
   plant?: Plant,
 }
 
-const AddPlantTrackingDetails: FC<Props> = (props) => {
+const AddPlantTrackingDetails = (props: Props) => {
   const router = useRouter();
-  const { user } = useContext(UserContext)
+  const { user } = useAuth()
   const todaysDate = new Date();
 
   const [plant] = useState<Plant>(props.plant);
@@ -170,7 +170,13 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                 <div className="relative  m-auto w-fit p-1">
                   {imageUrl ?
                     <div>
-                      <Image src={imageUrl} loader={customImageLoader} alt='photo of plant' width='150' height='190' />
+                      <Image
+                        src={imageUrl}
+                        loader={customImageLoader}
+                        alt='photo of plant'
+                        width='150'
+                        height='190'
+                      />
                       <a className='absolute top-2 right-2 bg-stone-100 text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
                         onClick={onRemoveFile} >
                         &#10060;

@@ -1,33 +1,40 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image';
 
 import ReactLoading from 'react-loading'
 import { IoPencilOutline } from '@react-icons/all-files/io5/IoPencilOutline';
 
-import auth from '../firebase/auth';
 import NavBar from './components/NavBar';
 import toggleStyles from '../styles/toggle-switch.module.css';
 import customImageLoader from '../util/customImageLoader';
 import FileInput from './components/FileInput';
-import { compressImage, deleteImage, getProfilePictureUrl, updateProfilePicture, uploadFile } from '../service/FileService';
+import { compressImage, deleteImage, updateProfilePicture, uploadFile } from '../service/FileService';
 import { useRouter } from 'next/router';
-import { getUserDBRecord, saveDisplayName, saveUsername, unsubscribeFromDailyEmails, subscribeToDailyEmails, deleteUser, deleteProfilePictureInDB } from '../service/UserService';
+import { saveDisplayName, saveUsername, unsubscribeFromDailyEmails, subscribeToDailyEmails, deleteUser } from '../service/UserService';
 import TextField from './components/TextField';
 import TextInput from './components/TextInput';
-import DBUser from '../domain/DBUser';
 import useAuthRedirect from '../hooks/useAuthRedirect';
-import UserContext from '../context/UserContext';
+import { doc, setDoc } from 'firebase/firestore';
+import db from '../firebase/db';
+import useAuth from '../hooks/useAuth';
+import { User } from 'firebase/auth';
+import useProfilePicture from '../hooks/useProfilePicture';
+import { signOut } from '../firebase/auth';
+
+const deleteAccount = (user: User) => {
+    if (confirm('Are you sure you want to delete your account?')
+        && confirm('Are you really sure you want to delete your account?')) {
+        deleteUser(user);
+        signOut();
+    }
+}
 
 function Home() {
 
     useAuthRedirect()
 
-    const { user } = useContext(UserContext)
-    const [DBUser, setDBUser] = useState<DBUser>(null) // Data in DB
-    const [trackingMsg, setTrackingMsg] = useState('');
-    const [profPicUrl, setProfPicUrl] = useState('')
-    const [fileName, setFileName] = useState('')
-    const [isProfPicLoading, setIsProfPicLoading] = useState(false);
+    const { user, dBUser, setDBUser } = useAuth();
+    const { profPicUrl, setProfPicUrl, profPicLoading, fileName, setFileName } = useProfilePicture()
     const [shouldAddUsername, setShouldAddUsername] = useState(false)
     const [inputUsername, setInputUsername] = useState('')
     const [inputDisplayName, setInputDisplayName] = useState('')
@@ -36,19 +43,19 @@ function Home() {
 
     const router = useRouter()
 
-    const signOut = () => {
+    const handleSignOut = () => {
         if (confirm('Sign out?')) {
-            auth.signOut();
+            signOut();
         }
     }
 
     const handleSaveUsername = useCallback(async (reload: boolean) => {
-        let username = inputUsername
-        saveUsername(username, user)
+        saveUsername(inputUsername, user)
             .then((result) => {
                 switch (result) {
                     case 'ok':
                         console.log('success!')
+                        setDBUser({ ...dBUser, username: inputUsername })
                         break
                     case 'username':
                         alert('Username already exists. Please try something different')
@@ -67,54 +74,19 @@ function Home() {
                 }
             }, console.error)
 
-    }, [inputUsername, router, user])
+    }, [dBUser, inputUsername, router, setDBUser, user])
 
 
     useEffect(() => {
-        if (!user) {
-            return
+        if (dBUser) {
+            if (!dBUser.username) {
+                // Prompt user to add username
+                setShouldAddUsername(true)
+            }
+
+            setReceiveDailyEmails(dBUser.dailyEmails ? true : false);
         }
-
-        // setIsLoading(true)
-        if (!DBUser) {
-            getUserDBRecord(user.uid)
-                .then(record => {
-                    if (!record) {
-                        console.error(`Could not find record for email ${user.email}`)
-                        return
-                    }
-
-                    setDBUser(record)
-                    setTrackingMsg(`Tracking ${record.plantTrackingDetails ? record.plantTrackingDetails.length : 0} plants`)
-                    setReceiveDailyEmails(record.dailyEmails ? true : false);
-
-                    if (!record.username) {
-                        // Prompt DBUser to add username
-                        setShouldAddUsername(true)
-                    }
-                })
-                .catch(console.error)
-        }
-
-        if (!profPicUrl) {
-            setIsProfPicLoading(true);
-            getProfilePictureUrl(user.uid)
-                .then(data => {
-                    setFileName(data.fileName)
-                    setProfPicUrl(data.url)
-                })
-                .catch(console.error)
-                .finally(() => setIsProfPicLoading(false))
-        }
-
-    }, [user, profPicUrl, DBUser]);
-
-    const deleteAccount = () => {
-        if (confirm('Are you sure you want to delete your account?')
-            && confirm('Are you really sure you want to delete your account?')) {
-            deleteUser(user);
-        }
-    }
+    }, [dBUser, profPicUrl, user]);
 
     const onRemoveFile = () => {
         if (!confirm('Delete profile picture?')) {
@@ -125,8 +97,12 @@ function Home() {
             deleteImage(fileName, user.uid)
                 .then(() => {
                     setProfPicUrl('')
-                    setFileName('')
-                    deleteProfilePictureInDB(user.uid)
+                    setFileName('x')
+                    setDoc(
+                        doc(db, 'users', user.uid),
+                        { profilePicture: '' },
+                        { merge: true }
+                    )
                 })
                 .catch(console.error);
         }
@@ -139,7 +115,7 @@ function Home() {
     return (
         <div className='bg-green text-stone-200 min-h-screen text-left'>
             {
-                shouldAddUsername && DBUser ?
+                shouldAddUsername && dBUser ?
                     <div className='text-center'>
                         <h2
                             className='italic '
@@ -171,13 +147,9 @@ function Home() {
                                 &rarr;
                             </a>
                         </div>
-                        {/* {saveMessage &&
-                            <div>
-                                {saveMessage}
-                            </div>
-                        } */}
                     </div>
                     :
+                    user &&
                     <div>
                         <NavBar hideUser />
                         <div className='pt-24 relative w-full med:w-3/6 m-auto text-center justify-center pb-14 px-6  '>
@@ -196,11 +168,9 @@ function Home() {
                                     Edit &nbsp; <IoPencilOutline />
                                 </a>
                             }
-                            {profPicUrl ?
+                            {!profPicLoading ?
                                 // User has saved profile picture
-                                isProfPicLoading ?
-                                    <ReactLoading type='spinningBubbles' color="#fff" />
-                                    :
+                                profPicUrl ?
                                     <div className='relative w-fit flex justify-center m-auto'>
                                         <Image
                                             src={profPicUrl}
@@ -215,11 +185,6 @@ function Home() {
                                                 &#10060;
                                             </a>
                                         }
-                                    </div>
-                                :
-                                isProfPicLoading ?
-                                    <div className='flex justify-center'>
-                                        <ReactLoading type='spinningBubbles' color="#fff" />
                                     </div>
                                     :
                                     <div className='relative m-auto pt-6 h-32 w-32 rounded-3xl bg-stone-100 '>
@@ -238,8 +203,12 @@ function Home() {
                                             />
                                         </div>
                                     </div>
+                                :
+                                <div className='flex justify-center'>
+                                    <ReactLoading type='spinningBubbles' color="#fff" />
+                                </div>
                             }
-                            <h1 className='m-10 mb-3 text-lightYellow' >
+                            <div className='m-10 mb-3 text-lightYellow' >
                                 {editMode ?
                                     <div className='m-auto flex justify-center'>
                                         <TextInput
@@ -249,12 +218,12 @@ function Home() {
                                                 // Save display name to DB
                                                 saveDisplayName(user.uid, inputDisplayName)
                                                     .then(() => {
-                                                        setDBUser({ ...DBUser, displayName: inputDisplayName })
+                                                        setDBUser({ ...dBUser, displayName: inputDisplayName })
                                                         setEditMode(false)
                                                     })
                                             }}
                                             width={10}
-                                            placeholder={DBUser && DBUser.displayName ? DBUser.displayName : user.displayName}
+                                            placeholder={dBUser?.displayName ? dBUser.displayName : user?.displayName}
                                             autoFocus={false}
                                             name='editDisplayName'
                                             type='text'
@@ -262,10 +231,10 @@ function Home() {
                                     </div>
                                     :
                                     <h2 className='text-3xl' >
-                                        {DBUser && DBUser.displayName ? DBUser.displayName : user.displayName}
+                                        {dBUser?.displayName ? dBUser.displayName : user?.displayName}
                                     </h2>
                                 }
-                            </h1>
+                            </div>
                             <div className=''>
                                 <h3 className='pb-5 pt-0 flex justify-center w-full items-center text-xl '>
                                     <p className='text-[#29bc29] '>
@@ -279,12 +248,12 @@ function Home() {
                                                 onSubmit={() => {
                                                     handleSaveUsername(false)
                                                         .then(() => {
-                                                            setDBUser({ ...DBUser, username: inputUsername })
+                                                            setDBUser({ ...dBUser, username: inputUsername })
                                                             setEditMode(false)
                                                         })
                                                 }}
                                                 width={10}
-                                                placeholder={DBUser ? `${DBUser.username}` : ''}
+                                                placeholder={`${dBUser?.username}`}
                                                 autoFocus={false}
                                                 name='editUsername'
                                                 type='text'
@@ -292,7 +261,7 @@ function Home() {
                                         </div>
                                         :
                                         <p className='font-bold p-3 pl-10 rounded-lg m-2 ml-0 text-stone-100'>
-                                            {DBUser ? `@${DBUser.username}` : ''}
+                                            {dBUser && `@${dBUser.username}`}
                                         </p>
                                     }
                                 </h3>
@@ -306,7 +275,7 @@ function Home() {
                                 </h3>
                             </div>
                             <h3 className='pt-10 text-[#29bc29]'>
-                                {trackingMsg}
+                                Tracking {dBUser?.plantTrackingDetails?.length || 0} plants
                             </h3>
                             <div className='mt-10 '>
                                 Receive daily emails if my plants need water &nbsp;&nbsp;&nbsp;
@@ -314,7 +283,7 @@ function Home() {
                                     <input type="checkbox"
                                         checked={receiveDailyEmails}
                                         onClick={() => {
-                                            if (!(user && DBUser)) {
+                                            if (!(user && dBUser)) {
                                                 return;
                                             }
                                             // unsubscribe
@@ -340,7 +309,7 @@ function Home() {
                                     style={{
                                         borderRadius: "0 222px",
                                     }}
-                                    onClick={signOut}
+                                    onClick={handleSignOut}
                                 >
                                     Sign out
                                 </a>
@@ -349,7 +318,7 @@ function Home() {
                                     style={{
                                         borderRadius: "222px 0",
                                     }}
-                                    onClick={deleteAccount}
+                                    onClick={() => deleteAccount(user)}
                                 >
                                     Delete account
                                 </a>

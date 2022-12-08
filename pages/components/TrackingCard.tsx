@@ -1,21 +1,22 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image';
 import dynamic from 'next/dynamic'
 
 import { IoWater } from '@react-icons/all-files/io5/IoWater';
 import { IoLeaf } from '@react-icons/all-files/io5/IoLeaf';
+import ReactLoading from 'react-loading'
 
 import Plant from '../../domain/Plant';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import customImageLoader from '../../util/customImageLoader';
 import { IoPencil } from '@react-icons/all-files/io5/IoPencil';
 import { IoTrash } from '@react-icons/all-files/io5/IoTrash';
-// import TimelineInCard from './TimelineInCard';
-const TimelineInCard = dynamic(() => import('./TimelineInCard'))
 import Update from '../../domain/Update';
-import { deletePlant, feedPlantInDB, waterPlantInDB } from '../../service/PlantService';
+import { deletePlant, feedPlantInDB, getUpdatesForPlant, updateDaysBetweenWatering } from '../../service/PlantService';
 import ResizablePanel from './ResizablePanel';
-import { getImageUrl } from '../../service/FileService';
+import { motion } from 'framer-motion';
+const TimelineInCard = dynamic(() => import('./TimelineInCard'), { ssr: false })
+
 
 const MILLIS_IN_DAY = 86400000
 
@@ -23,27 +24,13 @@ const SM_WIDTH = 650
 const MD_WIDTH = 1140
 const LG_WIDTH = 1530
 
-const waterPlant = async (plant: Plant, uid: string): Promise<Plant> => {
-    // Calculate next watering date
-    let today = new Date();
-    let daysBetweenWatering = plant.daysBetweenWatering ? plant.daysBetweenWatering : 7;
-    let nextWaterDateMs = today.getTime() + (daysBetweenWatering * 86400000);
-
-    await waterPlantInDB(uid, plant.id, nextWaterDateMs);
-
-    return {
-        ...plant,
-        dateLastWatered: today,
-        dateToWaterNext: new Date(nextWaterDateMs)
-    }
-}
-
 interface Props {
     plant: Plant;
     userID: string;
     updates: Update[];
     goToEditScreen: (plantId: string) => void;
     goToAddUpdateScreen: (plantId: string) => void;
+    waterPlant: (plant: Plant, uid: string) => Promise<Plant>;
 }
 
 const PlantCard = (props: Props) => {
@@ -53,12 +40,14 @@ const PlantCard = (props: Props) => {
     // props
     const [userID] = useState(props.userID);
     const [plant, setPlant] = useState(props.plant);
-    const [dateToWaterNext, setDateToWaterNext] = useState(plant ? plant.dateToWaterNext : new Date(new Date().getTime() + MILLIS_IN_DAY));
+    const [dateToWaterNext, setDateToWaterNext] = useState(props.plant?.dateToWaterNext || new Date(new Date().getTime() + MILLIS_IN_DAY));
+    const [daysBetweenWatering, setDaysBetweenWatering] = useState(props.plant?.daysBetweenWatering);
+
+    const [updates, setUpdates] = useState<Update[]>([])
+    const [isLoadingUpdates, setIsLoadingUpdates] = useState(true)
 
     // state
-    const [wateringState, setWateringState] = useState('good');
-    const [imageURL, setImageURL] = useState('');
-    const [isImageLoading, setIsImageLoading] = useState(true);
+    const [needsWater, setNeedsWater] = useState(false)
     const [showInstructions, setShowInstructions] = useState(false);
     const [showUpdates, setShowUpdates] = useState(false);
     const [hidden, setHidden] = useState(false);
@@ -69,48 +58,37 @@ const PlantCard = (props: Props) => {
         if (!plant) {
             return;
         }
-        if (imageURL == '' && userID && plant.picture && plant.picture !== '') {
-            getImageUrl(plant.picture, userID)
-                .then(downloadUrl => setImageURL(downloadUrl))
-                .catch(e => {
-                    console.debug(e);
-                    console.error('Failed to load image from storage bucket')
-                })
-                .finally(() => setIsImageLoading(false))
-        } else if (isImageLoading) {
-            setIsImageLoading(false)
-        }
+        // Does plant need water?
         let today = new Date();
-        // CHECK state
-        if (today.toLocaleDateString() == dateToWaterNext.toLocaleDateString()) {
-            setWateringState('check');
+        if (today.getTime() >= dateToWaterNext.getTime() || today.toLocaleDateString() == dateToWaterNext.toLocaleDateString()) {
+            setNeedsWater(true)
+        }
+    }, [dateToWaterNext, plant]);
+
+    const loadUpdates = useCallback(async () => {
+        if (!isLoadingUpdates) {
             return;
         }
-        // GOOD state
-        if (today.getTime() < dateToWaterNext.getTime()) {
-            setWateringState('good');
+        console.log("Reading updates")
+        await getUpdatesForPlant(userID, plant?.id).then(setUpdates);
+    }, [isLoadingUpdates, plant?.id, userID])
+
+    useEffect(() => {
+        if (!showUpdates || (updates && updates?.length > 0)) {
             return;
         }
-        // BAD state
-        if ((today.getTime() - dateToWaterNext.getTime()) >= (2 * MILLIS_IN_DAY)) {
-            setWateringState('bad');
-            return;
-        }
-        // CHECK state
-        setWateringState('check');
-    }, [dateToWaterNext, imageURL, isImageLoading, plant, userID]);
+        loadUpdates().finally(() => setIsLoadingUpdates(false))
+    }, [loadUpdates, showUpdates, updates])
 
     const getBgStyle = () => {
         if (!plant || hidden) {
             return 'hidden';
         }
-        let sharedStyle = "antialiased " +
-            (width > SM_WIDTH ? 'rounded-md p-0 m-2 ' : 'rounded p-0 ')
-        if (wateringState == 'good') {
-            return sharedStyle + ' bg-lime-900 border-[#29bc29] ';
-        }
-        else {
+        const sharedStyle = "antialiased " + (width > SM_WIDTH ? 'rounded-md p-0 m-2 ' : 'rounded p-0 ')
+        if (needsWater) {
             return sharedStyle + ' bg-dry text-stone-800 ';
+        } else {
+            return sharedStyle + ' bg-lime-900 border-[#29bc29] ';
         }
     }
 
@@ -129,31 +107,38 @@ const PlantCard = (props: Props) => {
 
     const imgHeight: number = (() => {
         if (!width) return 500;
-        if (width <= SM_WIDTH) return width * 1.2;
+        if (width <= SM_WIDTH) return width;
         return height / 2;
     })();
 
-    return plant && !isImageLoading && (
-        <div className={getBgStyle()} style={{ transition: 'background-color 1s ease', }}>
+    const handleShowUpdates = async () => {
+        setShowUpdates(!showUpdates)
+    }
+
+    return plant && (
+        <motion.div exit={{ opacity: 0 }} transition={{ delay: 1 }} className={getBgStyle()} style={{ transition: 'background-color 1s ease', }}>
             {/* Picture */}
             <div className='relative pt-2'>
-                {plant.picture && imageURL && imageURL !== '' &&
-                    <div className="flex px-0 mx-0 py-1 w-full h-fit relative">
+                {plant.imageUrl &&
+                    <div className="flex px-0 mx-0 py-1 w-full relative h-[400px]">
                         <Image
-                            src={imageURL}
+                            src={plant.imageUrl}
                             alt={`photo of ${plant.species}`}
-                            loader={customImageLoader}
+                            // loader={customImageLoader}
                             loading='lazy'
-                            width={imgWidth}
-                            height={height / 1.8}
-                            className='object-cover object-center' />
+                            // width={imgWidth}
+                            // height={200}
+                            fill
+                            sizes="(max-width: 650px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className='object-cover object-center '
+                        />
                     </div>
                 }
             </div>
             <div className="w-full flex justify-between items-center">
                 {/* Species */}
                 <h1 className='text-left p-1 '>
-                    <a className='hover:underline text-3xl italic pl-2 pt-5 leading-7 ' href={`http://wikipedia.org/wiki/${plant.species.replaceAll(' ', '_')}`} >
+                    <a className='hover:underline text-3xl italic pl-2 pt-5 leading-7 ' >
                         {plant.species}
                     </a>
                 </h1>
@@ -161,16 +146,13 @@ const PlantCard = (props: Props) => {
                 <div className="flex-col pr-2 pb-2 ">
                     {/* <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} /> */}
                     <div className={`flex items-center border mx-4 px-6 py-1 mb-2 mt-1 hover:bg-white hover:text-black hover:border-white cursor-pointer rounded-full p-2 
-                    ${wateringState == 'good' ?
-                            'border-[#ffe894] //text-[#ffe894]' :
-                            'border-black'}`}
-                        onClick={() => props.goToEditScreen(plant.id)}>
+                                ${!needsWater ? ' border-[#ffe894]' : ' border-black'}`}
+                        onClick={() => props.goToEditScreen(plant?.id)}
+                    >
                         <IoPencil />
                     </div>
                     <div className={`flex items-center mx-4 px-6 py-1 my-1 hover:bg-red-500 hover:text-stone-100 hover:border-red-500 cursor-pointer border rounded-full p-2 
-                    ${wateringState == 'good' ?
-                            'border-red-400' :
-                            'border-red-900 text-red-900'}`}
+                                ${!needsWater ? 'border-red-400' : 'border-red-900 text-red-900'}`}
                         onClick={() => {
                             if (!confirm(`Delete ${plant.species}?`)) {
                                 return;
@@ -187,27 +169,61 @@ const PlantCard = (props: Props) => {
                     </div>
                 </div>
             </div>
-            <div className="px-5 py-1 text-lg">
-                <div className='flex justify-between text-sm '>
-                    {plant.dateObtained &&
-                        <p>
-                            had since {plant.dateObtained.toLocaleDateString()}
-                        </p>
-                    }
+            <div className='flex justify-start text-sm pl-4'>
+                {plant.dateObtained &&
+                    <p>
+                        had since {plant.dateObtained.toLocaleDateString()}
+                    </p>
+                }
+            </div>
+            <div className=" flex justify-end pr-4 py-1 text-lg">
+                <div>
                     {/* {plant.lightRequired < 5 ?
                         <IoPartlySunnySharp className={getIconStyle()} />
                         :
                         <IoSunnySharp className={getIconStyle()} />
                     } */}
-                    <p className='text-lg'>
-                        water every <span className='font-bold'>{plant.daysBetweenWatering}</span> days
-                    </p>
+                    <div className='flex items-center text-lg'>
+                        <>
+                            water every
+                        </>
+                        <button className={`border rounded-full h-fit px-1 mx-2 leading-none 
+                                    ${needsWater ? "border-zinc-600" : ""}`}
+                            onClick={() => {
+                                const n = daysBetweenWatering-1
+                                let newDate = new Date(dateToWaterNext.getTime() - MILLIS_IN_DAY)
+                                updateDaysBetweenWatering(userID, plant.id, n, newDate.getTime())
+                                setDaysBetweenWatering(n)
+                                setDateToWaterNext(newDate)
+                            }}
+                        >
+                            -
+                        </button>
+                        <span className='font-bold'>
+                            {daysBetweenWatering}
+                        </span>
+                        <button className={`border rounded-full h-fit px-1 mx-2 leading-none
+                                    ${needsWater ? "border-zinc-600" : ""}`}
+                            onClick={() => {
+                                const n = daysBetweenWatering+1
+                                let newDate = new Date(dateToWaterNext.getTime() + MILLIS_IN_DAY)
+                                updateDaysBetweenWatering(userID, plant.id, n, newDate.getTime())
+                                setDaysBetweenWatering(n)
+                                setDateToWaterNext(newDate)
+                            }}
+                        >
+                            +
+                        </button>
+                        days
+                    </div>
                 </div>
+            </div>
+            <div className='px-4'>
                 {/* Instructions & Updates buttons */}
                 <div className='relative'>
                     <div
                         className={`absolute top-0 left-2 text-sm hover:bg-[#ffff63] hover:border-[#ffff63] rounded-full py-1 px-5  
-                            ${wateringState == "good" ? "border-white hover:text-black" : "border-black"}
+                            ${!needsWater ? "border-white hover:text-black" : "border-black"}
                             ${plant && plant.careInstructions ? "opacity-100 cursor-pointer" : "hidden"}
                             `}
                         onClick={toggleInstructions}
@@ -219,17 +235,17 @@ const PlantCard = (props: Props) => {
                     <div className="flex justify-end text-sm mt-4">
                         <div
                             className={`hover:bg-[#ffaf63] hover:text-black hover:border-[#ffaf63] cursor-pointer rounded-full py-2 px-5 mx-1 
-                                    ${wateringState == 'good' ?
+                                    ${!needsWater ?
                                     'border border-[#ffe894] text-[#ffe894] ' :
                                     'border border-darkYellow '}`}
-                            onClick={() => setShowUpdates(!showUpdates)}
+                            onClick={handleShowUpdates}
                         >
                             Updates
                         </div>
                         <div
                             className={"hover:bg-[#29bc29] hover:text-stone-100 hover:border-[#29bc29] cursor-pointer rounded-full py-2 px-3 ml-2 " +
-                                (wateringState == 'good' ? 'border border-[#ffe894] text-[#ffe894]' : ' border border-darkYellow  ')}
-                            onClick={() => props.goToAddUpdateScreen(plant.id)}
+                                (!needsWater ? 'border border-[#ffe894] text-[#ffe894]' : ' border border-darkYellow  ')}
+                            onClick={() => props.goToAddUpdateScreen(plant?.id)}
                         >
                             +
                         </div>
@@ -242,28 +258,33 @@ const PlantCard = (props: Props) => {
                 </div>
                 {/* Updates: */}
                 {showUpdates && plant &&
-                    <ResizablePanel>
-                        <div className="py-2 flex justify-end">
-                            {plant.updates?.length > 0 ?
-                                <TimelineInCard plantId={plant.id} updates={plant.updates || []}
-                                    species={plant.species} uid={userID} key={plant.id + "_timeline"}
-                                    width={imgWidth / 3} height={imgHeight / 3}
-                                />
+                    <div className="w-full">
+                        <ResizablePanel>
+                            {isLoadingUpdates ?
+                                <div className="flex justify-center w-full">
+                                    <ReactLoading type='bars' color="#FFF7ED" />
+                                </div>
                                 :
-                                <p className='text-lg bg-red'>
-                                    No updates for this plant.
-                                </p>
+                                <TimelineInCard
+                                    plantId={plant.id}
+                                    {...{ updates }}
+                                    species={plant.species}
+                                    uid={userID}
+                                    key={plant.id + "_timeline"}
+                                    width={imgWidth / 3}
+                                    height={imgHeight / 3}
+                                />
                             }
-                        </div>
-                    </ResizablePanel>
+                        </ResizablePanel>
+                    </div>
                 }
                 <div className='flex justify-between items-center relative '>
                     {/* Water dates */}
                     <div className='pt-4'>
                         last watered {plant.dateLastWatered.toLocaleDateString()}
                         <br></br>
-                        <p className={wateringState != 'good' ? 'font-extrabold' : ''}>
-                            water next {plant.dateToWaterNext.toLocaleDateString()}
+                        <p className={needsWater ? 'font-extrabold' : ''}>
+                            water next {dateToWaterNext.toLocaleDateString()}
                         </p>
                     </div>
                     {/* Water button: */}
@@ -272,22 +293,24 @@ const PlantCard = (props: Props) => {
                             if (!confirm('Mark as watered today?')) {
                                 return;
                             }
-                            waterPlant(plant, userID)
+                            props.waterPlant(plant, userID)
                                 .then(p => {
-                                    setWateringState('good')
+                                    setNeedsWater(false)
                                     setPlant(p)
                                     setDateToWaterNext(p?.dateToWaterNext)
                                 })
                                 .catch(e => { console.error(e); console.error("Failed to mark plant as watered") })
                         }}
                         className={`flex items-center hover:text-stone-100 hover:bg-blue-400  hover:border-blue-400
-                            cursor-pointer text-sm px-8 py-2  lg:mt-2 border rounded-full h-fit
-                            ${wateringState == 'good' ? 'border-blue-300' : 'border-blue-500'}`}
+                            cursor-pointer text-sm px-8 py-2 border rounded-full h-fit
+                            ${!needsWater ? 'border-blue-300' : 'border-blue-500'}`}
                     >
-                        Water
+                        <p>
+                            Water
+                        </p>
                         &nbsp;
                         <IoWater className={`text-lg
-                            ${wateringState == 'good' ? 'text-blue-200' : 'text-blue-600 animate-bounce text-xl'}`} />
+                            ${!needsWater ? 'text-blue-200' : 'text-blue-600 animate-bounce text-xl'}`} />
                     </button>
                 </div>
                 <div className="flex justify-between items-center relative">
@@ -302,23 +325,26 @@ const PlantCard = (props: Props) => {
                             if (!confirm('Mark as fed today?')) {
                                 return;
                             }
-                            feedPlantInDB(userID, plant.id)
+                            feedPlantInDB(userID, plant?.id)
                                 .then(() => {
-                                    const updatedPlant = { ...plant, dateLastFed: new Date() }
+                                    const updatedPlant = {
+                                        ...plant,
+                                        dateLastFed: new Date()
+                                    }
                                     setPlant(updatedPlant)
                                 }).catch(console.error);
                         }}
                         className={"flex items-center hover:text-stone-100 hover:bg-lime-600 hover:border-lime-600 cursor-pointer text-sm px-8 py-2 border rounded-full "
-                            + (wateringState == 'good' ? " border-lime-600" : " border-lime-900")}
+                            + (!needsWater ? " border-lime-600" : " border-lime-900")}
                     >
                         Feed
                         &nbsp;
                         <IoLeaf className={`cursor-pointer text-lg
-                            ${wateringState == 'good' ? 'text-lime-200' : 'text-lime-900'}`} />
+                            ${!needsWater ? 'text-lime-200' : 'text-lime-900'}`} />
                     </button>
                 </div>
             </div>
-        </div>)
+        </motion.div>)
 }
 
 export default PlantCard

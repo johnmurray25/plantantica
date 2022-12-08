@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 
 import ReactLoading from 'react-loading';
 
@@ -7,14 +7,14 @@ import TrackingPageBody from "./components/TrackingPageBody";
 import Link from "next/link";
 import usePlants from "../hooks/usePlants";
 import useAuthRedirect from "../hooks/useAuthRedirect";
-import UserContext from "../context/UserContext";
+import useAuth from "../hooks/useAuth";
 
 const Home = () => {
 
   useAuthRedirect()
 
   const { plants, isLoading } = usePlants();
-  const { user } = useContext(UserContext)
+  const { user } = useAuth()
 
   return (
     <div className='text-stone-100 min-w-screen bg-green' /**Container */>

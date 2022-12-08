@@ -15,12 +15,11 @@ interface Props {
     plantId: string;
     uid: string;
     species: string;
-    imageUrl: string;
     onDelete: () => void;
 }
 
 const CustomTimelineItem = (props: Props) => {
-    const { update, plantId, uid, species, imageUrl } = props;
+    const { update, plantId, uid, species } = props;
 
     return (
         <div className='w-full border border-t-0 border-x-0 border-stone-800 pb-3 mb-4'>
@@ -29,7 +28,7 @@ const CustomTimelineItem = (props: Props) => {
                     {update?.dateCreated?.toUTCString().substring(0, 17)}
                 </div>
                 <a
-                    className="text-red-800 hover:text-stone-100 border border-red-800 hover:bg-red-700 rounded-full text-sm p-1 px-2 cursor-pointer "
+                    className="text-stone-100 bg-red-800 border border-red-800 hover:bg-red-700 rounded-full text-sm p-1 px-2 cursor-pointer "
                     onClick={() => {
                         if (!confirm("Delete this update?")) {
                             return;
@@ -42,11 +41,11 @@ const CustomTimelineItem = (props: Props) => {
                 </a>
             </div>
             <div className='text-center'>
-                {update && update.image && imageUrl &&
+                {update && update.imageUrl &&
                     <ImageInTimeline
                         height={250}
                         {...{ species }}
-                        src={imageUrl}
+                        src={update.imageUrl}
                         width={250}
                     />
                 }

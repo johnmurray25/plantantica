@@ -1,37 +1,34 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
-import UserContext from '../context/UserContext';
+import { useCallback, useEffect, useState } from 'react'
 import Plant from '../domain/Plant';
 import { getPlants } from '../service/PlantService';
+import useAuth from './useAuth';
 
 const usePlants = () => {
     const [plants, setPlants] = useState<Plant[]>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const { user } = useContext(UserContext)
-
+    const { user } = useAuth()
 
     const loadPlants = useCallback(async () => {
-        if (!user) {
+        if (!user || plants) {
             return;
         }
         setIsLoading(true);
-        // console.log("Loading plants...")
         try {
+            console.log("Fetching plants")
             const res = await getPlants(user.uid)
             setPlants(res)
         } catch (e) {
             console.error(e)
-            // setStatus(ERR_STATUS)
+            console.error("Failed to load plants")
         } finally {
             setIsLoading(false)
             // console.log("finished loading plants")
         }
-    }, [user])
+    }, [plants, user])
 
     useEffect(() => {
-        if (plants === null && user) {
-            loadPlants();
-        }
-    }, [loadPlants, plants, user])
+        loadPlants();
+    }, [loadPlants])
 
 
     return { plants, isLoading }

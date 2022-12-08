@@ -12,15 +12,12 @@ const SignInWithGoogleButton = () => {
 
     const signInWithGoogle = async () => {
         // Log in/Sign up with Firebase Auth 
-        let userCredential = null;
         try {
             width <= 650 ?
                 signInWithRedirect(auth, googleAuthProvider)
                 : signInWithPopup(auth, googleAuthProvider)
         } catch (e) {
             console.error(e)
-        }
-        if (!userCredential || !userCredential.user) {
         }
     }
 

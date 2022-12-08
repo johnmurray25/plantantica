@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getDownloadURL, ref } from 'firebase/storage';
+import ReactLoading from "react-loading"
+
 import storage from '../../firebase/storage';
 import Update from '../../domain/Update';
 import TimelineItem from './TimelineItem';
@@ -24,32 +26,34 @@ const TimelineInCard = (props: Props) => {
 
     const [updateItems, setUpdateItems] = useState<JSX.Element[]>([]);
 
-    const timelineItemFromUpdate = useCallback(async (update: Update, updateItems: JSX.Element[]) => {
-        const imageUrl = update && update.image ? await getDownloadURL(ref(storage, `${uid}/${update.image}`)) : "";
+    const timelineItemFromUpdate = useCallback((update: Update) => {
         return (
             <TimelineItem
-                key={update?.id}
-                {...{ update, plantId, uid, width, height, species, imageUrl }}
+                key={Math.random()}
+                {...{ update, plantId, uid, width, height, species }}
                 onDelete={() => {
                     setUpdateItems(updateItems ? updateItems.filter(u => u.key != update.id) : [])
                 }}
             />
         )
-    }, [height, plantId, species, uid, width])
+    }, [height, plantId, species, uid, updateItems, width])
 
     useEffect(() => {
         if (!updates || !updates.length || (updateItems && updateItems.length)) {
             return;
         }
-        let promises = updates.map((u) => timelineItemFromUpdate(u, updateItems))
-        Promise.all(promises)
-            .then(setUpdateItems)
-            .catch(console.error)
+        setUpdateItems(updates.map((u) => timelineItemFromUpdate(u)))
     }, [timelineItemFromUpdate, updateItems, updates])
 
     return (
-        <div id="timeline">
-            {updateItems}
+        <div id="timeline" className='w-full'>
+            {updateItems?.length > 0 ?
+                updateItems
+                :
+                <p className='text-lg bg-red'>
+                    No updates for this plant.
+                </p>
+            }
         </div>
     );
 }

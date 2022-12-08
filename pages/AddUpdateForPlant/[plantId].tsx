@@ -1,13 +1,13 @@
 import { useRouter } from 'next/router'
-import React, { useContext, useEffect, useState } from 'react'
-import UserContext from '../../context/UserContext';
+import React, { useEffect, useState } from 'react'
 import Plant from '../../domain/Plant';
+import useAuth from '../../hooks/useAuth';
 import { getPlantById } from '../../service/PlantService';
 import AddUpdateForPlant from '../AddUpdateForPlant';
 
 const Home = () => {
 
-    const { user } = useContext(UserContext)
+    const { user } = useAuth()
 
     const router = useRouter();
     const plantId = router.query.plantId;

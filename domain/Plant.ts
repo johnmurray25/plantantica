@@ -11,6 +11,7 @@ export default interface Plant {
     dateToFeedNext?: Date;
     lightRequired: string | number;
     picture?: string;
+    imageUrl?: string;
     dateCreated?: Date;
     careInstructions?: string;
     updates?: Update[];

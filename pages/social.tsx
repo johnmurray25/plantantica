@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import ReactLoading from 'react-loading';
 
@@ -11,11 +11,11 @@ import useWindowDimensions from '../hooks/useWindowDimensions';
 import { mapDocToUser, getUserByUsername } from '../service/UserService';
 import { useRouter } from 'next/router';
 import DBUser from '../domain/DBUser';
-import UserContext from '../context/UserContext';
+import useAuth from '../hooks/useAuth';
 
 const Home: React.FC = () => {
 
-    const { user, loading } = useContext(UserContext)
+    const { user } = useAuth()
     const [searchText, setSearchText] = useState('')
     const [searchActive, setSearchActive] = useState(false)
     const [searchMessage, setSearchMessage] = useState('')
@@ -25,7 +25,7 @@ const Home: React.FC = () => {
     const [following, setFollowing] = useState<DBUser[]>([])
 
     const router = useRouter()
-    const { width, height } = useWindowDimensions()
+    const { height } = useWindowDimensions()
 
     const searchUsers = useCallback(() => {
         if (!searchText) {

@@ -15,27 +15,27 @@ export default function ResizablePanel({ children }) {
             className="relative overflow-hidden"
             exit={{ height: 0 }}
         >
-            <AnimatePresence initial={false}>
+            <AnimatePresence initial={true}>
                 <motion.div
                     key={JSON.stringify(children, ignoreCircularReferences())}
                     initial={{
-                        // opacity: 0,
-                        x: 382,
+                        opacity: 0.2,
+                        // x: 100,
                     }}
                     animate={{
-                        // opacity: 1,
-                        x: 0,
-                        // transition: { duration: duration / 2, delay: duration / 2 },
+                        opacity: 1,
+                        // x: 0,
+                        transition: { duration: 0.25, delay: 0.1 },
                     }}
                     exit={{
-                        // opacity: 0,
-                        x: -382,
+                        opacity: 0,
+                        // x: -100,
                         transition: { duration }
                     }}
                 >
                     <div
                         ref={ref}
-                        className={`${height ? "absolute" : "relative"} px-8 pb-8`}
+                        className={`${height ? "absolute" : "relative"} w-full pb-8`}
                     >
                         {children}
                     </div>

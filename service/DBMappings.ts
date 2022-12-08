@@ -21,9 +21,7 @@ export const docToPlant = (doc: QueryDocumentSnapshot): Plant => {
 }
 
 export const docToUpdate = (doc) => {
-    console.log(doc)
     const data = doc.data()
-    console.log(data)
     return {
         image: data.image,
         title: data.title,
@@ -35,6 +33,9 @@ export const docToUpdate = (doc) => {
 
 export const docToUser = (docSnap) => {
     const data = docSnap.data()
+    if (!data) {
+        return null
+    }
     return {
         profilePicture: data.profilePicture,
         email: data.email ? data.email : docSnap.id,

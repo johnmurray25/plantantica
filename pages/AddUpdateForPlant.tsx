@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React, { useContext, useState } from 'react'
+import React, { useState } from 'react'
 import ReactLoading from 'react-loading'
 import customImageLoader from '../util/customImageLoader';
 import FileInput from './components/FileInput';
@@ -12,7 +12,7 @@ import Plant from '../domain/Plant';
 import { useRouter } from 'next/router';
 import GenericDatePicker from './components/GenericDatePicker';
 import Update from '../domain/Update';
-import UserContext from '../context/UserContext';
+import useAuth from '../hooks/useAuth';
 
 interface Props {
     plantId: string;
@@ -24,7 +24,7 @@ interface Props {
 
 const AddUpdateForPlant: React.FC<Props> = (props) => {
 
-    const { user } = useContext(UserContext)
+    const { user } = useAuth()
     const router = useRouter();
 
     const [selectedFile, setSelectedFile] = useState<File>(null);

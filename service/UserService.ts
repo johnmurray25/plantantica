@@ -2,9 +2,8 @@ import { User } from "firebase/auth";
 import { collection, deleteDoc, doc, DocumentData, DocumentSnapshot, getDoc, getDocs, query, QueryDocumentSnapshot, setDoc, where } from "firebase/firestore"
 import DBUser from "../domain/DBUser";
 import Plant from "../domain/Plant";
-import Update from "../domain/Update";
 import db from "../firebase/db"
-import { getPlants, getUpdatesForPlant, migratePlantData } from "./PlantService"
+import { getPlants, migratePlantData } from "./PlantService"
 import { docToUser } from "./DBMappings";
 
 // Should delete after data is merged
@@ -39,7 +38,7 @@ export const initializeUser = async (user: User, username?: string) => {
         email: user.email,
         displayName: user.displayName,
         dailyEmails: true,
-        username
+        username: username || ""
     }
     try {
         await setDoc(userDoc, userData, { merge: true })

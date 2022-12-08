@@ -31,8 +31,9 @@ export const compressImage = async (imageFile: File) => {
         console.log(`compressed file size: ${compressedFile.size / 1024 / 1024} MB`);
         return compressedFile;
     }
-    catch (error) {
-        console.log(error);
+    catch (e) {
+        console.error(e);
+        alert("ERROR: " + e.message + ". Supported file types are png, jpeg")
         return null;
     }
 }
@@ -68,9 +69,10 @@ export const updateProfilePicture = async (fileName: string, uid: string) => {
 
 export const getProfilePictureUrl = async (uid: string): Promise<{ url: string, fileName: string }> => {
     const data = (await getDoc(doc(db, 'users', uid))).data()
-    let fileName = data.profilePicture
-    if (!fileName)
+    let fileName = data?.profilePicture
+    if (!fileName) {
         return { url: '', fileName: '' }
+    }
     let imageUrl = await getDownloadURL(ref(storage, `${uid}/${fileName}`))
     return { url: imageUrl, fileName };
 }

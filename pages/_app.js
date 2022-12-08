@@ -2,11 +2,8 @@ import Head from 'next/head';
 import Router from 'next/router';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
-import { useAuthState } from "react-firebase-hooks/auth";
 
-import '../styles/globals.css'
-import UserContext from "../context/UserContext"
-import auth from '../firebase/auth';
+import '../styles/globals.css' // enable tailwind
 
 // Bind loading/progress functions to Next event listeners
 Router.events.on('routeChangeStart', () => NProgress.start());
@@ -14,7 +11,6 @@ Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
 
 function Plantantica({ Component, pageProps }) {
-  const [user, loading] = useAuthState(auth)
 
   return <>
     <Head>
@@ -22,12 +18,6 @@ function Plantantica({ Component, pageProps }) {
       <meta name="description"
         content="A place to track your plants' maintenance" />
       <link rel="icon" href="./tree-logo.ico" />
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" />
-      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-      <link href="https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@600&display=swap" rel="stylesheet" />
-      {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-      <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&family=Montserrat&display=swap" rel="stylesheet" />
       <link rel='manifest' href='./manifest.json' />
       <meta name="apple-mobile-web-app-status-bar" content="rgb(39, 47, 39)" />
       <meta name="theme-color" content="rgb(39, 47, 39)" />
@@ -48,9 +38,7 @@ function Plantantica({ Component, pageProps }) {
       <link rel="apple-touch-startup-image" href="./apple-splash-750-1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
       <link rel="apple-touch-startup-image" href="./apple-splash-640-1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
     </Head>
-    <UserContext.Provider value={{user, loading}}>
-      <Component {...pageProps} />
-    </UserContext.Provider>
+    <Component {...pageProps} />
   </>
 }
 
