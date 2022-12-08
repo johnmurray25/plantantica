@@ -32,9 +32,10 @@
     "firebaseFunctions.js",
     "functions/index.js",
     "functions/test/index.test.ts"
-, "functions/DBMappings.ts", "pages/components/TreeLogo.js"  ],
+, "functions/DBMappings.ts", "components/TreeLogo.js"  ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "functions",
   ],
   // 9/23/22:
   "compileOnSave": true

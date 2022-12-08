@@ -12,15 +12,12 @@ const SignInWithGoogleButton = () => {
 
     const signInWithGoogle = async () => {
         // Log in/Sign up with Firebase Auth 
-        let userCredential = null;
         try {
             width <= 650 ?
                 signInWithRedirect(auth, googleAuthProvider)
                 : signInWithPopup(auth, googleAuthProvider)
         } catch (e) {
             console.error(e)
-        }
-        if (!userCredential || !userCredential.user) {
         }
     }
 
@@ -35,7 +32,7 @@ const SignInWithGoogleButton = () => {
                     <path fill="#EA4335" d="M -14.754 43.989 C -12.984 43.989 -11.404 44.599 -10.154 45.789 L -6.734 42.369 C -8.804 40.429 -11.514 39.239 -14.754 39.239 C -19.444 39.239 -23.494 41.939 -25.464 45.859 L -21.484 48.949 C -20.534 46.099 -17.884 43.989 -14.754 43.989 Z" />
                 </g>
             </svg>
-            Sign in with Google
+            Continue with Google
         </button>
     )
 }

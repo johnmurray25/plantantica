@@ -1,37 +1,34 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth';
 import Plant from '../domain/Plant';
-import auth from '../firebase/auth';
 import { getPlants } from '../service/PlantService';
+import useAuth from './useAuth';
 
 const usePlants = () => {
     const [plants, setPlants] = useState<Plant[]>(null);
-  const [isLoading, setIsLoading] = useState(true);
-    const [user] = useAuthState(auth)
+    const [isLoading, setIsLoading] = useState(true);
+    const { user } = useAuth()
 
     const loadPlants = useCallback(async () => {
-        if (!user) {
+        if (!user || plants) {
             return;
         }
         setIsLoading(true);
-        console.log("Loading plants...")
         try {
+            console.log("Fetching plants")
             const res = await getPlants(user.uid)
             setPlants(res)
         } catch (e) {
             console.error(e)
-            // setStatus(ERR_STATUS)
+            console.error("Failed to load plants")
         } finally {
             setIsLoading(false)
-            console.log("finished loading plants")
+            // console.log("finished loading plants")
         }
-    }, [user])
+    }, [plants, user])
 
     useEffect(() => {
-        if (plants === null && user) {
-            loadPlants();
-        }
-    }, [loadPlants, plants, user])
+        loadPlants();
+    }, [loadPlants])
 
 
     return { plants, isLoading }

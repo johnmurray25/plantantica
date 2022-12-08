@@ -11,12 +11,11 @@ import useWindowDimensions from '../hooks/useWindowDimensions';
 import { mapDocToUser, getUserByUsername } from '../service/UserService';
 import { useRouter } from 'next/router';
 import DBUser from '../domain/DBUser';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import auth from '../firebase/auth';
+import useAuth from '../hooks/useAuth';
 
 const Home: React.FC = () => {
 
-    const [currentUser, loading] = useAuthState(auth)
+    const { user } = useAuth()
     const [searchText, setSearchText] = useState('')
     const [searchActive, setSearchActive] = useState(false)
     const [searchMessage, setSearchMessage] = useState('')
@@ -26,7 +25,7 @@ const Home: React.FC = () => {
     const [following, setFollowing] = useState<DBUser[]>([])
 
     const router = useRouter()
-    const { width, height } = useWindowDimensions()
+    const { height } = useWindowDimensions()
 
     const searchUsers = useCallback(() => {
         if (!searchText) {
@@ -68,8 +67,8 @@ const Home: React.FC = () => {
     useEffect(() => {
         document.addEventListener('keydown', handleKeyPress)
 
-        // if (currentUser && (!following || !following.length)) {
-        //     getFollowingList(currentUser.uid)
+        // if (user && (!following || !following.length)) {
+        //     getFollowingList(user.uid)
         //         .then(res => {
         //             setFollowing(res)
         //             console.log(res)
@@ -80,10 +79,10 @@ const Home: React.FC = () => {
         return () => {
             document.removeEventListener('keydown', handleKeyPress)
         }
-    }, [currentUser, following, handleKeyPress, searchUsers])
+    }, [user, following, handleKeyPress, searchUsers])
 
     return (
-        <div className='text-yellow bg-green min-w-full' /**Container */>
+        <div className='text-stone-200 bg-green min-w-full' /**Container */>
             <NavBar />
 
             <div className='min-h-screen p-4 pt-28 flex flex-col items-center m-auto'>
@@ -99,7 +98,7 @@ const Home: React.FC = () => {
                         width={80}
                     />
                     <a
-                        className='cursor-pointer bg-[#53984D] text-yellow rounded justify-center h-12 w-8 text-center content-center'
+                        className='cursor-pointer bg-[#53984D] text-stone-200 rounded justify-center h-12 w-8 text-center content-center'
                         onClick={searchUsers}
                     >
                         &rarr;
@@ -154,7 +153,7 @@ const Home: React.FC = () => {
                         </p>
                     </div>
                     :
-                    currentUser &&
+                    user &&
                     <div>
                         {/* <h1>Who you&apos;re following</h1> */}
                         {following

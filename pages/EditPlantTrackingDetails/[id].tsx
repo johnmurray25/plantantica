@@ -1,59 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import db from '../../firebase/db';
-import auth from '../../firebase/auth';
 import AddPlantTrackingDetails from '../AddPlantTrackingDetails';
 import Plant from '../../domain/Plant';
-import { collection, doc, DocumentData, DocumentReference, DocumentSnapshot, getDoc } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import { User } from 'firebase/auth';
 import { useRouter } from 'next/router';
+import useAuth from '../../hooks/useAuth';
+import { getPlantById } from '../../service/PlantService';
 
-const getPlantDetails = async (id: string | any, user: User) => {
-    let docRef: DocumentReference<DocumentData> = null;
+const getPlantDetails = async (uid: string, plantId: string | any): Promise<Plant> => {
     try {
-        let collectionRef = collection(doc(db, 'users', user.uid), 'plantTrackingDetails');
-        if (!collectionRef) { console.error('NO COLLECTION FOUND') }
-        docRef = doc(collectionRef, id);
-    } catch (e) { console.error(e); }
-    if (!docRef) {
-        return;
-    }
-    let d: DocumentSnapshot = null;
-    try {
-        d = await getDoc(docRef);
+        return await getPlantById(uid, plantId);
     } catch (e) {
-        console.error(e);
-        throw e;
+        alert(e.message)
+        console.error(e)
+        console.error("Failed to load plant details")
     }
-    if (!d) {
-        return null;
-    }
-    const result: Plant = {
-        id: d.id,
-        species: d.get('species'),
-        dateObtained: new Date(d.get('dateObtained')),
-        daysBetweenWatering: d.get('daysBetweenWatering'),
-        dateLastWatered: new Date(d.get('dateLastWatered')),
-        dateToWaterNext: new Date(d.get('dateToWaterNext')),
-        lightRequired: d.get('lightRequired'),
-        dateCreated: new Date(d.get('dateCreated')),
-        picture: d.get('picture'),
-        careInstructions: d.get('careInstructions')
-    };
-    const dlf = d.get('dateLastFed');
-    if (dlf) {
-        result.dateLastFed = new Date(dlf)
-    }
-    const dtfn = d.get('dateToFeedNext');
-    if (dtfn) {
-        result.dateToFeedNext = new Date(dtfn)
-    }
-    return result;
 }
 
 const Home = () => {
     const [plant, setPlant] = useState<Plant>();
-    const [user] = useAuthState(auth);
+    const { user } = useAuth()
     const router = useRouter();
     const plantId = router.query.id;
 
@@ -61,13 +25,13 @@ const Home = () => {
         if (!user) {
             return;
         }
-        getPlantDetails(plantId, user).then(setPlant).catch(console.error);
+        getPlantDetails(user.uid, plantId).then(setPlant).catch(console.error);
     }, [user, plantId])
 
     return (
         <>
-            {plant && 
-                <AddPlantTrackingDetails {...{plant}} />
+            {plant &&
+                <AddPlantTrackingDetails {...{ plant }} />
             }
         </>
     )

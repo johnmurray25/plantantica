@@ -1,92 +1,42 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
-
-import { useAuthState } from "react-firebase-hooks/auth";
 
 import styles from "../styles/Home.module.css";
 import NavBar from "./components/NavBar";
-import auth from '../firebase/auth';
-import { getUser, mapDocToUser } from '../service/UserService';
-import { User } from "firebase/auth";
 import { useRouter } from "next/router";
-import DBUser from "../domain/DBUser";
 import TreeLogo from "./components/TreeLogo";
+import useAuth from "../hooks/useAuth";
 
 export default function Home() {
 
-    const [user] = useAuthState(auth);
+    const { dBUser } = useAuth()
     const router = useRouter()
-    const [userInDB, setUserInDB] = useState<DBUser>(null);
-
-    const getUserInfo = useCallback(async (user: User) => {
-        // Get user doc, or create new
-        let userDoc = await getUser(user)
-
-        let u = await mapDocToUser(userDoc);
-        setUserInDB(u);
-        // If user does not have username... 
-        if (!u.username && u.email) {
-            // Redirect to 'Edit Profile' page
-            router.push(`/profile`)
-        }
-    }, [router])
 
     useEffect(() => {
-        if (user) {
-            getUserInfo(user)
+        if (dBUser && !dBUser.username) {
+            router.push(`/profile`) // prompt user to add username 
         }
-    }, [user, getUserInfo])
+    }, [dBUser, router])
 
     return (
-        <div className=" text-yellow" style={{ minWidth: '100vw', }} >
+        <div className=" text-stone-200" style={{ minWidth: '100vw', }} >
             <NavBar hideLogo />
 
-            <main className="p-4 pt-20 flex flex-col items-center m-auto"
-                style={{ height: '100vh' }}
-            >
-                <h1 className="m-0 text-left text-[#FFE894] w-3/5"
-                    style={{ lineHeight: 1.15, fontSize: '2rem' }}
-                >
-                    <h3 style={{fontSize: "1.5rem"}} className="brand">
+            <main className="pt-20 flex flex-col items-center m-auto">
+                <div className="m-0 pb-10 text-left text-[#FFE894] w-3/5">
+                    <h3 className="brand -translate-x-1 leading-9 text-2xl">
                         Welcome to
                     </h3>
-                    <TreeLogo width={350} />
-                    {/* {
-                        userInDB ?
-                            <a>
-                                Welcome, {userInDB.displayName.split(' ')[0] || user.displayName.split(' ')[0]}
-                            </a>
-                            :
-                            <a>
-                                Welcome to Plantantica
-                            </a> 
-                    */}
-                </h1>
-
-                <p className="text-center mt-4 mb-6"
-                    style={{
-                        lineHeight: 1.5,
-                        fontSize: '1.3rem',
-                    }}
-                >
-                    {/* {!user && "A place to track your plants' maintenance"} */}
-                </p>
+                    <TreeLogo width={350} height={140} />
+                </div>
 
                 <div className={styles.grid}>
-                    {/* <Link href="/Blog">
-                    <a className={styles.card}>
-                        <h2>Blog &rarr;</h2>
-                        <p>Ask a question, or see what other users have to say.</p>
-                    </a>
-                </Link> */}
-
                     <div className={styles.leaf + " bg-[#2bb32b] hover:bg-[#32cd32]"}>
                         <Link href="/Tracking" passHref>
-                            <div className={styles.card}>
-                                <h2 className="absolute top-10 left-14 text-left justify-start text-green font-bold"
-                                >
+                            <div className={styles.card + " text-green font-bold"}>
+                                <h2 className="absolute top-10 left-14 text-left justify-start text-green font-bold">
                                     Track &rarr;</h2>
-                                <p className='absolute bottom-14 right-16 text-right font-bold text-green w-1/2'>
+                                <p className='absolute bottom-14 right-16 text-right  text-green w-1/2'>
                                     your plants&apos; maintenance
                                 </p>
                             </div>
@@ -96,7 +46,9 @@ export default function Home() {
                     <div className={styles.leaf + " bg-[#1f801f] hover:bg-[#259925] pt-10 lg:pt-0"}>
                         <Link href="/social" passHref>
                             <div className={styles.card}>
-                                <h2 className="absolute top-10 left-14 text-left justify-start font-bold">Connect &rarr;</h2>
+                                <h2 className="absolute top-10 left-14 text-left justify-start font-bold">
+                                    Connect &rarr;
+                                </h2>
                                 <p className='absolute bottom-3 right-12 text-right w-3/5 p-2'>
                                     Find people you know and see each other&apos;s plants
                                 </p>
@@ -107,7 +59,7 @@ export default function Home() {
             </main>
 
             <footer className={styles.footer}>
-                <div className="text-right text-lightYellow text-sm pr-6 pb-2">
+                <div className="text-right text-lightYellow text-sm pr-6 pb-2 pt-36">
                     An app by John Murray
                 </div>
             </footer>
@@ -115,6 +67,6 @@ export default function Home() {
     );
 }
 
-export async function getStaticProps() {
-    return { props: { isStatic: true } }
-}
+// export async function getStaticProps() {
+//     return { props: { isStatic: true } }
+// }

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 
 import ReactLoading from 'react-loading'
@@ -12,12 +12,9 @@ import Plant from '../../domain/Plant';
 import DisplayCard from '../components/DisplayCard'
 import gridStyles from '../../styles/smallGrid.module.css'
 import DBUser from '../../domain/DBUser';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import auth from '../../firebase/auth';
 
 function Home() {
 
-    const [currentUser, loading] = useAuthState(auth) // Current logged in user
     const [user, setUser] = useState<DBUser>(null) // Data in DB [username]
     const [uid, setUid] = useState('')
     const [trackingMsg, setTrackingMsg] = useState('');
@@ -91,12 +88,12 @@ function Home() {
     }, [profPicUrl, username, uid]);
 
     return (
-        <div className='bg-green text-yellow min-h-screen text-left'>
+        <div className='bg-green text-stone-100 min-h-screen text-left'>
             <NavBar />
             {
                 user &&
                 <div>
-                    <div className='relative w-full med:w-3/6 m-auto text-center justify-center pt-28 px-6 med:border border-yellow rounded '>
+                    <div className='relative w-full med:w-3/6 m-auto text-center justify-center pt-28 px-6 med:border border-stone-100 rounded '>
                         {profPicUrl && profPicUrl != '' &&
                             isProfPicLoading ?
                             <div className='relative w-fit flex justify-center m-auto border rounded-xl p-3'>

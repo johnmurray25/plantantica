@@ -138,3 +138,6 @@ package-lock.json
 .functions\
 .firebase/hosting.b3V0.cache
 .firebaserc
+.DS_Store
+*.cache
+.DS_Store

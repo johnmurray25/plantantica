@@ -13,10 +13,10 @@ interface Props {
 const GenericDatePicker: React.FC<Props> = (props) => {
 
     return (
-        <div className='bg-lightGrayGreen text-green p-3 m-auto'>
+        <div className='bg-orange-50 text-green p-3 m-auto rounded-lg mb-1'>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                    className='bg-yellow'
+                    className='bg-stone-100'
                     label={props.label}
                     value={props.value}
                     onChange={(newValue) => props.onSelect(newValue)}

@@ -1,21 +1,18 @@
-import React, { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 
 import { collection, addDoc, doc, setDoc, DocumentReference, DocumentData } from "firebase/firestore";
-import { Select, MenuItem } from "@mui/material";
-import { useAuthState } from "react-firebase-hooks/auth";
 import ReactLoading from 'react-loading'
 
-import auth from '../firebase/auth';
 import db from '../firebase/db';
 import Plant from "../domain/Plant";
-import styles from "../styles/tracking.module.css";
 import FileInput from "./components/FileInput";
 import Image from "next/image";
 import { compressImage, uploadFile, getImageUrl, deleteImage } from "../service/FileService";
 import GenericDatePicker from "./components/GenericDatePicker";
 import customImageLoader from "../util/customImageLoader";
 import TextField from "./components/TextField";
+import useAuth from "../hooks/useAuth";
 
 const MILLIS_IN_DAY = 86400000;
 
@@ -23,9 +20,9 @@ interface Props {
   plant?: Plant,
 }
 
-const AddPlantTrackingDetails: FC<Props> = (props) => {
+const AddPlantTrackingDetails = (props: Props) => {
   const router = useRouter();
-  const [user] = useAuthState(auth);
+  const { user } = useAuth()
   const todaysDate = new Date();
 
   const [plant] = useState<Plant>(props.plant);
@@ -42,7 +39,6 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   const [selectedFile, setSelectedFile] = useState<File>(null);
   const [imageUrl, setImageUrl] = useState('');
   const [loadingStatus, setLoadingStatus] = useState(null);
-  const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (imageUrl === '' && user && plant && plant.picture) {
@@ -154,15 +150,15 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
   }
 
   return (
-    <div className='text-lg text-white bg-green min-w-full min-h-screen' >
+    <div className='antialiased text-lg text-stone-100 bg-green ' >
       {loadingStatus ?
         <div className='flex justify-center items-center pt-60' >
-          {loadingStatus} < ReactLoading type='bars' color="#fff" />
+          {loadingStatus} <ReactLoading type='bars' color="#FFF7ED" />
         </div>
         :
         <div>
-          <div className={styles.title}>
-            <a className='pt-20 '>
+          <div className="text-3xl text-center italic text-zinc-100 border-4 border-x-0 border-t-0 border-zinc-200 border-dotted w-full p-6 bg-lime-900">
+            <a className='pt-20'>
               {`${plant ? 'Edit' : 'Add'} Plant Info`}
             </a>
           </div>
@@ -174,8 +170,14 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                 <div className="relative  m-auto w-fit p-1">
                   {imageUrl ?
                     <div>
-                      <Image src={imageUrl} loader={customImageLoader} alt='photo of plant' width='150' height='190' />
-                      <a className='absolute top-2 right-2 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
+                      <Image
+                        src={imageUrl}
+                        loader={customImageLoader}
+                        alt='photo of plant'
+                        width='150'
+                        height='190'
+                      />
+                      <a className='absolute top-2 right-2 bg-stone-100 text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
                         onClick={onRemoveFile} >
                         &#10060;
                       </a>
@@ -192,7 +194,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                     />
                   }
                 </div>
-                < div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center' >
+                < div className='grid grid-cols-2 gap-x-1 gap-y-6 items-center pt-6' >
                   <label htmlFor='species'>
                     Species:
                   </label>
@@ -201,30 +203,30 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                     value={species}
                     onChange={setSpecies}
                     textarea={true}
-                    width={40}
+                    width="full"
                   />
-                  <label htmlFor="lightReq">
+                  {/* <label htmlFor="lightReq">
                     Requires
-                  </label>
-                  <Select
+                  </label> */}
+                  {/* <Select
                     id="lightReq"
-                    className="bg-lightGrayGreen"
+                    className="bg-orange-50"
                     value={lightRequired}
                     label="light required"
                     onChange={(e) => setLightRequired(e.target.value)}
                   >
                     <MenuItem value={2}>Bright indirect light</MenuItem>
                     <MenuItem value={10}>Bright light</MenuItem>
-                  </Select>
+                  </Select> */}
                 </div>
               </div>
               <div>
-                <div className='flex flex-row justify-center items-center'>
+                <div className='flex flex-row justify-center items-center pt-6'>
                   <label htmlFor="minDays">
                     Water every &nbsp;
                   </label>
                   <input
-                    className='bg-lightGrayGreen p-2 px-0 my-2 text-slate text-center w-14'
+                    className='bg-orange-50 p-2 px-0 my-2 text-slate text-center w-14'
                     type="text"
                     name="minDays"
                     id="minDays"
@@ -264,7 +266,7 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                       }}
                     />
                     {dateLastFed &&
-                      <a className='bg-yellow text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit text-xs'
+                      <a className='bg-stone-100 text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit text-xs'
                         onClick={() => {
                           if (confirm('Remove date last fed?')) {
                             setDateLastFed(null);
@@ -273,14 +275,14 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                         &#10060;
                       </a>}
                   </div>
-                  <div className='flex justify-center items-center '>
+                  <div className='flex justify-center items-center'>
                     <GenericDatePicker
                       label='Feed next on'
                       value={dateToFeedNext}
                       onSelect={(d: Date) => setDateToFeedNext(d)}
                     />
                     {dateToFeedNext &&
-                      <a className='bg-yellow text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit text-xs'
+                      <a className='bg-stone-100 text-green cursor-pointer border border-red-700 rounded ml-2 p-1 w-fit text-xs'
                         onClick={() => {
                           if (confirm('Remove date to feed next?')) {
                             setDateToFeedNext(null);
@@ -313,20 +315,20 @@ const AddPlantTrackingDetails: FC<Props> = (props) => {
                     value={careInstructions}
                     onChange={setCareInstructions}
                     textarea={true}
-                    width={40}
+                    width={"full"}
                   />
                 </div>
               </div>
             </div>
-            <div className="mx-3 mt-8 ">
+            <div className="mx-3 mt-0 ">
               <div className='flex justify-evenly '>
                 <a
-                  className="bg-yellow text-green py-2.5 rounded px-7 mt-4 mx-8"
+                  className="bg-lime-100 text-green py-2.5 rounded px-7 mt-4 mx-8"
                   onClick={router.back}>
                   Cancel
                 </a>
                 <button
-                  className="bg-lightGrayGreen text-green py-2.5 rounded px-7 mt-4 mx-8"
+                  className="bg-lime-700 text-stone-50 font-bold py-2.5 rounded px-7 mt-4 mx-8"
                   onClick={savePlantTrackingDetails}>
                   Save
                 </button>

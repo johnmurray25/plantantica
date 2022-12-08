@@ -3,7 +3,7 @@ import Router from 'next/router';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 
-import '../styles/globals.css'
+import '../styles/globals.css' // enable tailwind
 
 // Bind loading/progress functions to Next event listeners
 Router.events.on('routeChangeStart', () => NProgress.start());
@@ -11,16 +11,13 @@ Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
 
 function Plantantica({ Component, pageProps }) {
+
   return <>
     <Head>
       <title>Plantantica</title>
       <meta name="description"
         content="A place to track your plants' maintenance" />
       <link rel="icon" href="./tree-logo.ico" />
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" />
-      <link href="https://fonts.googleapis.com/css2?family=Overpass+Mono:wght@600&display=swap" rel="stylesheet"/>
-      <link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@300&family=Montserrat&display=swap" rel="stylesheet" />
       <link rel='manifest' href='./manifest.json' />
       <meta name="apple-mobile-web-app-status-bar" content="rgb(39, 47, 39)" />
       <meta name="theme-color" content="rgb(39, 47, 39)" />

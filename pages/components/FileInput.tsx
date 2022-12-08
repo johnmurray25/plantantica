@@ -12,7 +12,7 @@ const FileInput: FC<Props> = (props) => {
     return (
         <div className='flex text-center justify-center h-12 m-auto '>
             {fileName ?
-                <div className="p-3 ml-3 border border-yellow rounded">
+                <div className="p-3 ml-3 border border-stone-100 rounded">
                     {fileName}
                     <a
                         className='cursor-pointer ml-5 mr-2'

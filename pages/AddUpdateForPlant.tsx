@@ -1,4 +1,3 @@
-import { Input } from '@mui/material';
 import Image from 'next/image';
 import React, { useState } from 'react'
 import ReactLoading from 'react-loading'
@@ -6,17 +5,14 @@ import customImageLoader from '../util/customImageLoader';
 import FileInput from './components/FileInput';
 
 import styles from "../styles/tracking.module.css";
-import { saveUpdateForPlant } from '../service/PlantService';
+import { deleteUpdatePictureInDB, saveUpdateForPlant } from '../service/PlantService';
 import { compressImage, deleteImage, uploadFile } from '../service/FileService';
-import { useAuthState } from 'react-firebase-hooks/auth';
-import auth from '../firebase/auth';
-import { collection, doc, setDoc } from 'firebase/firestore';
-import db from '../firebase/db';
 import TextField from './components/TextField';
 import Plant from '../domain/Plant';
 import { useRouter } from 'next/router';
 import GenericDatePicker from './components/GenericDatePicker';
 import Update from '../domain/Update';
+import useAuth from '../hooks/useAuth';
 
 interface Props {
     plantId: string;
@@ -28,7 +24,7 @@ interface Props {
 
 const AddUpdateForPlant: React.FC<Props> = (props) => {
 
-    const [user] = useAuthState(auth);
+    const { user } = useAuth()
     const router = useRouter();
 
     const [selectedFile, setSelectedFile] = useState<File>(null);
@@ -46,13 +42,7 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
                 .then(() => {
                     setSelectedFile(null)
                     setImageUrl('')
-                    setDoc(
-                        doc(
-                            collection(db, `users/${user.uid}/plantTrackingDetails/${props.plantId}/updates`),
-                            props.updateId),
-                        { picture: '' },
-                        { merge: true }
-                    )
+                    deleteUpdatePictureInDB(user?.uid, props.plant?.id, props.update?.id)
                 }).catch(console.error);
         }
         // otherwise just remove from UI
@@ -122,7 +112,7 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
                 :
                 <div>
                     <div className={styles.title}>
-                        <a className='pt-20 '>
+                        <a className='pt-20'>
                             Add Update for {props.plant ? props.plant.species : 'plant'}
                         </a>
                     </div>
@@ -133,7 +123,7 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
                                     {imageUrl ?
                                         <div>
                                             <Image src={imageUrl} loader={customImageLoader} alt='photo of plant' width='150' height='190' />
-                                            <a className='absolute top-2 right-32 bg-yellow text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
+                                            <a className='absolute top-2 right-32 bg-stone-100 text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
                                                 onClick={onRemoveFile} >
                                                 &#10060;
                                             </a>
@@ -154,15 +144,13 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
                                     <label htmlFor='species'>
                                         Title:
                                     </label>
-                                    <Input
-                                        className={styles.input}
+                                    <TextField
                                         type="text"
                                         name="title"
-                                        id="title"
                                         placeholder=""
                                         value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
-                                        required={true}
+                                        onChange={setTitle}
+                                        width={40}
                                     />
                                 </div>
                                 <div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center pr-10' >
