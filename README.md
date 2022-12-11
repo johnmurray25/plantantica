@@ -1,4 +1,3 @@
-![Plantantica](public/icon-256x256.png)
 ## PLANTANTICA 
 Plantantica is a web app that allows you to track the watering/feeding of your plants (and eventually.... much more).
 
@@ -20,3 +19,5 @@ yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+![Plantantica](public/Plantantica-logo.png)
