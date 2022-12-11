@@ -31,7 +31,7 @@ const usePlants = () => {
     }, [loadPlants])
 
 
-    return { plants, isLoading }
+    return { plants, setPlants, isLoading }
 }
 
 export default usePlants
