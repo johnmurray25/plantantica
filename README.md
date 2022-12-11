@@ -1,12 +1,11 @@
 ## PLANTANTICA 
 Plantantica is a web app that allows you to track the watering/feeding of your plants (and eventually.... much more).
 
-## PLANTANTICA IS A PROGRESSIVE WEB APP (PWA)
+## PLANTANTICA is a Progressive Web App (PWA)
 Open on Safari (iPhone) or Chrome (Android) and press 'Add to Home Screen' to experience the full potential of Plantantica. It is designed to feel like a mobile app.  
 
-Plantantica is built with Next JS, Typescript, and TailwindCSS.
-
-Plantantica uses Firebase as a BAAS.
+## Technologies
+Plantantica is built with Next JS, Typescript, and TailwindCSS, and uses Firebase as a BAAS.
 
 ## Getting Started
 
