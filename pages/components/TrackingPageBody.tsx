@@ -55,7 +55,6 @@ const waterPlant = async (plant: Plant, uid: string): Promise<Plant> => {
 }
 
 interface Props {
-    plants: Plant[];
     uid: string;
 }
 
