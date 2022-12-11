@@ -8,7 +8,6 @@ import ReactLoading from 'react-loading'
 
 import Plant from '../../domain/Plant';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
-import customImageLoader from '../../util/customImageLoader';
 import { IoPencil } from '@react-icons/all-files/io5/IoPencil';
 import { IoTrash } from '@react-icons/all-files/io5/IoTrash';
 import Update from '../../domain/Update';
@@ -123,11 +122,8 @@ const PlantCard = (props: Props) => {
                     <div className="flex px-0 mx-0 py-1 w-full relative h-[400px]">
                         <Image
                             src={plant.imageUrl}
-                            alt={`photo of ${plant.species}`}
-                            // loader={customImageLoader}
+                            alt={`Photo of ${plant.species}`}
                             loading='lazy'
-                            // width={imgWidth}
-                            // height={200}
                             fill
                             sizes="(max-width: 650px) 100vw, (max-width: 1200px) 50vw, 33vw"
                             className='object-cover object-center '
@@ -138,20 +134,20 @@ const PlantCard = (props: Props) => {
             <div className="w-full flex justify-between items-center">
                 {/* Species */}
                 <h1 className='text-left p-1 '>
-                    <a className='hover:underline text-3xl italic pl-2 pt-5 leading-7 ' >
+                    <a className='text-3xl italic pl-2 pt-5 leading-7 ' >
                         {plant.species}
                     </a>
                 </h1>
                 {/* Edit/Delete buttons */}
                 <div className="flex-col pr-2 pb-2 ">
                     {/* <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} /> */}
-                    <div className={`flex items-center border mx-4 px-6 py-1 mb-2 mt-1 hover:bg-white hover:text-black hover:border-white cursor-pointer rounded-full p-2 
+                    <button className={`flex items-center border mx-4 px-6 py-1 mb-2 mt-1 hover:bg-white hover:text-black hover:border-white cursor-pointer rounded-full p-2 
                                 ${!needsWater ? ' border-[#ffe894]' : ' border-black'}`}
                         onClick={() => props.goToEditScreen(plant?.id)}
                     >
                         <IoPencil />
-                    </div>
-                    <div className={`flex items-center mx-4 px-6 py-1 my-1 hover:bg-red-500 hover:text-stone-100 hover:border-red-500 cursor-pointer border rounded-full p-2 
+                    </button>
+                    <button className={`flex items-center mx-4 px-6 py-1 my-1 hover:bg-red-500 hover:text-stone-100 hover:border-red-500 cursor-pointer border rounded-full p-2 
                                 ${!needsWater ? 'border-red-400' : 'border-red-900 text-red-900'}`}
                         onClick={() => {
                             if (!confirm(`Delete ${plant.species}?`)) {
@@ -166,7 +162,7 @@ const PlantCard = (props: Props) => {
                         }}
                     >
                         <IoTrash />
-                    </div>
+                    </button>
                 </div>
             </div>
             <div className='flex justify-start text-sm pl-4'>
@@ -187,10 +183,9 @@ const PlantCard = (props: Props) => {
                         <>
                             water every
                         </>
-                        <button className={`border rounded-full h-fit px-1 mx-2 leading-none 
-                                    ${needsWater ? "border-zinc-600" : ""}`}
+                        <button className="border rounded-full h-fit px-1 mx-2 leading-none border-darkYellow"
                             onClick={() => {
-                                const n = daysBetweenWatering-1
+                                const n = daysBetweenWatering - 1
                                 let newDate = new Date(dateToWaterNext.getTime() - MILLIS_IN_DAY)
                                 updateDaysBetweenWatering(userID, plant.id, n, newDate.getTime())
                                 setDaysBetweenWatering(n)
@@ -202,10 +197,9 @@ const PlantCard = (props: Props) => {
                         <span className='font-bold'>
                             {daysBetweenWatering}
                         </span>
-                        <button className={`border rounded-full h-fit px-1 mx-2 leading-none
-                                    ${needsWater ? "border-zinc-600" : ""}`}
+                        <button className="border rounded-full h-fit px-1 mx-2 leading-none border-darkYellow"
                             onClick={() => {
-                                const n = daysBetweenWatering+1
+                                const n = daysBetweenWatering + 1
                                 let newDate = new Date(dateToWaterNext.getTime() + MILLIS_IN_DAY)
                                 updateDaysBetweenWatering(userID, plant.id, n, newDate.getTime())
                                 setDaysBetweenWatering(n)
@@ -221,34 +215,37 @@ const PlantCard = (props: Props) => {
             <div className='px-4'>
                 {/* Instructions & Updates buttons */}
                 <div className='relative'>
-                    <div
-                        className={`absolute top-0 left-2 text-sm hover:bg-[#ffff63] hover:border-[#ffff63] rounded-full py-1 px-5  
-                            ${!needsWater ? "border-white hover:text-black" : "border-black"}
+                    <button
+                        className={`absolute top-0 left-2 text-sm hover:bg-lime-700 rounded-full py-1 px-5  
+                            ${!needsWater ? "border-white " : " hover:text-stone-200"}
                             ${plant && plant.careInstructions ? "opacity-100 cursor-pointer" : "hidden"}
                             `}
+                        style={{ transition: 'background-color 0.4s ease' }}
                         onClick={toggleInstructions}
                     >
                         Instructions
                         &nbsp;
                         {showInstructions ? <span>&nbsp;&darr;</span> : <span>&rarr;</span>}
-                    </div>
+                    </button>
                     <div className="flex justify-end text-sm mt-4">
-                        <div
-                            className={`hover:bg-[#ffaf63] hover:text-black hover:border-[#ffaf63] cursor-pointer rounded-full py-2 px-5 mx-1 
+                        <button
+                            className={`hover:bg-amber-600 hover:border-amber-600 hover:text-stone-200 cursor-pointer rounded-full py-2 px-5 mx-1 
                                     ${!needsWater ?
                                     'border border-[#ffe894] text-[#ffe894] ' :
                                     'border border-darkYellow '}`}
+                            style={{ transition: 'background-color 0.4s ease' }}
                             onClick={handleShowUpdates}
                         >
                             Updates
-                        </div>
-                        <div
-                            className={"hover:bg-[#29bc29] hover:text-stone-100 hover:border-[#29bc29] cursor-pointer rounded-full py-2 px-3 ml-2 " +
+                        </button>
+                        <button
+                            className={"hover:bg-amber-800 hover:border-amber-800 hover:text-stone-200 cursor-pointer rounded-full py-2 px-3 ml-2 " +
                                 (!needsWater ? 'border border-[#ffe894] text-[#ffe894]' : ' border border-darkYellow  ')}
+                            style={{ transition: 'background-color 0.4s ease' }}
                             onClick={() => props.goToAddUpdateScreen(plant?.id)}
                         >
                             +
-                        </div>
+                        </button>
                     </div>
 
                 </div>
@@ -289,6 +286,7 @@ const PlantCard = (props: Props) => {
                     </div>
                     {/* Water button: */}
                     <button
+                        style={{ transition: 'background-color 0.4s ease' }}
                         onClick={() => {
                             if (!confirm('Mark as watered today?')) {
                                 return;
@@ -336,6 +334,7 @@ const PlantCard = (props: Props) => {
                         }}
                         className={"flex items-center hover:text-stone-100 hover:bg-lime-600 hover:border-lime-600 cursor-pointer text-sm px-8 py-2 border rounded-full "
                             + (!needsWater ? " border-lime-600" : " border-lime-900")}
+                        style={{ transition: 'background-color 0.4s ease' }}
                     >
                         Feed
                         &nbsp;

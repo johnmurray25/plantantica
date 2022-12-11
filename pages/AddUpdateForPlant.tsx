@@ -1,7 +1,6 @@
 import Image from 'next/image';
 import React, { useState } from 'react'
 import ReactLoading from 'react-loading'
-import customImageLoader from '../util/customImageLoader';
 import FileInput from './components/FileInput';
 
 import styles from "../styles/tracking.module.css";
@@ -104,17 +103,18 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
     }
 
     return (
-        <div className='text-black bg-[#bdc581] min-w-full min-h-screen' >
+        <div className='text-stone-200  w-screen min-h-screen' >
             {savingStatus ?
                 <div className='flex justify-center items-center pt-60' >
                     {savingStatus} < ReactLoading type='bars' color="#fff" />
                 </div>
                 :
                 <div>
-                    <div className={styles.title}>
-                        <a className='pt-20'>
-                            Add Update for {props.plant ? props.plant.species : 'plant'}
-                        </a>
+                    <div className='text-center pt-6 not-italic text-3xl leading-normal'>
+                            Add Update for <br/>
+                            <span className='italic'>
+                                {props.plant ? props.plant.species : 'plant'}
+                            </span>
                     </div>
                     <div className='flex flex-col items-center m-auto p-4 '>
                         <div className='absolute min-h-100 top-50'>
@@ -122,7 +122,12 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
                                 <div className="flex justify-center m-auto ">
                                     {imageUrl ?
                                         <div>
-                                            <Image src={imageUrl} loader={customImageLoader} alt='photo of plant' width='150' height='190' />
+                                            <Image
+                                                src={imageUrl}
+                                                alt='photo of plant'
+                                                width='150'
+                                                height='190'
+                                            />
                                             <a className='absolute top-2 right-32 bg-stone-100 text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
                                                 onClick={onRemoveFile} >
                                                 &#10060;
@@ -140,7 +145,7 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
                                         />
                                     }
                                 </div>
-                                <div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center' >
+                                <div className='flex justify-evenly items-center pt-8' >
                                     <label htmlFor='species'>
                                         Title:
                                     </label>
@@ -176,7 +181,7 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
                                 </div>
                                 <div className='flex justify-center'>
                                     <button
-                                        className="bg-green text-lightGrayGreen py-2.5 rounded px-7 mt-4 mx-8"
+                                        className="bg-lime-900 text-lightGrayGreen py-2.5 rounded px-7 mt-4 mx-8"
                                         onClick={handleSave}
                                     >
                                         Save

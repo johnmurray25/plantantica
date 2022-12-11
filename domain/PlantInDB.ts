@@ -11,6 +11,7 @@ export default interface PlantInDB {
     dateToFeedNext?: number;
     lightRequired: string | number;
     picture?: string;
+    imageUrl?: string;
     dateCreated?: number;
     careInstructions?: string;
     updates?: Update[];

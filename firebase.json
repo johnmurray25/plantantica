@@ -4,9 +4,10 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "public": "out",
+    "source": ".",
     "ignore": [
       "firebase.json",
+      "functions/**",
       "**/node_modules/**"
     ]
   },
@@ -27,7 +28,7 @@
     "predeploy": [
       "npm --prefix \"$RESOURCE_DIR\" run lint",
       "npm --prefix \"$RESOURCE_DIR\" run build",
-      "copy ./functions/lib/functions/index.js ./functions/lib/index.js"
+      "cp ./functions/lib/functions/index.js ./functions/lib/index.js"
     ]
   }
 }

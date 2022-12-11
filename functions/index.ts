@@ -6,7 +6,26 @@ import Plant from "../domain/Plant";
 import {DocumentSnapshot, QueryDocumentSnapshot}
   from "firebase-functions/v1/firestore";
 import moment from "moment";
-import {docToPlant} from "./DBMappings";
+import PlantInDB from "../domain/PlantInDB";
+
+const docToPlant = (doc: QueryDocumentSnapshot): Plant => {
+  const data = doc.data() as PlantInDB;
+  return {
+    id: doc.id,
+    species: data.species,
+    dateObtained: new Date(data.dateObtained),
+    daysBetweenWatering: data.daysBetweenWatering,
+    dateLastWatered: new Date(data.dateLastWatered),
+    dateToWaterNext: new Date(data.dateToWaterNext),
+    dateLastFed: data.dateLastFed ? new Date(data.dateLastFed) : undefined,
+    dateToFeedNext: data.dateToFeedNext ?
+        new Date(data.dateToFeedNext) : undefined,
+    lightRequired: data.lightRequired,
+    dateCreated: data.dateCreated ? new Date(data.dateCreated) : undefined,
+    picture: data.picture,
+    careInstructions: data.careInstructions,
+  };
+};
 
 // const crossOrigin = cors({origin: true});
 admin.initializeApp();

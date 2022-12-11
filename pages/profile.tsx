@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Image from 'next/image';
 
-import ReactLoading from 'react-loading'
 import { IoPencilOutline } from '@react-icons/all-files/io5/IoPencilOutline';
+import { IoArrowUndo } from '@react-icons/all-files/io5/IoArrowUndo';
 
 import NavBar from './components/NavBar';
 import toggleStyles from '../styles/toggle-switch.module.css';
-import customImageLoader from '../util/customImageLoader';
 import FileInput from './components/FileInput';
 import { compressImage, deleteImage, updateProfilePicture, uploadFile } from '../service/FileService';
 import { useRouter } from 'next/router';
@@ -18,8 +17,9 @@ import { doc, setDoc } from 'firebase/firestore';
 import db from '../firebase/db';
 import useAuth from '../hooks/useAuth';
 import { User } from 'firebase/auth';
-import useProfilePicture from '../hooks/useProfilePicture';
 import { signOut } from '../firebase/auth';
+import { getDownloadURL, ref } from 'firebase/storage';
+import storage from '../firebase/storage';
 
 const deleteAccount = (user: User) => {
     if (confirm('Are you sure you want to delete your account?')
@@ -34,7 +34,7 @@ function Home() {
     useAuthRedirect()
 
     const { user, dBUser, setDBUser } = useAuth();
-    const { profPicUrl, setProfPicUrl, profPicLoading, fileName, setFileName } = useProfilePicture()
+    const [profPicUrl, setProfPicUrl] = useState("")
     const [shouldAddUsername, setShouldAddUsername] = useState(false)
     const [inputUsername, setInputUsername] = useState('')
     const [inputDisplayName, setInputDisplayName] = useState('')
@@ -84,25 +84,27 @@ function Home() {
                 setShouldAddUsername(true)
             }
 
+            if (dBUser.profPicUrl) {
+                setProfPicUrl(dBUser.profPicUrl)
+            }
+
             setReceiveDailyEmails(dBUser.dailyEmails ? true : false);
         }
-    }, [dBUser, profPicUrl, user]);
+    }, [dBUser, user]);
 
     const onRemoveFile = () => {
         if (!confirm('Delete profile picture?')) {
             return;
         }
         // if image was previously saved, delete from storage
-        if (fileName) {
-            deleteImage(fileName, user.uid)
+        if (dBUser.profilePicture) {
+            deleteImage(dBUser.profilePicture, user.uid)
                 .then(() => {
-                    setProfPicUrl('')
-                    setFileName('x')
                     setDoc(
                         doc(db, 'users', user.uid),
-                        { profilePicture: '' },
+                        { profilePicture: '', profPicUrl: '' },
                         { merge: true }
-                    )
+                    ).then(() => setProfPicUrl(''))
                 })
                 .catch(console.error);
         }
@@ -154,58 +156,54 @@ function Home() {
                         <NavBar hideUser />
                         <div className='pt-24 relative w-full med:w-3/6 m-auto text-center justify-center pb-14 px-6  '>
                             {editMode ?
-                                <a
-                                    className='m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border border-stone-100 rounded w-fit p-3 hover:text-green hover:bg-stone-100'
+                                <button
+                                    className='rounded-full border-darkYellow m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border w-fit p-3  hover:bg-darkYellow active:bg-darkYellow'
+                                    style={{ transition: "background-color 0.3s ease-out" }}
                                     onClick={() => setEditMode(false)}
                                 >
-                                    Cancel
-                                </a>
+                                    <IoArrowUndo className='text-xl'/>
+                                </button>
                                 :
-                                <a
-                                    className='m-auto mr-4 mb-5 mt-8 med:mr-64 lg:mr-80 self-center flex items-center border border-stone-100s rounded w-fit p-3 hover:text-green hover:bg-stone-100'
+                                <button
+                                    className='rounded-full border-darkYellow hover:text-zinc-200 m-auto mr-4 mb-5 mt-8  text-zinc-300 med:mr-64 lg:mr-80 self-center flex items-center border border-stone-100s w-fit p-2 hover:bg-darkYellow active:bg-darkYellow'
+                                    style={{ transition: "background-color 0.3s ease-out" }}
                                     onClick={() => setEditMode(true)}
                                 >
-                                    Edit &nbsp; <IoPencilOutline />
-                                </a>
+                                    <IoPencilOutline className='text-2xl' />
+                                </button>
                             }
-                            {!profPicLoading ?
-                                // User has saved profile picture
-                                profPicUrl ?
-                                    <div className='relative w-fit flex justify-center m-auto'>
-                                        <Image
-                                            src={profPicUrl}
-                                            loader={customImageLoader}
-                                            alt='Profile picture'
-                                            width={150}
-                                            height={180}
-                                        />
-                                        {editMode &&
-                                            <a className='absolute top-2 right-2 bg-stone-100 text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
-                                                onClick={onRemoveFile} >
-                                                &#10060;
-                                            </a>
-                                        }
-                                    </div>
-                                    :
-                                    <div className='relative m-auto pt-6 h-32 w-32 rounded-3xl bg-stone-100 '>
-                                        <div className='absolute flex items-center cursor-pointer mt-2 top-0 right-3 text-green text-xs'>
-                                            <FileInput
-                                                onAttachFile={async (e: { target: { files: File[]; }; }) => {
-                                                    let f: File = e.target.files[0]
-                                                    let compressedImage = await compressImage(f)
-                                                    setProfPicUrl(URL.createObjectURL(f))
-                                                    uploadFile(compressedImage, user)
-                                                        .then(fileName => updateProfilePicture(fileName, user.uid))
-                                                        .catch(console.log)
-                                                }}
-                                                onRemoveFile={onRemoveFile}
-                                                message='Add picture &#10133;'
-                                            />
-                                        </div>
-                                    </div>
+                            {profPicUrl ?
+                                <div className='relative w-fit flex justify-center m-auto'>
+                                    <Image
+                                        src={profPicUrl}
+                                        alt='Profile picture'
+                                        width={200}
+                                        height={220}
+                                        className="object-cover object-center"
+                                    />
+                                    {editMode &&
+                                        <a className='absolute top-2 right-2 bg-stone-100 text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
+                                            onClick={onRemoveFile} >
+                                            &#10060;
+                                        </a>
+                                    }
+                                </div>
                                 :
-                                <div className='flex justify-center'>
-                                    <ReactLoading type='spinningBubbles' color="#fff" />
+                                <div className='relative m-auto pt-6 h-32 w-32 rounded-3xl bg-stone-100 '>
+                                    <div className='absolute flex items-center cursor-pointer mt-2 top-0 right-3 text-green text-xs'>
+                                        <FileInput
+                                            onAttachFile={async (e: { target: { files: File[]; }; }) => {
+                                                let f: File = e.target.files[0]
+                                                let compressedImage = await compressImage(f)
+                                                setProfPicUrl(URL.createObjectURL(f))
+                                                const fileName = await uploadFile(compressedImage, user)
+                                                const url = await getDownloadURL(ref(storage, `${user.uid}/${fileName}`))
+                                                updateProfilePicture(fileName, url, user.uid)
+                                            }}
+                                            onRemoveFile={onRemoveFile}
+                                            message='Add picture &#10133;'
+                                        />
+                                    </div>
                                 </div>
                             }
                             <div className='m-10 mb-3 text-lightYellow' >
@@ -230,13 +228,13 @@ function Home() {
                                         />
                                     </div>
                                     :
-                                    <h2 className='text-3xl' >
+                                    <h2 className='text-2xl ' >
                                         {dBUser?.displayName ? dBUser.displayName : user?.displayName}
                                     </h2>
                                 }
                             </div>
                             <div className=''>
-                                <h3 className='pb-5 pt-0 flex justify-center w-full items-center text-xl '>
+                                <h3 className=' mb-8 pt-0 flex justify-center items-center text-xl translate-y-4 '>
                                     <p className='text-[#29bc29] '>
                                         username:
                                     </p>
@@ -260,7 +258,7 @@ function Home() {
                                             />
                                         </div>
                                         :
-                                        <p className='font-bold p-3 pl-10 rounded-lg m-2 ml-0 text-stone-100'>
+                                        <p className='font-bold p-3 pl-10 rounded-lg m-2 ml-0 text-stone-100 '>
                                             {dBUser && `@${dBUser.username}`}
                                         </p>
                                     }
@@ -274,10 +272,10 @@ function Home() {
                                     </p>
                                 </h3>
                             </div>
-                            <h3 className='pt-10 text-[#29bc29]'>
+                            {/* <h3 className='pt-10 text-[#29bc29]'>
                                 Tracking {dBUser?.plantTrackingDetails?.length || 0} plants
-                            </h3>
-                            <div className='mt-10 '>
+                            </h3> */}
+                            <div className='mt-14 leading-8 '>
                                 Receive daily emails if my plants need water &nbsp;&nbsp;&nbsp;
                                 <label className="relative inline-block w-14 h-8">
                                     <input type="checkbox"
@@ -304,24 +302,27 @@ function Home() {
                                 </label>
                             </div>
                             <div className="flex justify-evenly text-center pb-0 pt-10 w-full">
-                                <a
-                                    className='cursor-pointer hover:bg-stone-100 hover:text-green border border-[#29bc29] py-4 px-7 mx-2'
+                                <button
+                                    className='border-[#29bc29] hover:bg-[#29bc29] active:bg-[#29bc29]
+                                     py-4 px-7 mx-2 cursor-pointer  border  '
                                     style={{
                                         borderRadius: "0 222px",
+                                        transition: "background-color 0.5s ease"
                                     }}
                                     onClick={handleSignOut}
                                 >
                                     Sign out
-                                </a>
-                                <a
-                                    className='cursor-pointer hover:bg-red-600 hover:text-stone-100 border border-red-600 py-4 px-7 mx-2'
+                                </button>
+                                <button
+                                    className='cursor-pointer hover:bg-red-600 active:bg-red-600 hover:text-stone-100 border border-red-600 py-4 px-7 mx-2'
                                     style={{
                                         borderRadius: "222px 0",
+                                        transition: "background-color 0.5s ease"
                                     }}
                                     onClick={() => deleteAccount(user)}
                                 >
                                     Delete account
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>

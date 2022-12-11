@@ -16,6 +16,7 @@ export const docToPlant = (doc: QueryDocumentSnapshot): Plant => {
         lightRequired: data.lightRequired,
         dateCreated: new Date(data.dateCreated),
         picture: data.picture,
+        imageUrl: data.imageUrl,
         careInstructions: data.careInstructions,
     }
 }
@@ -32,12 +33,17 @@ export const docToUpdate = (doc) => {
 }
 
 export const docToUser = (docSnap) => {
+    if (!docSnap) {
+        console.log("no doc")
+        return;
+    }
     const data = docSnap.data()
     if (!data) {
         return null
     }
     return {
         profilePicture: data.profilePicture,
+        profPicUrl: data.profPicUrl,
         email: data.email ? data.email : docSnap.id,
         username: data.username,
         displayName: data.displayName,

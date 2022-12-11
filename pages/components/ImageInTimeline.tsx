@@ -1,9 +1,5 @@
 import Image from 'next/image'
 
-const customImageLoader = ({ src, width, height }) => {
-    return `${src}&w=${width || 48}$height=${height || 48}`
-}
-
 interface Props {
     src: string;
     species: string;
@@ -32,22 +28,21 @@ const ImageInTimeline = (props: Props) => {
                         src={props.src}
                         width={400} height={300}
                         alt={props.species}
-                        loader={customImageLoader}
                         className='cursor-pointer object-cover object-center rounded-3xl '
                     />
                 </div>
                 : */}
+            {props.src &&
                 <Image
                     src={props.src}
                     alt={`photo of ${props.species}`}
-                    loader={customImageLoader}
                     loading='lazy'
                     width={350}
                     height={400}
                     className='rounded-3xl object-cover object-center //cursor-pointer'
-                    // onClick={toggleZoomImage}
+                // onClick={toggleZoomImage}
                 />
-            {/* } */}
+            }
         </div>
     )
 }
