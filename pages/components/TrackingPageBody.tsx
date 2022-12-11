@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import Plant from '../../domain/Plant'
 import TextField from './TextField';
 import TrackingCard from './TrackingCard';
@@ -13,6 +13,7 @@ import db from '../../firebase/db';
 import { useRouter } from 'next/router';
 import { waterPlantInDB } from '../../service/PlantService';
 import { AnimatePresence, motion } from "framer-motion";
+import PlantContext from '../../context/PlantContext';
 
 const saveViewPreference = async (uid: string, cols: number) => {
     setDoc(doc(db, `users/${uid}`),
@@ -64,7 +65,7 @@ const TrackingPageBody = (props: Props) => {
     const { width } = useWindowDimensions()
 
     const uid = props.uid || "";
-    const [plants, setPlants] = useState(props.plants)
+    const { plants, setPlants } = useContext(PlantContext)
 
     const [searchText, setSearchText] = useState('')
     const [trackingCards, setTrackingCards] = useState<JSX.Element[]>([])
@@ -80,7 +81,7 @@ const TrackingPageBody = (props: Props) => {
         setPlants(updatedPlants)
 
         return updatedPlant
-    }, [plants])
+    }, [plants, setPlants])
 
     const plantToCard = useCallback((p: Plant, index: number): JSX.Element => {
         // console.log("i = " + index)
@@ -141,7 +142,7 @@ const TrackingPageBody = (props: Props) => {
                                 setColumns(1)
                                 saveViewPreference(uid, 1)
                             }}
-                            style={{transition: 'background-color 0.2s ease'}}
+                            style={{ transition: 'background-color 0.2s ease' }}
                         >
                             <IoList />
                         </button>
@@ -151,14 +152,14 @@ const TrackingPageBody = (props: Props) => {
                                 setColumns(2)
                                 saveViewPreference(uid, 2)
                             }}
-                            style={{transition: 'background-color 0.2s ease'}}
+                            style={{ transition: 'background-color 0.2s ease' }}
                         >
                             <IoGrid />
                         </button>
                     </div>
                 }
                 <div className="py-3 px-6 bg-[#145914]  hover:text-green hover:bg-lime-400"
-                            style={{ borderRadius: '0 222px', transition: 'background-color 0.2s ease' }}>
+                    style={{ borderRadius: '0 222px', transition: 'background-color 0.2s ease' }}>
                     <Link href="/AddPlantTrackingDetails" passHref className='cursor-pointer p-2 m-2 '>
                         Add a plant +
                     </Link>
