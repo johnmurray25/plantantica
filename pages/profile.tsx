@@ -115,7 +115,7 @@ function Home() {
     }
 
     return (
-        <div className='bg-green text-stone-200 min-h-screen text-left'>
+        <div className='bg-brandGreen text-stone-200 min-h-screen text-left'>
             {
                 shouldAddUsername && dBUser ?
                     <div className='text-center'>
@@ -182,7 +182,7 @@ function Home() {
                                         className="object-cover object-center"
                                     />
                                     {editMode &&
-                                        <a className='absolute top-2 right-2 bg-stone-100 text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
+                                        <a className='absolute top-2 right-2 bg-stone-100 text-brandGreen cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
                                             onClick={onRemoveFile} >
                                             &#10060;
                                         </a>
@@ -190,7 +190,7 @@ function Home() {
                                 </div>
                                 :
                                 <div className='relative m-auto pt-6 h-32 w-32 rounded-3xl bg-stone-100 '>
-                                    <div className='absolute flex items-center cursor-pointer mt-2 top-0 right-3 text-green text-xs'>
+                                    <div className='absolute flex items-center cursor-pointer mt-2 top-0 right-3 text-brandGreen text-xs'>
                                         <FileInput
                                             onAttachFile={async (e: { target: { files: File[]; }; }) => {
                                                 let f: File = e.target.files[0]

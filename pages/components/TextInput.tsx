@@ -25,7 +25,7 @@ const TextInput: React.FC<Props> = (props) => {
                 width={props.width}
             />
             <button
-                className='bg-lime-700 text-stone-200 hover:bg-lime-400 hover:text-green active:bg-lime-400 active:text-green focus:bg-lime-400 focus:text-green rounded-sm p-1 justify-center 
+                className='bg-lime-700 text-stone-200 hover:bg-lime-400 hover:text-brandGreen active:bg-lime-400 active:text-brandGreen focus:bg-lime-400 focus:text-brandGreen rounded-sm p-1 justify-center 
                     h-12  w-8 text-center content-center cursor-pointer'
                 onClick={props.onSubmit}
             >

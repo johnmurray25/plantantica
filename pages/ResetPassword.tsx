@@ -42,7 +42,7 @@ const ResetPassword = () => {
                 type="email"
             />
             <button className='bg-lime-700 text-zinc-100 px-4 py-2 w-48
-                                rounded text-center translate-x-6 hover:bg-lime-400 hover:text-green'
+                                rounded text-center translate-x-6 hover:bg-lime-400 hover:text-brandGreen'
                 onClick={handleResetPassword}
             >
                 Reset password
