@@ -19,7 +19,7 @@ const Home = () => {
   const { user } = useAuth()
 
   return (
-    <div className='text-stone-100 min-w-screen bg-green' /**Container */>
+    <div className='text-stone-100 min-w-screen bg-brandGreen' /**Container */>
       <NavBar />
 
       <div className='min-h-screen p-4 pt-28 flex flex-col items-center m-auto mt-0'>

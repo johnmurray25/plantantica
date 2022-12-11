@@ -157,7 +157,7 @@ const TrackingPageBody = (props: Props) => {
                         </button>
                     </div>
                 }
-                <div className="py-3 px-6 bg-[#145914]  hover:text-green hover:bg-lime-400"
+                <div className="py-3 px-6 bg-[#145914]  hover:text-brandGreen hover:bg-lime-400"
                     style={{ borderRadius: '0 222px', transition: 'background-color 0.2s ease' }}>
                     <Link href="/AddPlantTrackingDetails" passHref className='cursor-pointer p-2 m-2 '>
                         Add a plant +

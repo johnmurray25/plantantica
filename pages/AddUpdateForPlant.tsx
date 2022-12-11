@@ -128,7 +128,7 @@ const AddUpdateForPlant: React.FC<Props> = (props) => {
                                                 width='150'
                                                 height='190'
                                             />
-                                            <a className='absolute top-2 right-32 bg-stone-100 text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
+                                            <a className='absolute top-2 right-32 bg-stone-100 text-brandGreen cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
                                                 onClick={onRemoveFile} >
                                                 &#10060;
                                             </a>

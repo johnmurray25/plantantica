@@ -19,7 +19,7 @@ export default function Home() {
     }, [dBUser, router])
 
     return (
-        <div className="antialiased text-stone-200" style={{ minWidth: '100vw', }} >
+        <div className="antialiased text-blue-50" style={{ minWidth: '100vw', }} >
             <NavBar hideLogo />
 
             <main className="pt-20 flex flex-col items-center m-auto">
@@ -31,19 +31,25 @@ export default function Home() {
                 </div>
 
                 <div className={"flex flex-col med:flex-row mt-8 med:mt-16 "}>
-                    <div className={styles.leaf + " bg-[#2ba52b] hover:bg-[#32cd32]"}>
+                    <div
+                        className={styles.leaf + " bg-green-700 hover:bg-green-600"}
+                        style={{ transition: 'background-color 0.3s ease' }}
+                    >
                         <Link href="/Tracking" passHref>
                             <div className={styles.card}>
-                                <h2 className="font-extrabold brand absolute top-10 left-14 text-left justify-start text-stone-100 ">
+                                <h2 className="font-extrabold brand absolute top-10 left-14 text-left justify-start ">
                                     Track &rarr;</h2>
-                                <p className='brand absolute bottom-14 right-16 text-right  text-stone-100 w-1/2 pt-8'>
+                                <p className='brand absolute bottom-14 right-16 text-right   w-1/2 pt-8'>
                                     My plants&apos; maintenance
                                 </p>
                             </div>
                         </Link>
                     </div>
 
-                    <div className={styles.leaf + " bg-[#1a6d1a] hover:bg-[#25c925]  pt-10 lg:pt-0"}>
+                    <div
+                        className={styles.leaf + " bg-green-900 hover:bg-green-800  pt-10 lg:pt-0"}
+                        style={{transition: 'background-color 0.3s ease'}}
+                    >
                         <Link href="/social" passHref>
                             <div className={styles.card}>
                                 <h2 className="brand absolute top-10 left-14 text-left justify-start font-light">

@@ -6,7 +6,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'green': 'rgb(39, 47, 39)',
+        'brandGreen': 'rgb(39, 47, 39)',
         'olive': '#4C6049',
         'customYellow': 'rgb(248, 245, 240)',
         'brandYellow': "#FFE894",
