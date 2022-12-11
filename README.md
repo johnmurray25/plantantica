@@ -1,4 +1,4 @@
-![Plantantica](public/icon192x192.png)
+![Plantantica](public/icon-192x192.png)
 ## PLANTANTICA 
 Plantantica is a web app that allows you to track the watering/feeding of your plants (and eventually.... much more).
 
