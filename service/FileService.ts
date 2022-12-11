@@ -61,10 +61,9 @@ export const deleteImage = async (fileName: string, uid: string) => {
     console.log('Deleted image from bucket')
 }
 
-export const updateProfilePicture = async (fileName: string, uid: string) => {
+export const updateProfilePicture = async (fileName: string, url: string, uid: string) => {
     let userDocRef = doc(db, 'users', uid)
-    setDoc(userDocRef, { profilePicture: fileName }, { merge: true })
-        .catch(console.error)
+    setDoc(userDocRef, { profilePicture: fileName, profPicUrl: url }, { merge: true }).catch(console.error)
 }
 
 export const getProfilePictureUrl = async (uid: string): Promise<{ url: string, fileName: string }> => {

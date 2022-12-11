@@ -4,7 +4,6 @@ import Image from 'next/image';
 import ReactLoading from 'react-loading'
 
 import NavBar from '../components/NavBar';
-import customImageLoader from '../../util/customImageLoader';
 import { getProfilePictureUrl } from '../../service/FileService';
 import { useRouter } from 'next/router';
 import { getUserDBRecord, getUserByUsername } from '../../service/UserService';
@@ -12,6 +11,7 @@ import Plant from '../../domain/Plant';
 import DisplayCard from '../components/DisplayCard'
 import gridStyles from '../../styles/smallGrid.module.css'
 import DBUser from '../../domain/DBUser';
+import { getPlants } from '../../service/PlantService';
 
 function Home() {
 
@@ -48,16 +48,27 @@ function Home() {
                             return
                         }
 
-                        setUser(record)
-                        let ptd = record.plantTrackingDetails
-                        if (ptd) {
-                            if (ptd.length == 1)
-                                setTrackingMsg(`Tracking ${record.plantTrackingDetails ? record.plantTrackingDetails.length : 0} plant:`)
-                            else
-                                setTrackingMsg(`Tracking ${record.plantTrackingDetails ? record.plantTrackingDetails.length : 0} plants:`)
-                        } else {
-                            setTrackingMsg('Tracking 0 plants')
-                        }
+                        getPlants(doc.id)
+                            .then(ptd => {
+                                setUser({
+                                    ...record,
+                                    plantTrackingDetails: ptd
+                                })
+                                if (ptd?.length == 1) {
+                                    setTrackingMsg(`Tracking 1 plant:`)
+                                }
+                                else {
+                                    setTrackingMsg(`Tracking ${ptd?.length || 0} plants:`)
+                                }
+                                setPlants(ptd)
+                                setPlantCards(ptd?.map(p =>
+                                    <DisplayCard
+                                        plant={p}
+                                        userID={uid}
+                                        key={p.id}
+                                    />
+                                ))
+                            })
 
                         // load profile picture
                         if (record.profilePicture) {
@@ -68,19 +79,6 @@ function Home() {
                                 .finally(() => setIsProfPicLoading(false))
                         }
 
-                        // load plants
-                        if (record.plantTrackingDetails
-                            && record.plantTrackingDetails.length > 0) {
-                            setPlants(record.plantTrackingDetails)
-                            console.log(record.plantTrackingDetails)
-                            setPlantCards(record.plantTrackingDetails.map(p =>
-                                <DisplayCard
-                                    plant={p}
-                                    userID={uid}
-                                    key={p.id}
-                                />
-                            ))
-                        }
                     })
             })
             .catch(console.error)
@@ -103,7 +101,6 @@ function Home() {
                             <div className='relative w-fit flex justify-center m-auto bg-[#473432] rounded-xl p-3'>
                                 <Image
                                     src={profPicUrl}
-                                    loader={customImageLoader}
                                     alt='Profile picture'
                                     width={100}
                                     height={120}

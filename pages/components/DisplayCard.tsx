@@ -7,7 +7,6 @@ import { getDownloadURL, ref } from 'firebase/storage';
 import storage from '../../firebase/storage';
 import Plant from '../../domain/Plant';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
-import customImageLoader from '../../util/customImageLoader';
 
 interface Props {
     plant: Plant;
@@ -76,7 +75,6 @@ const PlantCard: FC<Props> = (props) => {
                     <Image
                         src={imageURL}
                         alt={`photo of ${plant.species}`}
-                        loader={customImageLoader}
                         loading='lazy'
                         width={getImageWidth()}
                         height={Math.min(getImageHeight(), getImageWidth())}

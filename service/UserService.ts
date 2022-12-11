@@ -5,6 +5,8 @@ import Plant from "../domain/Plant";
 import db from "../firebase/db"
 import { getPlants, migratePlantData } from "./PlantService"
 import { docToUser } from "./DBMappings";
+import { getDownloadURL, ref } from "firebase/storage";
+import storage from "../firebase/storage";
 
 // Should delete after data is merged
 export const getUserByEmailDeprecated = async (email: string) => {
@@ -88,21 +90,6 @@ export const getUserByEmail = async (email: string) => {
     }
 }
 
-export const mapDocToUser = async (docSnap: QueryDocumentSnapshot<DocumentData> | DocumentSnapshot<DocumentData>): Promise<DBUser> => {
-    let plants: Plant[] = []
-    try {
-        // get plants
-        plants = await getPlants(docSnap.id)
-    } catch (e) {
-        console.error(e)
-    }
-
-    return {
-        ...docToUser(docSnap),
-        plantTrackingDetails: plants
-    };
-}
-
 export const mapDocToUserForMigration = async (docSnap: QueryDocumentSnapshot<DocumentData>): Promise<DBUser> => {
     const data = docSnap.data()
     let uname = data.username
@@ -160,15 +147,32 @@ export const saveUsername = async (username: string, user: User): Promise<string
 }
 
 export const getUserDBRecord = async (uid: string) => {
+    let userDoc: DocumentSnapshot = null;
     try {
-        let userDoc = await getUserByUid(uid);
-        if (!userDoc) return null;
-        let result = await mapDocToUser(userDoc);
-        return result
+        userDoc = await getDoc(doc(db, "users", uid))
     } catch (e) {
         console.log(e)
         return null
     }
+    if (!userDoc || !userDoc.exists()) {
+        return null;
+    } 
+    const user = docToUser(userDoc)
+    if (user.profilePicture && !user.profPicUrl) {
+        try {
+            const url = getDownloadURL(ref(storage, `users/${user.profilePicture}`))
+            user.profPicUrl = url
+            setDoc(doc(db, `users/${uid}`),
+                { profPicUrl: url },
+                { merge: true })
+                .then(() => console.log("Saved profPicUrl to DB"))
+                .catch(console.error)
+        } catch (e) {
+            console.error(e)
+            console.error("Failed to get downloadUrl for profile picture")
+        }
+    }
+    return user
 }
 
 export const saveDisplayName = async (uid: string, displayName: string) => {
@@ -180,7 +184,7 @@ export const saveDisplayName = async (uid: string, displayName: string) => {
 export const getAllUsers = async () => {
     let usersRef = collection(db, 'users')
     let userDocs = await getDocs(usersRef)
-    let results = userDocs.docs.map(mapDocToUser)
+    let results = userDocs.docs.map(docToUser)
     return results
 }
 
@@ -245,7 +249,7 @@ export const getFollowingList = async (uid: string): Promise<DBUser[]> => {
 export const deleteProfilePictureInDB = (uid: string) => {
     setDoc(
         doc(db, 'users', uid),
-        { profilePicture: '' },
+        { profilePicture: '', profPicurl: '' },
         { merge: true }
     )
 }

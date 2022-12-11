@@ -21,8 +21,11 @@ const TextField = React.forwardRef<InputElement, TextFieldProps>(
             <div>
                 <InputElement
                     ref={ref as any}
-                    className={`rounded-md w-${props.width ? props.width : 24} p-3 mb-3 bg-orange-50 text-black ${textarea ? "h-28" : ""
-                        }`}
+                    className={`bg-inherit text-right border border-t-0 border-x-0 text-stone-200 
+                                p-3 mb-3  
+                                w-${props.width ? props.width : 24} 
+                                ${textarea ? "h-28" : "h-12"}`
+                    }
                     onChange={({ target: { value } }: InputChangeEvent) => onChange(value)}
                     {...props}
                 />

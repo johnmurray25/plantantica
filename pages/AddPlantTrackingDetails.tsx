@@ -10,9 +10,10 @@ import FileInput from "./components/FileInput";
 import Image from "next/image";
 import { compressImage, uploadFile, getImageUrl, deleteImage } from "../service/FileService";
 import GenericDatePicker from "./components/GenericDatePicker";
-import customImageLoader from "../util/customImageLoader";
 import TextField from "./components/TextField";
 import useAuth from "../hooks/useAuth";
+import { getDownloadURL, ref } from "firebase/storage";
+import storage from "../firebase/storage";
 
 const MILLIS_IN_DAY = 86400000;
 
@@ -20,12 +21,41 @@ interface Props {
   plant?: Plant,
 }
 
+const savePlantToDB = async (update: boolean, plant: { species: any; dateLastWatered: any; dateObtained: any; dateToWaterNext: any; daysBetweenWatering: any; dateLastFed: any; dateToFeedNext: any; lightRequired: any; savedFileName: any; careInstructions: any; id?: string; downloadUrl: string},
+    uid: string) => {
+  // Save document to firestore db
+  let plantTrackingDetails = {
+    species: plant.species,
+    dateObtained: plant.dateObtained.getTime(),
+    daysBetweenWatering: plant.daysBetweenWatering,
+    dateLastWatered: plant.dateLastWatered.getTime(),
+    dateToWaterNext: plant.dateToWaterNext.getTime(),
+    dateLastFed: plant.dateLastFed?.getTime() > 0 ? plant.dateLastFed.getTime() : null,
+    dateToFeedNext: plant.dateToFeedNext?.getTime() > 0 ? plant.dateToFeedNext.getTime() : null,
+    lightRequired: plant.lightRequired,
+    dateCreated: (new Date()).getTime(),
+    picture: plant.savedFileName,
+    imageUrl: plant.downloadUrl,
+    careInstructions: plant.careInstructions || "",
+  };
+  let docRef: DocumentReference<DocumentData> = null;
+  if (update) {
+    // Update an existing document
+    await setDoc(doc(collection(doc(db, 'users', uid), 'plantTrackingDetails'), plant.id), plantTrackingDetails, { merge: true });
+    console.log('Updated existing plant tracking details');
+  } else {
+    // Add a new document with a generated id.
+    docRef = await addDoc(collection(doc(db, 'users', uid), 'plantTrackingDetails'), plantTrackingDetails);
+    console.log(`Document written with ID: ${docRef.id}`);
+  }
+}
+
 const AddPlantTrackingDetails = (props: Props) => {
   const router = useRouter();
   const { user } = useAuth()
   const todaysDate = new Date();
 
-  const [plant] = useState<Plant>(props.plant);
+  const [plant] = useState<Plant>(props.plant); // if EDITING, pass plant as props
   const [species, setSpecies] = useState(plant ? plant.species : "");
   const [dateObtained, setDateObtained] = useState(plant ? plant.dateObtained : todaysDate);
   const [daysBetweenWatering, setDaysBetweenWatering] = useState(plant ? plant.daysBetweenWatering : 7);
@@ -66,6 +96,7 @@ const AddPlantTrackingDetails = (props: Props) => {
       return;
     }
     let savedFileName = '';
+    let downloadUrl = '';
     // Check if image to be processed
     if (imageUrl) {
       // Image was already saved 
@@ -79,35 +110,20 @@ const AddPlantTrackingDetails = (props: Props) => {
           // Upload image to storage
           setLoadingStatus('Uploading image ')
           savedFileName = await uploadFile(compressedImage, user);
+          downloadUrl = await getDownloadURL(ref(storage, `${user.uid}/${savedFileName}`))
         } catch (e) {
           console.error(e)
         }
       }
     }
     setLoadingStatus('Saving ')
-    // Save document to firestore db
-    let plantTrackingDetails = {
-      species: species,
-      dateObtained: dateObtained.getTime(),
-      daysBetweenWatering: daysBetweenWatering,
-      dateLastWatered: dateLastWatered.getTime(),
-      dateToWaterNext: dateToWaterNext.getTime(),
-      dateLastFed: dateLastFed && dateLastFed.getTime() > 0 ? dateLastFed.getTime() : null,
-      dateToFeedNext: dateToFeedNext && dateToFeedNext.getTime() > 0 ? dateToFeedNext.getTime() : null,
-      lightRequired: lightRequired,
-      dateCreated: (new Date()).getTime(),
-      picture: savedFileName ? savedFileName : plant ? plant.picture ? plant.picture : '' : '',
-      careInstructions: careInstructions || "",
-    };
-    let docRef: DocumentReference<DocumentData> = null;
     if (plant) {
-      // Update an existing document
-      await setDoc(doc(collection(doc(db, 'users', user.uid), 'plantTrackingDetails'), plant.id), plantTrackingDetails, { merge: true });
-      console.log('Updated existing plant tracking details');
-    } else {
-      // Add a new document with a generated id.
-      docRef = await addDoc(collection(doc(db, 'users', user.uid), 'plantTrackingDetails'), plantTrackingDetails);
-      console.log(`Document written with ID: ${docRef.id}`);
+      // update
+      savePlantToDB(true, { species, dateLastWatered, dateObtained, dateToWaterNext, daysBetweenWatering, dateLastFed, dateToFeedNext, lightRequired, savedFileName, careInstructions, downloadUrl, id: plant.id }, user.uid);
+    } 
+    else {
+      // insert
+      savePlantToDB(false, { species, dateLastWatered, dateObtained, dateToWaterNext, daysBetweenWatering, dateLastFed, dateToFeedNext, lightRequired, savedFileName, careInstructions, downloadUrl }, user.uid);
     }
     // Redirect back to tracking page
     router.push('/Tracking');
@@ -172,10 +188,10 @@ const AddPlantTrackingDetails = (props: Props) => {
                     <div>
                       <Image
                         src={imageUrl}
-                        loader={customImageLoader}
-                        alt='photo of plant'
-                        width='150'
-                        height='190'
+                        alt='Photo of plant'
+                        width='200'
+                        height='220'
+                        className="object-cover object-center"
                       />
                       <a className='absolute top-2 right-2 bg-stone-100 text-green cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
                         onClick={onRemoveFile} >

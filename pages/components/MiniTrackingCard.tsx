@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 
 import Plant from '../../domain/Plant';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
-import customImageLoader from '../../util/customImageLoader';
 import { IoWater } from '@react-icons/all-files/io5/IoWater';
 
 interface Props {
@@ -38,25 +37,24 @@ const PlantCard = (props: Props) => {
         <motion.div
             layout
             animate={{ opacity: 1, scale: 1 }}
-            initial={{ opacity: 0, scale: 1 }}
+            initial={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}
-            className={`border rounded border-stone-600 w-full antialiased
+            className={`border rounded border-stone-600 w-full antialiased h-full
                 ${needsWater ? " bg-dry text-stone-800"
                     : " bg-lime-900 text-zinc-200"}`}
             style={{ transition: 'background-color 1s ease', }}
         >
             {/* Picture */}
             {plant.imageUrl &&
-                <div className="px-0 mx-0 py-1 flex justify-center">
+                <div className="relative px-0 mx-0 py-1 w-full ">
                     <Image
                         src={plant.imageUrl}
-                        alt={`photo of ${plant.species}`}
-                        loader={customImageLoader}
+                        alt={`Photo of ${plant.species}`}
                         loading='lazy'
-                        // layout='fill' 
                         width={width || 250}
                         height={height ? height / 3 : 250}
-                        className='object-cover object-center'
+                        sizes='50vw, 33vw'
+                        className='object-cover object-center h-1/5'
                     />
                 </div>
             }

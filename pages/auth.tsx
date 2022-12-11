@@ -113,10 +113,6 @@ const SignInScreen = () => {
                         Or (recommended):
                     </div>
                     <SignInWithGoogleButton />
-                    {/* <button className='flex flex-row justify-evenly items-center bg-[#3B5998] text-stone-100 font-sans font-semibold px-2 py-3 m-2 text-sm  w-52 rounded-sm' >
-                                <Image alt="Google logo" loader={customImageLoader} src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/facebook.svg" width={17} height={17} />
-                                Sign in with Facebook
-                            </button> */}
                 </div>
         </div>
     );

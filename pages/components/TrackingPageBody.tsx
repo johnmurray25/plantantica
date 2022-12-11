@@ -141,6 +141,7 @@ const TrackingPageBody = (props: Props) => {
                                 setColumns(1)
                                 saveViewPreference(uid, 1)
                             }}
+                            style={{transition: 'background-color 0.2s ease'}}
                         >
                             <IoList />
                         </button>
@@ -150,13 +151,14 @@ const TrackingPageBody = (props: Props) => {
                                 setColumns(2)
                                 saveViewPreference(uid, 2)
                             }}
+                            style={{transition: 'background-color 0.2s ease'}}
                         >
                             <IoGrid />
                         </button>
                     </div>
                 }
-                <div className="py-3 px-6 bg-[#145914]  hover:text-green hover:bg-stone-100"
-                    style={{ borderRadius: '0 222px' }}>
+                <div className="py-3 px-6 bg-[#145914]  hover:text-green hover:bg-lime-400"
+                            style={{ borderRadius: '0 222px', transition: 'background-color 0.2s ease' }}>
                     <Link href="/AddPlantTrackingDetails" passHref className='cursor-pointer p-2 m-2 '>
                         Add a plant +
                     </Link>
@@ -178,7 +180,7 @@ const TrackingPageBody = (props: Props) => {
                 </div>
             </div>
             {width <= 650 ?
-                <motion.div layout className={`grid grid-cols-${columns || 1} gap-1`} style={{ width: '100vw' }}>
+                <motion.div className={`grid grid-cols-${columns || 1} gap-1`} style={{ width: '100vw' }}>
                     <AnimatePresence>
                         {trackingCards}
                     </AnimatePresence>

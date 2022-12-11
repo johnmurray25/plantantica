@@ -9,7 +9,7 @@ const usePlants = () => {
     const { user } = useAuth()
 
     const loadPlants = useCallback(async () => {
-        if (!user || plants) {
+        if (!user || plants || !isLoading) {
             return;
         }
         setIsLoading(true);
@@ -24,7 +24,7 @@ const usePlants = () => {
             setIsLoading(false)
             // console.log("finished loading plants")
         }
-    }, [plants, user])
+    }, [isLoading, plants, user])
 
     useEffect(() => {
         loadPlants();

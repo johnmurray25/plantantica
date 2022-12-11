@@ -4,10 +4,8 @@ import Link from 'next/link'
 import ReactLoading from 'react-loading'
 
 import Image from 'next/image'
-import customImageLoader from '../../util/customImageLoader'
 import TreeLogo from './TreeLogo'
 import useAuth from '../../hooks/useAuth'
-import useProfilePicture from '../../hooks/useProfilePicture'
 
 interface NavProps {
   hideUser?: boolean;
@@ -20,15 +18,21 @@ const NavBar = (props: NavProps) => {
   const hideLogo = props.hideLogo ? true : false;
 
   const [isLoading, setIsLoading] = useState(true)
+  const [profPicUrl, setProfPicUrl] = useState("")
 
-  const { profPicUrl } = useProfilePicture();
-  const { user, dBUser } = useAuth()
+  const { user, dBUser, loading } = useAuth()
 
   useEffect(() => {
-    if (profPicUrl || (dBUser && !dBUser.profilePicture)) {
+    if (dBUser) {
+      if (dBUser.profPicUrl) {
+        setProfPicUrl(dBUser.profPicUrl)
+      }
       setIsLoading(false)
     }
-  }, [dBUser, profPicUrl])
+    if (!loading) {
+      setIsLoading(false)
+    }
+  }, [dBUser, loading])
 
   return (
     <nav className="z-10 fixed bg-transparent flex justify-between flex-wrap px-4 pt-4 pb-2 items-center w-full">
@@ -36,7 +40,7 @@ const NavBar = (props: NavProps) => {
         {!hideLogo &&
           <Link href="/" passHref>
             <div className="flex items-center flex-shrink-0  cursor-pointer pr-4 py-3">
-              <TreeLogo width={200} height={120}/>
+              <TreeLogo width={200} height={120} />
             </div>
           </Link>
         }
@@ -45,14 +49,14 @@ const NavBar = (props: NavProps) => {
         (isLoading) ?
         <ReactLoading type='cylon' color="#FFF7ED" />
         :
-        user && dBUser ?
+        dBUser ?
           <Link href="/profile" passHref>
             <div className='cursor-pointer lg:pr-8'>
               {
                 profPicUrl ?
                   <Image
                     src={profPicUrl}
-                    loader={customImageLoader}
+                    sizes="15vw"
                     alt='Profile'
                     width={60}
                     height={60}

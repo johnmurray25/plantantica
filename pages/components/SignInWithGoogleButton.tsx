@@ -1,9 +1,7 @@
 import { GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth';
-import Image from 'next/image';
 import React from 'react'
 import auth from '../../firebase/auth';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
-import customImageLoader from '../../util/customImageLoader';
 
 const googleAuthProvider = new GoogleAuthProvider();
 

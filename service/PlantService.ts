@@ -30,10 +30,23 @@ export const mapDocsToPlants = async (docs: QueryDocumentSnapshot<DocumentData>[
             if (p.dateToFeedNext) {
                 res.dateToFeedNext = new Date(p.dateToFeedNext);
             }
-            if (p.picture) {
-                console.log("Getting imageUrl for " + p.species)
-                res.imageUrl = await getImageUrl(p.picture, uid);
-            }
+            if (!p.imageUrl && p.picture) {
+                console.log("Getting imageUrl")
+                try {
+                    const downloadUrl = await getImageUrl(p.picture, uid);
+                    res.imageUrl = downloadUrl
+                    setDoc(doc(db, `users/${uid}/plantTrackingDetails/${p.id}`),
+                        {
+                            imageUrl: downloadUrl
+                        },
+                        {
+                            merge: true,
+                        }
+                    ).then(() => console.log("Saved imageUrl to DB"))
+                } catch (e) {
+                    console.error(e)
+                }
+            } 
             // res.updates = await getUpdatesForPlant(uid, p.id);
             return res;
         })
@@ -88,14 +101,14 @@ export const getPlantById = async (uid: string, plantId: string): Promise<Plant>
 export const updateDaysBetweenWatering = async (uid: string, plantId: string, n: number, waterNextMs: number) => {
     const plantDoc = doc(db, `users/${uid}/plantTrackingDetails/${plantId}`);
     try {
-        setDoc(plantDoc, 
-            { 
+        setDoc(plantDoc,
+            {
                 daysBetweenWatering: n,
                 dateToWaterNext: waterNextMs,
             }
             , { merge: true })
     } catch (e) {
-        console.error(`Failed to update daysBetweenWatering: ${e.message}`); 
+        console.error(`Failed to update daysBetweenWatering: ${e.message}`);
     }
 }
 

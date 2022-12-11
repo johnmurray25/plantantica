@@ -2,11 +2,6 @@ import Image from 'next/image';
 import React from 'react'
 import logo from '../../public/vector/default-monochrome.svg';
 
-const customImageLoader = ({src, width, height}) => {
-    let dimensions = `${width} x ${height}`
-    return src;
-}
-
 interface Props {
     width?: number;
     height?: number;
@@ -20,7 +15,6 @@ const TreeLogo = (props: Props) => {
         <Image
             src={logo}
             alt='Plantantica'
-            loader={customImageLoader}
             {...{width}}
             {...{height}}
         />
