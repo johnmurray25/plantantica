@@ -22,13 +22,13 @@ const CustomTimelineItem = (props: Props) => {
     const { update, plantId, uid, species } = props;
 
     return (
-        <div className='w-full border border-t-0 border-x-0 border-stone-800 pb-3 mb-4'>
+        <div className='w-full border border-t-0 border-x-0 border-gray-800 pb-3 mb-4'>
             <div className='flex justify-between pb-2'>
                 <div>
                     {update?.dateCreated?.toUTCString().substring(0, 17)}
                 </div>
                 <a
-                    className="text-stone-100 bg-red-800 border border-red-800 hover:bg-red-700 rounded-full text-sm p-1 px-2 cursor-pointer "
+                    className="text-gray-100 bg-red-800 border border-red-800 hover:bg-red-700 rounded-full text-sm p-1 px-2 cursor-pointer "
                     onClick={() => {
                         if (!confirm("Delete this update?")) {
                             return;

@@ -21,8 +21,8 @@ const TextField = React.forwardRef<InputElement, TextFieldProps>(
             <div>
                 <InputElement
                     ref={ref as any}
-                    className={`bg-inherit text-right border border-t-0 border-x-0 text-stone-200 
-                                p-3 mb-3  
+                    className={`bg-inherit text-right border border-t-0 border-x-0 text-gray-200 
+                                p-3 mb-3  brand text-sm
                                 w-${props.width ? props.width : 24} 
                                 ${textarea ? "h-28" : "h-12"}`
                     }

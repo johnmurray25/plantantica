@@ -135,8 +135,8 @@ const TrackingPageBody = (props: Props) => {
             >
                 {width <= 650 &&
                     <div className="flex">
-                        <button className={`border p-3 m-2 hover:bg-stone-600 hover:text-stone-100 border-stone-600 cursor-pointer
-                                ${columns === 1 && 'bg-stone-600 text-stone-100'}`}
+                        <button className={`border p-3 m-2 hover:bg-gray-600 hover:text-gray-100 border-gray-600 cursor-pointer
+                                ${columns === 1 && 'bg-gray-700 border-gray-700 text-gray-100'}`}
                             onClick={() => {
                                 setColumns(1)
                                 saveViewPreference(uid, 1)
@@ -145,8 +145,8 @@ const TrackingPageBody = (props: Props) => {
                         >
                             <IoList />
                         </button>
-                        <button className={`border p-3 m-2 hover:bg-stone-600 hover:text-stone-100 border-stone-600 cursor-pointer
-                                ${columns > 1 && 'bg-stone-600 text-stone-100'}`}
+                        <button className={`border p-3 m-2 hover:bg-gray-600 hover:text-gray-100 border-gray-600 cursor-pointer
+                                ${columns > 1 && 'bg-gray-700 border-gray-700 text-gray-100'}`}
                             onClick={() => {
                                 setColumns(2)
                                 saveViewPreference(uid, 2)
@@ -157,14 +157,15 @@ const TrackingPageBody = (props: Props) => {
                         </button>
                     </div>
                 }
-                <div className="py-3 px-6 bg-[#145914]  hover:text-brandGreen hover:bg-lime-400"
-                    style={{ borderRadius: '0 222px', transition: 'background-color 0.2s ease' }}>
-                    <Link href="/AddPlantTrackingDetails" passHref className='cursor-pointer p-2 m-2 '>
-                        Add a plant +
-                    </Link>
-                </div>
+                <button
+                    className="py-3 px-6 brand bg-gray-700  hover:text-brandGreen hover:bg-lime-300 p-2 shadow-sm shadow-gray-800"
+                    style={{ borderRadius: '0 222px', transition: 'background-color 0.7s ease' }}
+                    onClick={() => router.push("/AddPlantTrackingDetails")}
+                >
+                        Add a plant <span className='text-2xl text-green-400 '>+</span>
+                </button>
             </div>
-            <div className="flex justify-between items-center pr-2 pl-2 pb-1 pt-6 text-stone-200 w-full">
+            <div className="text-sm flex justify-between items-center pr-2 pl-2 pb-1 pt-6 text-gray-200 w-full">
                 <p>
                     You are tracking {plants?.length} plants
                 </p>

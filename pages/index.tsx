@@ -19,7 +19,7 @@ export default function Home() {
     }, [dBUser, router])
 
     return (
-        <div className="antialiased text-blue-50" style={{ minWidth: '100vw', }} >
+        <div className="antialiased text-blue-50 bg-gray-900 bg-opacity-50" >
             <NavBar hideLogo />
 
             <main className="pt-20 flex flex-col items-center m-auto">

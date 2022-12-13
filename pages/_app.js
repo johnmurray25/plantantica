@@ -42,7 +42,7 @@ function Plantantica({ Component, pageProps }) {
       <link rel="apple-touch-startup-image" href="./apple-splash-750-1334.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
       <link rel="apple-touch-startup-image" href="./apple-splash-640-1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
     </Head>
-    <div className="antialiased bg-brandGreen">
+    <div className="antialiased select-none bg-brandGreen min-w-screen min-h-screen">
       <PlantContext.Provider value={{ plants, setPlants }}>
         <Component {...pageProps} />
       </PlantContext.Provider>

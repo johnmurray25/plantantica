@@ -19,7 +19,7 @@ const Home = () => {
   const { user } = useAuth()
 
   return (
-    <div className='text-stone-100 min-w-screen bg-brandGreen' /**Container */>
+    <div className='text-gray-100 min-w-screen bg-gray-900 bg-opacity-50' /**Container */>
       <NavBar />
 
       <div className='min-h-screen p-4 pt-28 flex flex-col items-center m-auto mt-0'>
@@ -35,7 +35,7 @@ const Home = () => {
           //   />
           //   :
           // If user doesn't have plants, show message
-          <div className='flex justify-evenly items-center m-10'>
+          <div className='flex justify-evenly items-center m-10 '>
             You aren&apos;t tracking any plants yet...
             <Link href="/AddPlantTrackingDetails" passHref >
               <div
