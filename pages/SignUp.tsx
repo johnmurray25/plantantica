@@ -32,7 +32,7 @@ const signUp = async ({ email, username, password, passwordConfirm }): Promise<U
         console.log('Successfully created account in firebase auth')
         if (await initializeUser(newCredential.user, username)) {
             // sendEmailVerification(newCredential.user)
-                // .then(() => alert("We are sending you an email verification link. Please open it to complete the sign up process"))
+            // .then(() => alert("We are sending you an email verification link. Please open it to complete the sign up process"))
             return newCredential.user
         } else {
             deleteUser(newCredential.user)
@@ -79,8 +79,11 @@ const SignUp = () => {
     return (
         <div className='antialiased text-stone-200 min-h-screen text-center pt-10 text-xl' id='firebaseui-auth-container' >
             <Link href='/' passHref>
-                <div>
-                    <TreeLogo height={140} width={375} />
+                <h1 className=' text-primary text-3xl'>
+                    PLANTANTICA
+                </h1>
+                <div className='flex justify-center'>
+                    <TreeLogo height={140} width={300} />
                 </div>
             </Link>
             <TextField
@@ -110,7 +113,7 @@ const SignUp = () => {
                 placeholder="Confirm password"
                 type='password'
             />
-            <button className='bg-lime-700 text-zinc-100 px-4 py-2 w-32 
+            <button className='bg-lime-700 text-zinc-100 px-4 py-2 my-8 w-32 
                                 rounded text-center translate-x-16 hover:bg-lime-400 hover:text-brandGreen'
                 onClick={() => {
                     signUp({ email, username, password, passwordConfirm })

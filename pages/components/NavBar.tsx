@@ -6,6 +6,7 @@ import ReactLoading from 'react-loading'
 import Image from 'next/image'
 import TreeLogo from './TreeLogo'
 import useAuth from '../../hooks/useAuth'
+import useWindowDimensions from '../../hooks/useWindowDimensions'
 
 interface NavProps {
   hideUser?: boolean;
@@ -13,6 +14,8 @@ interface NavProps {
 }
 
 const NavBar = (props: NavProps) => {
+
+  const { width } = useWindowDimensions()
 
   const hideUser = props.hideUser ? true : false;
   const hideLogo = props.hideLogo ? true : false;
@@ -35,12 +38,13 @@ const NavBar = (props: NavProps) => {
   }, [dBUser, loading])
 
   return (
-    <nav className="z-10 fixed bg-transparent flex justify-between flex-wrap px-4 pt-4 pb-2 items-center w-full">
-      <div className='bg-brandGreen p-1 lg:p-3 pl-2 //border rounded //border-[#2bb32b]'>
+    <nav className=" z-10 fixed bg-transparent flex justify-between flex-wrap px-4 pt-4 pb-2 items-center w-full">
+      <div className='bg-tertiary rounded '>
         {!hideLogo &&
           <Link href="/" passHref>
-            <div className="flex items-center flex-shrink-0  cursor-pointer pr-4 py-3">
-              <TreeLogo width={200} height={120} />
+            <div className="text-primary text-opacity-80 text-2xl flex items-center flex-shrink-0  cursor-pointer med:pr-4 py-1 px-2 shadow-md">
+              <TreeLogo width={80} height={80} />
+              {width && width >= 420 && 'Plantantica  '}
             </div>
           </Link>
         }
@@ -51,32 +55,38 @@ const NavBar = (props: NavProps) => {
         :
         dBUser ?
           <Link href="/profile" passHref>
-            <div className='cursor-pointer lg:pr-8'>
+            <div className='text-gray-100 text-opacity-80 transition-colors hover:bg-opacity-40 //hover:bg-gradient-to-tr //hover:from-green-50s flex items-center rounded-3xl justify-between cursor-pointer lg:mr-8 bg-primary shadow-md p-0.5'>
               {
                 profPicUrl ?
-                  <Image
-                    src={profPicUrl}
-                    sizes="15vw"
-                    alt='Profile'
-                    width={60}
-                    height={60}
-                    className='rounded-full'
-                  />
+                  <>
+                    <Image
+                      src={profPicUrl}
+                      sizes="15vw"
+                      alt='Profile'
+                      width={80}
+                      height={80}
+                      className='rounded-full'
+                    />
+                    {/* &nbsp; */}
+                    {/* <IoChevronDown /> */}
+                  </>
                   :
-                  <div className="inline-block text-xs lg:text-xs px-4 py-2 leading-none border rounded border-stone-100 text-stone-100 hover:border-transparent hover:text-brandGreen hover:bg-stone-100 mt-4 lg:mt-0">
-                    {dBUser.username ? `@${dBUser.username}` : user.email}
+                  <div className="flex items-center justify-between px-4 py-4 leading-none transition-colors hover:border-transparent ">
+                    {dBUser.username ? `@${dBUser.username}` : user.email} 
+                    {/* &nbsp;
+                    <IoChevronForward /> */}
                   </div>
               }
             </div>
           </Link>
           :
           <Link href="/auth" passHref
-            className="inline-block text-xs lg:text-sm px-4 py-2 leading-none border rounded border-stone-100 text-stone-100 border-yello hover:border-transparent hover:text-brandGreen hover:bg-stone-100 mt-4 lg:mt-0"
+            className="text-primary border-primary inline-block  px-4 py-2 leading-none border-2 font-semibold rounded transition-colors border-yello hover:border-transparent  hover:bg-stone-100 hover:bg-opacity-60 mt-4 lg:mt-0"
           >
             Login / Sign up
           </Link>
       }
-    </nav>
+    </nav >
   )
 }
 

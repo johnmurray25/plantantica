@@ -86,7 +86,7 @@ function Home() {
     }, [profPicUrl, username, uid]);
 
     return (
-        <div className='bg-brandGreen text-stone-100 min-h-screen text-left'>
+        <div className=' text-stone-100 min-h-screen text-left'>
             <NavBar />
             {
                 user &&

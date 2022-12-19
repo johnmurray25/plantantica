@@ -62,58 +62,61 @@ const SignInScreen = () => {
 
     return (
         <div className='antialiased text-stone-200 min-h-screen text-center pt-10 text-xl' id='firebaseui-auth-container' >
-                <div className='w-screen flex justify-center pb-6'>
-                    <Link href='/' passHref>
-                        <span className='cursor-pointer '>
-                            <TreeLogo height={140} width={375} />
+            <div className='w-screen flex justify-center pb-0'>
+                <Link href='/' passHref>
+                    <h1 className=' text-primary text-3xl'>
+                        PLANTANTICA
+                    </h1>
+                    <span className='cursor-pointer '>
+                        <TreeLogo height={140} width={300} />
+                    </span>
+                </Link>
+            </div>
+            <div className='flex flex-col items-center justify-center'>
+                <p className='pb-4'>
+                    Please sign in:
+                </p>
+                <TextField
+                    onChange={setIdentifier}
+                    value={identifier}
+                    width={150}
+                    placeholder="Username or email"
+                />
+                <TextField
+                    onChange={setPassword}
+                    value={password}
+                    width={150}
+                    placeholder="Password"
+                    type='password'
+                />
+                <div className="flex items-center">
+                    <Link href='/ResetPassword'
+                        className='text-sm text-stone-300 -translate-x-2 cursor-pointer hover:text-lime-300'
+                    >
+                        Forgot password?
+                    </Link>
+                    <button className='bg-lime-700 text-zinc-100 px-4 py-2 w-28 rounded
+                                            text-center translate-x-2 hover:bg-lime-400 hover:text-brandGreen'
+                        onClick={() => signIn(identifier, password)}
+                    >
+                        &rarr;
+                    </button>
+                </div>
+                <p className='text-sm text-right pb-6 pt-2'>
+                    Don&apos; have an account yet? &nbsp;
+                    <Link href="/SignUp" passHref>
+                        <span className='text-lime-400 cursor-pointer hover:underline'>
+                            Sign up
                         </span>
                     </Link>
+                </p>
+                <div className='border border-b-stone-600 border-t-0 border-x-0 w-1/3'>
                 </div>
-                <div className='flex flex-col items-center justify-center'>
-                    <p className='pb-4'>
-                        Please sign in:
-                    </p>
-                    <TextField
-                        onChange={setIdentifier}
-                        value={identifier}
-                        width={150}
-                        placeholder="Username or email"
-                    />
-                    <TextField
-                        onChange={setPassword}
-                        value={password}
-                        width={150}
-                        placeholder="Password"
-                        type='password'
-                    />
-                    <div className="flex items-center">
-                        <Link href='/ResetPassword'
-                            className='text-sm text-stone-300 -translate-x-2 cursor-pointer hover:text-lime-300'
-                        >
-                            Forgot password?
-                        </Link>
-                        <button className='bg-lime-700 text-zinc-100 px-4 py-2 w-28 rounded
-                                            text-center translate-x-2 hover:bg-lime-400 hover:text-brandGreen'
-                            onClick={() => signIn(identifier, password)}
-                        >
-                            &rarr;
-                        </button>
-                    </div>
-                    <p className='text-sm text-right pb-6 pt-2'>
-                        Don&apos; have an account yet? &nbsp;
-                        <Link href="/SignUp" passHref>
-                            <span className='text-lime-400 cursor-pointer hover:underline'>
-                                Sign up
-                            </span>
-                        </Link>
-                    </p>
-                    <div className='border border-b-stone-600 border-t-0 border-x-0 w-1/3'>
-                    </div>
-                    <div className="pt-6 pb-2">
-                        Or (recommended):
-                    </div>
-                    <SignInWithGoogleButton />
+                <div className="pt-6 pb-2">
+                    Or (recommended):
                 </div>
+                <SignInWithGoogleButton />
+            </div>
         </div>
     );
 }

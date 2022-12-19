@@ -41,7 +41,7 @@ const PlantCard = (props: Props) => {
             exit={{ opacity: 0, scale: 0 }}
             className={`rounded w-full antialiased h-full
                 ${needsWater ? " bg-dry bg-opacity-80 text-gray-800"
-                    : " bg-green-700 bg-opacity-30 text-gray-200"}`}
+                    : " bg-primary bg-opacity-60 text-gray-200"}`}
             style={{ transition: 'background-color 1s ease', }}
         >
             {/* Picture */}
@@ -75,7 +75,7 @@ const PlantCard = (props: Props) => {
                             .catch(e => { console.error(e); console.error("Failed to mark plant as watered") })
                     }}
                 >
-                    <IoWater className={`text-lg text-blue-700 ${needsWater && 'animate-bounce'}`} />
+                    <IoWater className={`text-lg ${needsWater ? 'animate-bounce text-blue-600' : "text-blue-300 "}`} />
                 </button>
             </div>
         </motion.div >)

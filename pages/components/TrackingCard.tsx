@@ -79,18 +79,6 @@ const PlantCard = (props: Props) => {
         loadUpdates().finally(() => setIsLoadingUpdates(false))
     }, [loadUpdates, showUpdates, updates])
 
-    const getBgStyle = () => {
-        if (!plant || hidden) {
-            return 'hidden';
-        }
-        const sharedStyle = width > SM_WIDTH ? 'rounded-md p-0 m-2 ' : 'rounded p-0 '
-        return sharedStyle + "bg-green-900 bg-opacity-20 h-fit pb-3 mb-2"
-        // if (needsWater) {
-        //     return sharedStyle + ' //bg-dry text-gray-800 ';
-        // } else {
-        //     return sharedStyle + ' //bg-lime-900 border-[#29bc29] ';
-        // }
-    }
 
     const imgWidth: number = (() => {
         // when running 'next build' etc.
@@ -116,39 +104,45 @@ const PlantCard = (props: Props) => {
     }
 
     return plant && (
-        <motion.div exit={{ opacity: 0 }} transition={{ delay: 1 }} className={getBgStyle()} style={{ transition: 'background-color 1s ease', }}>
+        <motion.div
+            exit={{ opacity: 0 }}
+            transition={{ delay: 1 }}
+            className={`${width > SM_WIDTH ? 'rounded-md p-0 m-2 ' : 'rounded p-0 '} 
+               helvetica bg-secondary bg-opacity-90 text-tertiary h-fit pb-3 mb-2 shadow`}
+        >
             {/* Picture */}
-            <div className='relative pt-2 bg-green-800 bg-opacity-30'>
+            <div className='relative pt-2 border-t border-primary border-opacity-20'>
                 {plant.imageUrl &&
-                    <div className="flex px-0 mx-0 py-1 w-full relative h-[400px]">
+                    <div className="flex px-0 mx-0 py-1 w-full relative h-[300px]">
                         <Image
                             src={plant.imageUrl}
                             alt={`Photo of ${plant.species}`}
                             loading='lazy'
                             fill
                             sizes="(max-width: 650px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                            className='object-cover object-center '
+                            className='object-cover '
                         />
                     </div>
                 }
             </div>
-            <div className="w-full flex justify-between items-center rounded-bl-full bg-green-800 bg-opacity-30 mb-2">
+            <div className="w-full flex justify-between items-center //rounded-bl-full bg-tertiary bg-opacity-60 text-primary text-opacity-90 shadow-sm mb-2">
                 {/* Species */}
-                <h1 className='select-none text-center w-full text-gray- italic text-3xl pl-6 text-opacity-80'>
+                <h1 className='futura text-center w-full italic text-3xl font-normal pl-4 pr-1'
+                >
                     {plant.species}
                 </h1>
                 {/* Edit/Delete buttons */}
                 <div className="flex-col pr-2 py-2 ">
                     {/* <DropDownMenu plantId={plant.id} onClickRemove={() => props.removePlant(plant)} /> */}
                     <button
-                        className="border-2 border-gray-400 text-gray-200 rounded-xl p-1 text-lg mb-1
+                        className="shadow-sm border-2 border-primary border-opacity-30 text-primary text-opacity-90 rounded-xl p-1 text-lg mb-1
                                     hover:bg-gray-200 hover:border-gray-200  hover:text-gray-700 transition-colors"
                         onClick={() => props.goToEditScreen(plant?.id)}
                     >
                         <IoPencil />
                     </button>
                     <button
-                        className="border-2 border-red-400 rounded-xl p-1 text-red-400 text-lg mt-1
+                        className="shadow-sm border-2 border-red-700 border-opacity-40 rounded-xl p-1 text-red-700 text-opacity-80 text-lg mt-1
                                     hover:bg-red-400 hover:text-gray-100 transition-colors"
                         onClick={() => {
                             if (!confirm(`Delete ${plant.species}?`)) {
@@ -166,60 +160,64 @@ const PlantCard = (props: Props) => {
                     </button>
                 </div>
             </div>
-            <div className='flex justify-end text-md px-4 mb-1 text-gray-300 '>
+            <div className='futura flex justify-end text-md px-4 mb-1  text-primary text-opacity-80 '>
                 {plant.dateObtained &&
                     <p>
                         had since {plant.dateObtained.toLocaleDateString()}
                     </p>
                 }
             </div>
-            <div className=" flex justify-center pr-4 py-1 text-lg">
-                <div>
-                    <div className='flex items-center text-lg text-gray-300 '>
-                        <>
-                            water every&nbsp;
-                        </>
-                        <div className="bg-green-800 bg-opacity-30 rounded-full">
-                            <button
-                                className="bg-green-700 bg-opacity-60 hover:bg-lime-600 transition-colors text-gray-900 text-2xl font-bold rounded-full h-fit px-1 mx-2 "
-                                style={{ lineHeight: 0.7 }}
-                                onClick={() => {
-                                    const n = daysBetweenWatering - 1
-                                    let newDate = new Date(dateToWaterNext.getTime() - MILLIS_IN_DAY)
-                                    updateDaysBetweenWatering(userID, plant.id, n, newDate.getTime())
-                                    setDaysBetweenWatering(n)
-                                    setDateToWaterNext(newDate)
-                                }}
-                            >
-                                -
-                            </button>
-                            <span className='font-bold text-gray-100'>
-                                {daysBetweenWatering}
-                            </span>
-                            <button
-                                className="bg-green-700 bg-opacity-60 hover:bg-lime-600 transition-colors text-gray-900 font-bold text-xl rounded-full h-fit px-1 mx-2 "
-                                style={{ lineHeight: 0.9 }}
-                                onClick={() => {
-                                    const n = daysBetweenWatering + 1
-                                    let newDate = new Date(dateToWaterNext.getTime() + MILLIS_IN_DAY)
-                                    updateDaysBetweenWatering(userID, plant.id, n, newDate.getTime())
-                                    setDaysBetweenWatering(n)
-                                    setDateToWaterNext(newDate)
-                                }}
-                            >
-                                +
-                            </button>
+            <div className='px-4'>
+                <div className=" flex justify-center pr-4 py-1 text-lg">
+                    <div>
+                        <div className='futura text-sm flex items-center text-primary text-opacity-60 '>
+                            <>
+                                WATER EVERY&nbsp;
+                            </>
+                            <div className="bg-tertiary shadow-sm rounded-full pt-1">
+                                <button
+                                    className="bg-green-700 bg-opacity-70 text-white text-opacity-70 hover:bg-lime-700 transition-colors text-2xl font-bold rounded-full h-fit px-1 mx-2 "
+                                    style={{ lineHeight: 0.7 }}
+                                    onClick={() => {
+                                        const n = daysBetweenWatering - 1
+                                        let newDate = new Date(dateToWaterNext.getTime() - MILLIS_IN_DAY)
+                                        updateDaysBetweenWatering(userID, plant.id, n, newDate.getTime())
+                                        setDaysBetweenWatering(n)
+                                        setDateToWaterNext(newDate)
+                                    }}
+                                >
+                                    <div className='-translate-y-[1px]'>
+                                        -
+                                    </div>
+                                </button>
+                                <span className='text-lg text-primary text-opacity-90 text'>
+                                    {daysBetweenWatering}
+                                </span>
+                                <button
+                                    className="bg-green-700 bg-opacity-70 text-white text-opacity-70 hover:bg-lime-700  transition-colors font-bold text-xl rounded-full h-fit px-1 mx-2 "
+                                    style={{ lineHeight: 0.9 }}
+                                    onClick={() => {
+                                        const n = daysBetweenWatering + 1
+                                        let newDate = new Date(dateToWaterNext.getTime() + MILLIS_IN_DAY)
+                                        updateDaysBetweenWatering(userID, plant.id, n, newDate.getTime())
+                                        setDaysBetweenWatering(n)
+                                        setDateToWaterNext(newDate)
+                                    }}
+                                >
+                                    <div className='-translate-y-[1px]'>
+                                        +
+                                    </div>
+                                </button>
+                            </div>
+                            &nbsp;
+                            DAYS
                         </div>
-                        &nbsp;
-                        days
                     </div>
                 </div>
-            </div>
-            <div className='px-4'>
                 {/* Instructions & Updates buttons */}
                 <div className='relative'>
                     <button
-                        className={`absolute top-0 left-2 text-sm hover:bg-gray-900 rounded-full py-1 px-5  
+                        className={`absolute top-0 left-2 text-sm hover:bg-gray-900 rounded-full py-1 px-5  text-primary futura
                             ${!needsWater ? "border-white " : " hover:text-gray-200"}
                             ${plant && plant.careInstructions ? "opacity-100 cursor-pointer" : "hidden"}
                             `}
@@ -232,15 +230,15 @@ const PlantCard = (props: Props) => {
                     </button>
                     <div className="flex justify-end items-center text-sm mt-4">
                         <button
-                            className="mr-2 py-2 px-4 bg-green-800 bg-opacity-30 text-gray-300 rounded-full font-bold
-                                hover:bg-lime-700 hover:text-green-100 transition-colors"
+                            className="futura mr-2 py-0.5 px-4 text-primary bg-tertiary shadow-sm rounded-full text-lg //font-bold
+                                hover:bg-primary hover:bg-opacity-20 hover:text-green-100 transition-colors"
                             onClick={handleShowUpdates}
                         >
                             Updates
                         </button>
                         <button
-                            className="bg-green-700 bg-opacity-70 text-gray-200 text-2xl rounded-full h-fit py-0.5 px-2 
-                                hover:bg-lime-500 hover:text-green-900 transition-colors"
+                            className="bg-green-700 hover:bg-lime-600 bg-opacity-80 text-gray-200 text-opacity-80 text-2xl shadow-sm rounded-full h-fit //py-0.5 px-2 
+                                 //hover:bg-opacity-60 //hover:text-green-900 transition-colors"
                             onClick={() => props.goToAddUpdateScreen(plant?.id)}
                         >
                             +
@@ -249,9 +247,12 @@ const PlantCard = (props: Props) => {
 
                 </div>
                 {/* Instructions: */}
-                <div className={`py-2 pr-40 ${showInstructions ? 'opacity-100' : 'opacity-0 h-0'} transition ease-linear duration-100`}>
+                <motion.div
+                    layout
+                    animate={{ height: (!showInstructions || !height ? "0" : height / 15) || "auto" }}
+                    className={`text-secondary mb-2 py-2 pr-40 ${showInstructions ? 'opacity-100' : 'opacity-0 h-0'} transition-all ease-linear duration-100`}>
                     {plant?.careInstructions}
-                </div>
+                </motion.div>
                 {/* Updates: */}
                 {showUpdates && plant &&
                     <div className="w-full">
@@ -275,66 +276,70 @@ const PlantCard = (props: Props) => {
                     </div>
                 }
             </div>
-            <div className={`${needsWater ? "bg-dry bg-opacity-60 text-gray-800 " : "bg-green-700 bg-opacity-30"} rounded-tl-3xl rounded-br-full py-2 px-4 flex justify-between items-center relative  text-gray-300`}>
-                {/* Water dates */}
-                <div className='px-1'>
-                    last watered {plant.dateLastWatered.toLocaleDateString()}
-                    <div className='flex w-4/5 justify-center border border-t-0 border-x-0 border-gray-800 my-0.5'></div>
-                    <p className={needsWater ? ' font-bold text-xl ' : ''}>
-                        water next {dateToWaterNext.toLocaleDateString()}
-                    </p>
-                </div>
-                {/* Water button: */}
-                <button
-                    onClick={() => {
-                        if (!confirm('Mark as watered today?')) {
-                            return;
-                        }
-                        props.waterPlant(plant, userID)
-                            .then(p => {
-                                setNeedsWater(false)
-                                setPlant(p)
-                                setDateToWaterNext(p?.dateToWaterNext)
-                            })
-                            .catch(e => { console.error(e); console.error("Failed to mark plant as watered") })
-                    }}
-                    className='flex items-center hover:bg-blue-700  hover:border-blue-300 text-sky-400 hover:text-sky-200
-                            cursor-pointer px-3 py-2 rounded-full h-fit mr-4 bg-[#1B2C29] transition-colors'
-                >
-                    {/* <p>
+            <div className='shadow-sm flex text-lg justify-evenly bg-tertiary bg-opacity-60'>
+                <div className={`w-1/2 border-x-2 border-secondary ${needsWater ? "bg-yellow-600 bg-opacity-40 text-gray-100 text-opacity-90 " : " text-primary"} text-opacity-90  pl-6 pt-3 pb-2 pr-2 flex justify-between items-center relative  `}>
+                    {/* Water dates */}
+                    <div className={`${needsWater && ""} px-1 rounded-2xl pl-3`}>
+                        Last watered {plant.dateLastWatered.toLocaleDateString()}
+                        <div className='flex w-full justify-center border border-t-0 border-x-0 border-gray-800 my-0.5 -translate-x-4'></div>
+                        <p className={needsWater ? ' font-bold //text-lg ' : ''}>
+                            Water next {dateToWaterNext.toLocaleDateString()}
+                        </p>
+                    </div>
+                    {/* Water button: */}
+                    <button
+                        onClick={() => {
+                            if (!confirm('Mark as watered today?')) {
+                                return;
+                            }
+                            props.waterPlant(plant, userID)
+                                .then(p => {
+                                    setNeedsWater(false)
+                                    setPlant(p)
+                                    setDateToWaterNext(p?.dateToWaterNext)
+                                })
+                                .catch(e => { console.error(e); console.error("Failed to mark plant as watered") })
+                        }}
+                        className='flex items-center hover:bg-blue-500  hover:border-blue-300 text-blue-600 hover:text-sky-200
+                            cursor-pointer px-3 py-2 rounded-full h-fit bg-tertiary bg-opacity-80 transition-colors'
+                    >
+                        {/* <p>
                         Water
                     </p> */}
-                    &nbsp;
-                    <IoWater className={`${needsWater && ' animate-bounce '} text-2xl `} />
-                </button>
-            </div>
-            <div className="bg-green-700 bg-opacity-30 rounded-tl-3xl rounded-br-full py-2 px-4 mt-2 flex justify-between items-center relative  text-gray-300">
-                {/* Feeding dates */}
-                <div className={`pt-2 pl-2 ${(!plant.dateLastFed || !plant.dateToFeedNext) && 'pb-8'}`}>
-                    {plant.dateLastFed && `last fed ${plant.dateLastFed.toLocaleDateString()}`}
-                    <div className='flex w-4/5 justify-center border border-t-0 border-x-0 border-gray-800 my-0.5'></div>
-                    {plant.dateToFeedNext && `feed next ${plant.dateToFeedNext.toLocaleDateString()}`}
+                        &nbsp;
+                        <IoWater className={`${needsWater && ' animate-bounce '} text-2xl `} />
+                    </button>
                 </div>
-                {/* Feed button: */}
-                <button
-                    onClick={() => {
-                        if (!confirm('Mark as fed today?')) {
-                            return;
-                        }
-                        feedPlantInDB(userID, plant?.id)
-                            .then(() => {
-                                const updatedPlant = {
-                                    ...plant,
-                                    dateLastFed: new Date()
+                {(plant?.dateToFeedNext || plant?.dateLastFed) &&
+                    <div className="w-1/2 //bg-tertiary //bg-opacity-60 rounded-full //rounded-tl-full pl-4 //rounded-br-full py-2 px-4 mt-2 flex justify-evenly items-center relative  text-primary text-opacity-70">
+                        {/* Feeding dates */}
+                        <div className={`pt-2 pl-4 ${(!plant.dateLastFed || !plant.dateToFeedNext) && 'pb-8'}`}>
+                            {plant.dateLastFed && `Last fed ${plant.dateLastFed.toLocaleDateString()}`}
+                            <div className='flex w-full justify-center border border-t-0 border-x-0 border-gray-800 my-0.5 -translate-x-4'></div>
+                            {plant.dateToFeedNext && `Feed next ${plant.dateToFeedNext.toLocaleDateString()}`}
+                        </div>
+                        {/* Feed button: */}
+                        <button
+                            onClick={() => {
+                                if (!confirm('Mark as fed today?')) {
+                                    return;
                                 }
-                                setPlant(updatedPlant)
-                            }).catch(console.error);
-                    }}
-                    className='flex items-center hover:bg-green-600 text-green-400 hover:text-green-100
-                            cursor-pointer text-sm px-3 py-2 rounded-full h-fit mr-4 bg-[#1B2C29] transition-colors'
-                >
-                    <IoLeaf className='cursor-pointer text-2xl' />
-                </button>
+                                feedPlantInDB(userID, plant?.id)
+                                    .then(() => {
+                                        const updatedPlant = {
+                                            ...plant,
+                                            dateLastFed: new Date()
+                                        }
+                                        setPlant(updatedPlant)
+                                    }).catch(console.error);
+                            }}
+                            className='flex items-center hover:bg-green-600 text-green-800 hover:text-green-100
+                            cursor-pointer text-sm p-3 py-2 rounded-full h-fit //bg-tertiary //bg-opacity-80 transition-colors'
+                        >
+                            <IoLeaf className='cursor-pointer text-2xl' />
+                        </button>
+                    </div>
+                }
             </div>
         </motion.div >)
 }

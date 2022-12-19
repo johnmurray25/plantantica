@@ -1,19 +1,20 @@
-import Link from 'next/link'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import Plant from '../../domain/Plant'
 import TextField from './TextField';
 import TrackingCard from './TrackingCard';
 import MiniTrackingCard from './MiniTrackingCard';
-import gridStyles from '../../styles/grid.module.css';
 import { IoList } from '@react-icons/all-files/io5/IoList';
 import { IoGrid } from '@react-icons/all-files/io5/IoGrid';
+import { IoSearch } from '@react-icons/all-files/io5/IoSearch';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import db from '../../firebase/db';
 import { useRouter } from 'next/router';
 import { waterPlantInDB } from '../../service/PlantService';
-import { AnimatePresence, motion } from "framer-motion";
 import PlantContext from '../../context/PlantContext';
+import MyPlants from './MyPlants';
+
+const SM_WIDTH = 420
 
 const saveViewPreference = async (uid: string, cols: number) => {
     setDoc(doc(db, `users/${uid}`),
@@ -65,6 +66,7 @@ const TrackingPageBody = (props: Props) => {
 
     const uid = props.uid || "";
     const { plants, setPlants } = useContext(PlantContext)
+    const [filteredPlants, setFilteredPlants] = useState(plants)
 
     const [searchText, setSearchText] = useState('')
     const [trackingCards, setTrackingCards] = useState<JSX.Element[]>([])
@@ -109,12 +111,16 @@ const TrackingPageBody = (props: Props) => {
     }, [columns, handleWaterPlant, router, uid, width])
 
     const filterPlants = useCallback(() => {
+        console.log('filtering plants')
         if (searchText) {
+            setFilteredPlants(plants.filter(p => p.species?.toLocaleLowerCase()?.includes(searchText.toLocaleLowerCase()))
+                .sort(byDateToWaterNext))
             setTrackingCards(plants
                 .filter(p => p.species.toLowerCase().includes(searchText.toLowerCase()))
                 .sort(byDateToWaterNext)
                 .map((p, i) => plantToCard(p, i)))
         } else {
+            setFilteredPlants(plants)
             setTrackingCards(plants
                 .sort(byDateToWaterNext)
                 .map((p, i) => plantToCard(p, i)))
@@ -130,13 +136,13 @@ const TrackingPageBody = (props: Props) => {
 
     return (
         <>
-            <div className={`flex px-2 items-center w-full
+            <div className={`flex px-2 py-8 items-center w-full
                     ${width <= 650 ? 'justify-between' : 'justify-end'}`}
             >
                 {width <= 650 &&
                     <div className="flex">
-                        <button className={`border p-3 m-2 hover:bg-gray-600 hover:text-gray-100 border-gray-600 cursor-pointer
-                                ${columns === 1 && 'bg-gray-700 border-gray-700 text-gray-100'}`}
+                        <button className={`border p-3 m-2 hover:bg-primary hover:text-gray-100 border-gray-600 cursor-pointer
+                                ${columns === 1 ? 'bg-primary border-primary text-gray-100' : "text-primary"}`}
                             onClick={() => {
                                 setColumns(1)
                                 saveViewPreference(uid, 1)
@@ -145,8 +151,8 @@ const TrackingPageBody = (props: Props) => {
                         >
                             <IoList />
                         </button>
-                        <button className={`border p-3 m-2 hover:bg-gray-600 hover:text-gray-100 border-gray-600 cursor-pointer
-                                ${columns > 1 && 'bg-gray-700 border-gray-700 text-gray-100'}`}
+                        <button className={`border p-3 m-2 hover:bg-primary hover:text-gray-100 border-gray-600 cursor-pointer
+                                ${columns > 1 ? 'bg-primary border-primary text-gray-100' : 'text-primary'}`}
                             onClick={() => {
                                 setColumns(2)
                                 saveViewPreference(uid, 2)
@@ -157,42 +163,51 @@ const TrackingPageBody = (props: Props) => {
                         </button>
                     </div>
                 }
-                <button
-                    className="py-3 px-6 brand bg-gray-700  hover:text-brandGreen hover:bg-lime-300 p-2 shadow-sm shadow-gray-800"
-                    style={{ borderRadius: '0 222px', transition: 'background-color 0.7s ease' }}
-                    onClick={() => router.push("/AddPlantTrackingDetails")}
-                >
-                        Add a plant <span className='text-2xl text-green-400 '>+</span>
-                </button>
             </div>
-            <div className="text-sm flex justify-between items-center pr-2 pl-2 pb-1 pt-6 text-gray-200 w-full">
-                <p>
+            <div className="text-sm flex justify-between items-center pr-2 pl-2 pb-1 pt-6 w-full">
+                <p className='text-primary text-opacity-80'>
                     You are tracking {plants?.length} plants
                 </p>
-                <div className='flex justify-end'>
-                    <TextField
-                        name="search"
-                        type="text"
-                        value={searchText}
-                        onChange={setSearchText}
-                        placeholder="Search..."
-                        width={24}
-                    />
+                <div className="sticky top-0">
+                    <div className={`flex justify-end items-center mb-2 w-fit`}>
+                        <TextField
+                            name="search"
+                            type="text"
+                            value={searchText}
+                            onChange={setSearchText}
+                            placeholder="Search..."
+                            width={24}
+                        />
+                        <button onClick={filterPlants}>
+                            <IoSearch className='text-primary text-3xl ml-2' />
+                        </button>
+                    </div>
                 </div>
+                <button
+                    className="flex items-center justify-between py-3 px-8 //helvetica bg-primary hover:text-brandGreen hover:bg-lime-300 p-2 shadow-sm shadow-gray-800"
+                    style={{ borderRadius: '222px 0px', transition: 'background-color 0.7s ease' }}
+                    onClick={() => router.push("/AddPlantTrackingDetails")}
+                >
+                    <div>
+                        Add a plant &nbsp;&nbsp;
+                    </div>
+                    <div className='text-2xl text-green-400 active:text-white '>+</div>
+                </button>
             </div>
-            {width <= 650 ?
+            <MyPlants plants={filteredPlants} />
+            {/* {width <= 650 ?
                 <motion.div className={`grid grid-cols-${columns || 1} gap-1`} style={{ width: '100vw' }}>
                     <AnimatePresence>
                         {trackingCards}
                     </AnimatePresence>
                 </motion.div>
                 :
-                <motion.div layout className={gridStyles.container}>
+                <motion.div className={gridStyles.container}>
                     <AnimatePresence>
                         {trackingCards}
                     </AnimatePresence>
                 </motion.div>
-            }
+            } */}
         </>
     )
 }

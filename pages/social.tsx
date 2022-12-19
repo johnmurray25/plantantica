@@ -19,10 +19,10 @@ const Home: React.FC = () => {
     }, [])
 
     return (
-        <div className='text-stone-200 bg-brandGreen min-w-full' /**Container */>
+        <div className='text-stone-200  min-w-full' /**Container */>
             <NavBar />
 
-            <div className='min-h-screen p-4 pt-28 flex flex-col items-center m-auto'>
+            <div className='min-h-screen p-4 pt-48 flex flex-col items-center m-auto'>
                 <UserSearch />
             </div>
 
