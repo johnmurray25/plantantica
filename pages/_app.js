@@ -14,7 +14,7 @@ Router.events.on('routeChangeError', () => NProgress.done());
 
 function Plantantica({ Component, pageProps }) {
 
-  const { plants, setPlants } = usePlants()
+  const { plants, setPlants, deletePlant } = usePlants()
 
   return <>
     <Head>
@@ -23,8 +23,8 @@ function Plantantica({ Component, pageProps }) {
         content="A place to track your plants' maintenance" />
       <link rel="icon" href="./tree-logo.ico" />
       <link rel='manifest' href='./manifest.json' />
-      <meta name="apple-mobile-web-app-status-bar" content="#95A295" />
-      <meta name="theme-color" content="#95A295" />
+      <meta name="apple-mobile-web-app-status-bar" content="#AFBDA1" />
+      <meta name="theme-color" content="#AFBDA1" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <link rel="apple-touch-startup-image" href="./apple-splash-1536-2048.png" media="(device-width: 768px) and (device-height: 1024px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
       <link rel="apple-touch-startup-image" href="./apple-splash-2048-2732.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
@@ -43,7 +43,7 @@ function Plantantica({ Component, pageProps }) {
       <link rel="apple-touch-startup-image" href="./apple-splash-640-1136.png" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
     </Head>
     <div className="antialiased select-none text-primary bg-secondary //bg-opacity-90 w-screen min-h-screen break-words">
-      <PlantContext.Provider value={{ plants, setPlants }}>
+      <PlantContext.Provider value={{ plants, setPlants, deletePlant }}>
         <Component {...pageProps} />
       </PlantContext.Provider>
     </div>

@@ -13,6 +13,8 @@ interface TextFieldProps {
     textarea?: boolean;
     width: string | number;
     style?: HTMLAttributes<any>;
+    bgColor?: string;
+    color?: string;
 }
 
 const TextField = React.forwardRef<InputElement, TextFieldProps>(
@@ -22,7 +24,7 @@ const TextField = React.forwardRef<InputElement, TextFieldProps>(
             <div>
                 <InputElement
                     ref={ref as any}
-                    className={`text-right border border-r-1 border-b-0 border-gray-600 border-opacity-40 text-lime-50 bg-secondaryDark bg-opacity-80 rounded-xl  
+                    className={`text-right border border-r-1 border-b-0 border-gray-600 border-opacity-40 text-${props.color || 'lime-50'} bg-${props.bgColor || 'secondaryDark'} bg-opacity-80 rounded-xl  
                                 p-3 mb-3  brand text-sm
                                 w-${props.width ? props.width : 24} 
                                 ${textarea ? "h-28" : "h-12"}`

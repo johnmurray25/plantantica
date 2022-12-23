@@ -13,6 +13,7 @@ import { useRouter } from 'next/router';
 import { waterPlantInDB } from '../../service/PlantService';
 import PlantContext from '../../context/PlantContext';
 import MyPlants from './MyPlants';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const SM_WIDTH = 420
 
@@ -86,39 +87,42 @@ const TrackingPageBody = (props: Props) => {
 
     const plantToCard = useCallback((p: Plant, index: number): JSX.Element => {
         // console.log("i = " + index)
-        if (columns === 1 || width > 650 || !columns) {
-            return (
-                <TrackingCard
-                    key={p?.id}
-                    plant={p}
-                    userID={uid}
-                    updates={p?.updates}
-                    goToEditScreen={(plantId) => router.push(`/EditPlantTrackingDetails/${plantId}`)}
-                    goToAddUpdateScreen={(plantId) => router.push(`/AddUpdateForPlant/${plantId}`)}
-                    waterPlant={handleWaterPlant}
-                />
-            )
-        } else {
-            return (
-                <MiniTrackingCard
-                    key={p.id}
-                    plant={p}
-                    userID={uid}
-                    waterPlant={handleWaterPlant}
-                />
-            )
-        }
-    }, [columns, handleWaterPlant, router, uid, width])
+        // if (columns === 1 || width > 650 || !columns) {
+        //     return (
+        //         <TrackingCard
+        //             key={p?.id}
+        //             plant={p}
+        //             userID={uid}
+        //             updates={p?.updates}
+        //             goToEditScreen={(plantId) => router.push(`/EditPlantTrackingDetails/${plantId}`)}
+        //             goToAddUpdateScreen={(plantId) => router.push(`/AddUpdateForPlant/${plantId}`)}
+        //             waterPlant={handleWaterPlant}
+        //         />
+        //     )
+        // } else {
+        return (
+            <MiniTrackingCard
+                key={p.id}
+                plant={p}
+                userID={uid}
+                waterPlant={handleWaterPlant}
+            />
+        )
+        // }
+    }, [handleWaterPlant, uid])
 
     const filterPlants = useCallback(() => {
         console.log('filtering plants')
         if (searchText) {
-            setFilteredPlants(plants.filter(p => p.species?.toLocaleLowerCase()?.includes(searchText.toLocaleLowerCase()))
-                .sort(byDateToWaterNext))
-            setTrackingCards(plants
-                .filter(p => p.species.toLowerCase().includes(searchText.toLowerCase()))
+            setFilteredPlants(plants
+                .filter(p => p.species?.toLocaleLowerCase()?.includes(searchText.toLocaleLowerCase()))
                 .sort(byDateToWaterNext)
-                .map((p, i) => plantToCard(p, i)))
+            )
+            setTrackingCards(plants
+                .filter(p => p.species.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()))
+                .sort(byDateToWaterNext)
+                .map((p, i) => plantToCard(p, i))
+            )
         } else {
             setFilteredPlants(plants)
             setTrackingCards(plants
@@ -137,38 +141,38 @@ const TrackingPageBody = (props: Props) => {
     return (
         <>
             <div className={`flex px-2 py-8 items-center w-full
-                    ${width <= 650 ? 'justify-between' : 'justify-end'}`}
+                    ${width <= 650 ? 'justify-between' : 'justify-start'}`}
             >
-                {width <= 650 &&
-                    <div className="flex">
-                        <button className={`border p-3 m-2 hover:bg-primary hover:text-gray-100 border-gray-600 cursor-pointer
+                {/* {width <= 650 && */}
+                <div className="flex sm:ml-8">
+                    <button className={`border p-3 m-2 hover:bg-primary hover:text-gray-100 border-gray-600 cursor-pointer
                                 ${columns === 1 ? 'bg-primary border-primary text-gray-100' : "text-primary"}`}
-                            onClick={() => {
-                                setColumns(1)
-                                saveViewPreference(uid, 1)
-                            }}
-                            style={{ transition: 'background-color 0.2s ease' }}
-                        >
-                            <IoList />
-                        </button>
-                        <button className={`border p-3 m-2 hover:bg-primary hover:text-gray-100 border-gray-600 cursor-pointer
+                        onClick={() => {
+                            setColumns(1)
+                            saveViewPreference(uid, 1)
+                        }}
+                        style={{ transition: 'background-color 0.2s ease' }}
+                    >
+                        <IoList />
+                    </button>
+                    <button className={`border p-3 m-2 hover:bg-primary hover:text-gray-100 border-gray-600 cursor-pointer
                                 ${columns > 1 ? 'bg-primary border-primary text-gray-100' : 'text-primary'}`}
-                            onClick={() => {
-                                setColumns(2)
-                                saveViewPreference(uid, 2)
-                            }}
-                            style={{ transition: 'background-color 0.2s ease' }}
-                        >
-                            <IoGrid />
-                        </button>
-                    </div>
-                }
+                        onClick={() => {
+                            setColumns(2)
+                            saveViewPreference(uid, 2)
+                        }}
+                        style={{ transition: 'background-color 0.2s ease' }}
+                    >
+                        <IoGrid />
+                    </button>
+                </div>
+                {/* } */}
             </div>
-            <div className="text-sm flex justify-between items-center pr-2 pl-2 pb-1 pt-6 w-full">
+            <div className="text-sm flex justify-between items-center pr-2 pl-2 pb-1 pt-6 w-full max-w-[1200px]">
                 <p className='text-primary text-opacity-80'>
                     You are tracking {plants?.length} plants
                 </p>
-                <div className="sticky top-0">
+                {/* <div className="sticky top-0">
                     <div className={`flex justify-end items-center mb-2 w-fit`}>
                         <TextField
                             name="search"
@@ -177,14 +181,16 @@ const TrackingPageBody = (props: Props) => {
                             onChange={setSearchText}
                             placeholder="Search..."
                             width={24}
+                            bgColor="gray-100"
+                            color="primary"
                         />
                         <button onClick={filterPlants}>
-                            <IoSearch className='text-primary text-3xl ml-2' />
+                            <IoSearch className='text-primary text-3xl ml-2 mb-2' />
                         </button>
                     </div>
-                </div>
+                </div> */}
                 <button
-                    className="flex items-center justify-between py-3 px-8 //helvetica bg-primary hover:text-brandGreen hover:bg-lime-300 p-2 shadow-sm shadow-gray-800"
+                    className="flex items-center justify-between py-3 px-8 mb-4 //helvetica bg-primary hover:text-brandGreen hover:bg-lime-300 p-2 "
                     style={{ borderRadius: '222px 0px', transition: 'background-color 0.7s ease' }}
                     onClick={() => router.push("/AddPlantTrackingDetails")}
                 >
@@ -194,7 +200,15 @@ const TrackingPageBody = (props: Props) => {
                     <div className='text-2xl text-green-400 active:text-white '>+</div>
                 </button>
             </div>
-            <MyPlants plants={filteredPlants} />
+            {columns === 1 ?
+                <MyPlants plants={filteredPlants} waterPlant={handleWaterPlant} />
+                :
+                <motion.div className={`grid grid-cols-2 gap-1`} style={{ width: '100vw' }}>
+                    <AnimatePresence>
+                        {trackingCards}
+                    </AnimatePresence>
+                </motion.div>
+            }
             {/* {width <= 650 ?
                 <motion.div className={`grid grid-cols-${columns || 1} gap-1`} style={{ width: '100vw' }}>
                     <AnimatePresence>

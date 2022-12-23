@@ -11,7 +11,7 @@ import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { IoPencil } from '@react-icons/all-files/io5/IoPencil';
 import { IoTrash } from '@react-icons/all-files/io5/IoTrash';
 import Update from '../../domain/Update';
-import { deletePlant, feedPlantInDB, getUpdatesForPlant, updateDaysBetweenWatering } from '../../service/PlantService';
+import { deletePlantInDB, feedPlantInDB, getUpdatesForPlant, updateDaysBetweenWatering } from '../../service/PlantService';
 import ResizablePanel from './ResizablePanel';
 import { motion } from 'framer-motion';
 const TimelineInCard = dynamic(() => import('./TimelineInCard'), { ssr: false })
@@ -43,12 +43,10 @@ const PlantCard = (props: Props) => {
     const [daysBetweenWatering, setDaysBetweenWatering] = useState(props.plant?.daysBetweenWatering);
 
     const [updates, setUpdates] = useState<Update[]>([])
+    const [showUpdates, setShowUpdates] = useState(false);
     const [isLoadingUpdates, setIsLoadingUpdates] = useState(true)
-
-    // state
     const [needsWater, setNeedsWater] = useState(false)
     const [showInstructions, setShowInstructions] = useState(false);
-    const [showUpdates, setShowUpdates] = useState(false);
     const [hidden, setHidden] = useState(false);
 
     const toggleInstructions = () => { setShowInstructions(!showInstructions) }
@@ -148,7 +146,7 @@ const PlantCard = (props: Props) => {
                             if (!confirm(`Delete ${plant.species}?`)) {
                                 return;
                             }
-                            deletePlant(plant, userID)
+                            deletePlantInDB(plant, userID)
                                 .then(() => setHidden(true))
                                 .catch(e => {
                                     console.error(e)
@@ -244,7 +242,6 @@ const PlantCard = (props: Props) => {
                             +
                         </button>
                     </div>
-
                 </div>
                 {/* Instructions: */}
                 <motion.div

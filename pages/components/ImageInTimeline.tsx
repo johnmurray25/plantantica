@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import ImageWithZoom from './ImageWithZoom';
 
 interface Props {
     src: string;
@@ -33,14 +34,13 @@ const ImageInTimeline = (props: Props) => {
                 </div>
                 : */}
             {props.src &&
-                <Image
+                <ImageWithZoom
                     src={props.src}
                     alt={`photo of ${props.species}`}
-                    loading='lazy'
                     width={350}
                     height={400}
-                    className='rounded-3xl object-cover object-center //cursor-pointer'
-                // onClick={toggleZoomImage}
+                    // sizes="350px"
+                    className='rounded-3xl object-cover object-center mb-4 h-64'
                 />
             }
         </div>

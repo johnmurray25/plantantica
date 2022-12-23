@@ -39,10 +39,10 @@ const NavBar = (props: NavProps) => {
 
   return (
     <nav className=" z-10 fixed bg-transparent flex justify-between flex-wrap px-4 pt-4 pb-2 items-center w-full">
-      <div className='bg-tertiary rounded '>
+      <div className='shadow-sm shadow-primary bg-tertiary rounded'>
         {!hideLogo &&
           <Link href="/" passHref>
-            <div className="text-primary text-opacity-80 text-2xl flex items-center flex-shrink-0  cursor-pointer med:pr-4 py-1 px-2 shadow-md">
+            <div className="text-primary text-opacity-80 text-2xl flex items-center flex-shrink-0  cursor-pointer med:pr-4 py-1 px-2 ">
               <TreeLogo width={80} height={80} />
               {width && width >= 420 && 'Plantantica  '}
             </div>

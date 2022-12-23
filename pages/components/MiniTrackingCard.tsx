@@ -39,14 +39,14 @@ const PlantCard = (props: Props) => {
             animate={{ opacity: 1, scale: 1 }}
             initial={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}
-            className={`rounded w-full antialiased h-full
+            className={`rounded w-full max-w-[350px] antialiased mx-auto mb-4
                 ${needsWater ? " bg-dry bg-opacity-80 text-gray-800"
                     : " bg-primary bg-opacity-60 text-gray-200"}`}
             style={{ transition: 'background-color 1s ease', }}
         >
             {/* Picture */}
             {plant.imageUrl &&
-                <div className="relative px-0 mx-0 py-1 w-full ">
+                <div className="relative px-0 mx-0 py-1 w-full">
                     <Image
                         src={plant.imageUrl}
                         alt={`Photo of ${plant.species}`}
@@ -54,7 +54,7 @@ const PlantCard = (props: Props) => {
                         width={width || 250}
                         height={height ? height / 3 : 250}
                         sizes='50vw, 33vw'
-                        className='object-cover object-center h-1/5'
+                        className='object-cover object-center '
                     />
                 </div>
             }

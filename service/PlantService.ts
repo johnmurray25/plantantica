@@ -66,7 +66,7 @@ export const getPlants = async (uid: string): Promise<Plant[]> => {
     return Promise.all(plants)
 };
 
-export const deletePlant = async (plant: Plant, uid: string) => {
+export const deletePlantInDB= async (plant: Plant, uid: string) => {
     if (plant.picture) {
         deleteImage(plant.picture, uid)
             .catch(console.error);
