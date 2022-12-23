@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import React from 'react'
-import logo from '../../public/vector/default-monochrome.svg';
+import logo from '../../public/vector/Tree-only.svg';
 
 interface Props {
     width?: number;
@@ -15,8 +15,9 @@ const TreeLogo = (props: Props) => {
         <Image
             src={logo}
             alt='Plantantica'
-            {...{width}}
-            {...{height}}
+            {...{ width }}
+            {...{ height }}
+            className="text-green-100"
         />
     )
 }

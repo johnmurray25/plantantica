@@ -35,7 +35,7 @@ export default function ResizablePanel({ children }) {
                 >
                     <div
                         ref={ref}
-                        className={`${height ? "absolute" : "relative"} w-full pb-8`}
+                        className={`${height ? "absolute" : "relative"} w-full `}
                     >
                         {children}
                     </div>

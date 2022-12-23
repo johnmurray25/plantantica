@@ -50,7 +50,7 @@ const TimelineInCard = (props: Props) => {
             {updateItems?.length > 0 ?
                 updateItems
                 :
-                <p className='text-lg bg-red'>
+                <p className='text-lg bg-red text-primary text-opacity-80'>
                     No updates for this plant.
                 </p>
             }

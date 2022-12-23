@@ -6,6 +6,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        'primary': '#294749',
+        'secondary': '#AFBDA1',
+        'secondaryDark': "#8A9889",
+        'tertiary': '#BFCAB7',
         'brandGreen': 'rgb(39, 47, 39)',
         'olive': '#4C6049',
         'customYellow': 'rgb(248, 245, 240)',
@@ -19,7 +23,7 @@ module.exports = {
         'dry': '#d1b979'
       },
       backgroundImage: {
-        'blue-tree': 'url(../img/blue-tree.png)'
+        'tree': 'url(/vector/Tree-only.svg)',
       }
     },
   },

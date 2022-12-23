@@ -1,12 +1,21 @@
 import { useCallback, useEffect, useState } from 'react'
 import Plant from '../domain/Plant';
-import { getPlants } from '../service/PlantService';
+import { deletePlantInDB, getPlants } from '../service/PlantService';
 import useAuth from './useAuth';
 
 const usePlants = () => {
     const [plants, setPlants] = useState<Plant[]>(null);
     const [isLoading, setIsLoading] = useState(true);
     const { user } = useAuth()
+
+    const deletePlant = (plant: Plant) => {
+        deletePlantInDB(plant, user.uid)
+            .then(() => setPlants(plants.filter(p => p.id !== plant.id)))
+            .catch(e => {
+                console.error(e)
+                alert('Failed to delete plant. Please try again later')
+            })
+    }
 
     const loadPlants = useCallback(async () => {
         if (!user || plants || !isLoading) {
@@ -31,7 +40,7 @@ const usePlants = () => {
     }, [loadPlants])
 
 
-    return { plants, setPlants, isLoading }
+    return { plants, setPlants, isLoading, deletePlant }
 }
 
 export default usePlants

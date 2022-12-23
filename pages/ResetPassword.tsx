@@ -14,7 +14,7 @@ const ResetPassword = () => {
     const handleResetPassword = async () => {
         if (!email?.length) {
             return;
-        } 
+        }
         const user = await getUserByEmail(email);
         if (!user || !user.exists()) {
             alert("Could not find a user with the given email address.")
@@ -27,11 +27,14 @@ const ResetPassword = () => {
             })
     }
 
-  return (
-    <div className='antialiased text-stone-200 min-h-screen text-center pt-10 text-xl' id='firebaseui-auth-container' >
+    return (
+        <div className='antialiased text-stone-200 min-h-screen text-center pt-10 text-xl' id='firebaseui-auth-container' >
             <Link href='/' passHref>
-                <div>
-                    <TreeLogo height={140} width={375} />
+                <h1 className=' text-primary text-3xl'>
+                    PLANTANTICA
+                </h1>
+                <div className='flex justify-center'>
+                    <TreeLogo height={140} width={300} />
                 </div>
             </Link>
             <TextField
@@ -48,7 +51,7 @@ const ResetPassword = () => {
                 Reset password
             </button>
         </div>
-  )
+    )
 }
 
 export default ResetPassword

@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import ReactLoading from 'react-loading'
 import FileInput from './components/FileInput';
 
-import styles from "../styles/tracking.module.css";
 import { deleteUpdatePictureInDB, saveUpdateForPlant } from '../service/PlantService';
 import { compressImage, deleteImage, uploadFile } from '../service/FileService';
 import TextField from './components/TextField';

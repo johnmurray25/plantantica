@@ -115,7 +115,7 @@ function Home() {
     }
 
     return (
-        <div className='bg-brandGreen text-stone-200 min-h-screen text-left'>
+        <div className=' text-stone-200 min-h-screen text-left'>
             {
                 shouldAddUsername && dBUser ?
                     <div className='text-center'>
@@ -154,22 +154,22 @@ function Home() {
                     user &&
                     <div>
                         <NavBar hideUser />
-                        <div className='pt-24 relative w-full med:w-3/6 m-auto text-center justify-center pb-14 px-6  '>
+                        <div className='pt-24 relative med:w-3/6 m-auto text-center justify-center pb-14 px-6  '>
                             {editMode ?
                                 <button
                                     className='rounded-full border-darkYellow m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border w-fit p-3  hover:bg-darkYellow active:bg-darkYellow'
                                     style={{ transition: "background-color 0.3s ease-out" }}
                                     onClick={() => setEditMode(false)}
                                 >
-                                    <IoArrowUndo className='text-xl'/>
+                                    <IoArrowUndo className='text-xl' />
                                 </button>
                                 :
                                 <button
-                                    className='rounded-full border-darkYellow hover:text-zinc-200 m-auto mr-4 mb-5 mt-8  text-zinc-300 med:mr-64 lg:mr-80 self-center flex items-center border border-stone-100s w-fit p-2 hover:bg-darkYellow active:bg-darkYellow'
+                                    className='rounded-full border-primary hover:text-zinc-200 m-auto mr-4 mb-5 mt-8  text-primary med:mr-64 lg:mr-80 self-center flex items-center border border-stone-100s w-fit p-2 hover:bg-darkYellow active:bg-darkYellow'
                                     style={{ transition: "background-color 0.3s ease-out" }}
                                     onClick={() => setEditMode(true)}
                                 >
-                                    <IoPencilOutline className='text-2xl' />
+                                    <IoPencilOutline className='text-3xl' />
                                 </button>
                             }
                             {profPicUrl ?
@@ -206,7 +206,7 @@ function Home() {
                                     </div>
                                 </div>
                             }
-                            <div className='m-10 mb-3 text-lightYellow' >
+                            <div className='m-10 mb-3 text-primary' >
                                 {editMode ?
                                     <div className='m-auto flex justify-center'>
                                         <TextInput
@@ -235,8 +235,8 @@ function Home() {
                             </div>
                             <div className=''>
                                 <h3 className=' mb-8 pt-0 flex justify-center items-center text-xl translate-y-4 '>
-                                    <p className='text-[#29bc29] '>
-                                        username:
+                                    <p className='text-primary text-opacity-80 text-xs font-bold'>
+                                        USERNAME:
                                     </p>
                                     {editMode ?
                                         <div className='text-sm p-3 flex items-center'>
@@ -258,16 +258,16 @@ function Home() {
                                             />
                                         </div>
                                         :
-                                        <p className='font-bold p-3 pl-10 rounded-lg m-2 ml-0 text-stone-100 '>
-                                            {dBUser && `@${dBUser.username}`}
+                                        <p className=' p-3 pl-10 rounded-lg m-2 ml-0 text-stone-100 '>
+                                            {dBUser && `@${dBUser.username?.toLocaleUpperCase()}`}
                                         </p>
                                     }
                                 </h3>
-                                <h3 className='text-lg flex justify-center w-full text-[#29bc29]'>
-                                    <p className=' pr-8'>
-                                        email:
-                                    </p>
-                                    <p className='italic pl-8 text-lightYellow'>
+                                <h3 className='text-lg flex items-center justify-center w-full text-[#29bc29]'>
+                                    {/* <p className='text-primary text-opacity-80 text-xs font-bold pr-8'>
+                                        EMAIL:
+                                    </p> */}
+                                    <p className='italic pl-8 text-primary text-opacity-50'>
                                         {user.email}
                                     </p>
                                 </h3>
@@ -275,36 +275,43 @@ function Home() {
                             {/* <h3 className='pt-10 text-[#29bc29]'>
                                 Tracking {dBUser?.plantTrackingDetails?.length || 0} plants
                             </h3> */}
-                            <div className='mt-14 leading-8 '>
-                                Receive daily emails if my plants need water &nbsp;&nbsp;&nbsp;
-                                <label className="relative inline-block w-14 h-8">
-                                    <input type="checkbox"
-                                        checked={receiveDailyEmails}
-                                        onClick={() => {
-                                            if (!(user && dBUser)) {
-                                                return;
-                                            }
-                                            // unsubscribe
-                                            if (receiveDailyEmails) {
-                                                unsubscribeFromDailyEmails(user.uid)
-                                                    .then(() => setReceiveDailyEmails(false))
-                                                console.log('Unsubscribed from daily emails')
-                                            }
-                                            // subscribe
-                                            else {
-                                                subscribeToDailyEmails(user.uid)
-                                                    .then(() => setReceiveDailyEmails(true))
-                                                console.log('Subscribed to daily emails')
-                                            }
-                                        }}
-                                    />
-                                    <span className={`${toggleStyles.slider} ${toggleStyles.round}`}></span>
-                                </label>
+                            <div className='mt-14 leading-8 text-gray-100 text-opacity-90'>
+                                Receive daily emails if my plants need water:
+                                <div className='pt-1 flex justify-center '>
+                                    <div className="relative mx-4 w-fit">
+                                        <label className='absolute w-14 h-8 //-translate-y-28'>
+                                            <input type="checkbox"
+                                                checked={receiveDailyEmails}
+                                                onClick={() => {
+                                                    if (!(user && dBUser)) {
+                                                        return;
+                                                    }
+                                                    // unsubscribe
+                                                    if (receiveDailyEmails) {
+                                                        unsubscribeFromDailyEmails(user.uid)
+                                                            .then(() => setReceiveDailyEmails(false))
+                                                        console.log('Unsubscribed from daily emails')
+                                                    }
+                                                    // subscribe
+                                                    else {
+                                                        subscribeToDailyEmails(user.uid)
+                                                            .then(() => setReceiveDailyEmails(true))
+                                                        console.log('Subscribed to daily emails')
+                                                    }
+                                                }}
+                                            />
+                                            <span className={`${toggleStyles.slider} ${toggleStyles.round}`}></span>
+                                        </label>
+                                    </div>
+                                    <div className='translate-x-16 transition-opacity'>
+                                        {receiveDailyEmails ? "YES" : "NO"}
+                                    </div>
+                                </div>
                             </div>
                             <div className="flex justify-evenly text-center pb-0 pt-10 w-full">
                                 <button
-                                    className='border-[#29bc29] hover:bg-[#29bc29] active:bg-[#29bc29]
-                                     py-4 px-7 mx-2 cursor-pointer  border  '
+                                    className='text-primary hover:text-gray-100 text-opacity-80 font-light border-primary hover:bg-primary active:bg-[#29bc29]
+                                     py-4 px-7 mx-2  border  '
                                     style={{
                                         borderRadius: "0 222px",
                                         transition: "background-color 0.5s ease"
@@ -314,7 +321,7 @@ function Home() {
                                     Sign out
                                 </button>
                                 <button
-                                    className='cursor-pointer hover:bg-red-600 active:bg-red-600 hover:text-stone-100 border border-red-600 py-4 px-7 mx-2'
+                                    className='text-red-800 text-opacity-80 font-light hover:bg-red-800 active:bg-red-800 hover:text-gray-100 border border-red-800 py-4 px-7 mx-2'
                                     style={{
                                         borderRadius: "222px 0",
                                         transition: "background-color 0.5s ease"

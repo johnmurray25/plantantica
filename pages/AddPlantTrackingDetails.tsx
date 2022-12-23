@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 
 import { collection, addDoc, doc, setDoc, DocumentReference, DocumentData } from "firebase/firestore";
@@ -14,6 +14,7 @@ import TextField from "./components/TextField";
 import useAuth from "../hooks/useAuth";
 import { getDownloadURL, ref } from "firebase/storage";
 import storage from "../firebase/storage";
+import PlantContext from "../context/PlantContext";
 
 const MILLIS_IN_DAY = 86400000;
 
@@ -22,7 +23,7 @@ interface Props {
 }
 
 const savePlantToDB = async (update: boolean, plant: { species: any; dateLastWatered: any; dateObtained: any; dateToWaterNext: any; daysBetweenWatering: any; dateLastFed: any; dateToFeedNext: any; lightRequired: any; savedFileName: any; careInstructions: any; id?: string; downloadUrl: string},
-    uid: string) => {
+    uid: string): Promise<string> => {
   // Save document to firestore db
   let plantTrackingDetails = {
     species: plant.species,
@@ -39,6 +40,7 @@ const savePlantToDB = async (update: boolean, plant: { species: any; dateLastWat
     careInstructions: plant.careInstructions || "",
   };
   let docRef: DocumentReference<DocumentData> = null;
+  let id = plant.id;
   if (update) {
     // Update an existing document
     await setDoc(doc(collection(doc(db, 'users', uid), 'plantTrackingDetails'), plant.id), plantTrackingDetails, { merge: true });
@@ -46,13 +48,16 @@ const savePlantToDB = async (update: boolean, plant: { species: any; dateLastWat
   } else {
     // Add a new document with a generated id.
     docRef = await addDoc(collection(doc(db, 'users', uid), 'plantTrackingDetails'), plantTrackingDetails);
+    id = docRef.id
     console.log(`Document written with ID: ${docRef.id}`);
   }
+  return id;
 }
 
 const AddPlantTrackingDetails = (props: Props) => {
   const router = useRouter();
   const { user } = useAuth()
+  const { plants, setPlants } = useContext(PlantContext)
   const todaysDate = new Date();
 
   const [plant] = useState<Plant>(props.plant); // if EDITING, pass plant as props
@@ -117,13 +122,18 @@ const AddPlantTrackingDetails = (props: Props) => {
       }
     }
     setLoadingStatus('Saving ')
+    const newPlant = { species, dateLastWatered, dateObtained, dateToWaterNext, daysBetweenWatering, dateLastFed, dateToFeedNext, lightRequired, savedFileName, careInstructions, downloadUrl }
     if (plant) {
       // update
-      savePlantToDB(true, { species, dateLastWatered, dateObtained, dateToWaterNext, daysBetweenWatering, dateLastFed, dateToFeedNext, lightRequired, savedFileName, careInstructions, downloadUrl, id: plant.id }, user.uid);
+      const updatedPlant = { ...newPlant, id: plant.id }
+      savePlantToDB(true, updatedPlant, user.uid);
+      const updatedPlants = plants.filter(p => p.id !== plant.id)
+      updatedPlants.push(updatedPlant)
     } 
     else {
-      // insert
-      savePlantToDB(false, { species, dateLastWatered, dateObtained, dateToWaterNext, daysBetweenWatering, dateLastFed, dateToFeedNext, lightRequired, savedFileName, careInstructions, downloadUrl }, user.uid);
+      // inserts
+      const plantId = await savePlantToDB(false, newPlant, user.uid);
+      setPlants([...plants, {species, dateLastWatered, dateToWaterNext, dateLastFed, dateToFeedNext, daysBetweenWatering, dateObtained, id: plantId, lightRequired, careInstructions, dateCreated: new Date(), imageUrl, picture: savedFileName}])
     }
     // Redirect back to tracking page
     router.push('/Tracking');

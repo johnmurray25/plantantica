@@ -69,7 +69,7 @@ const PlantCard: FC<Props> = (props) => {
     }
 
     return plant && (
-        <div key={plant.id} className={getBgStyle() + " bg-[#286314] "}>
+        <div key={plant.id} className={getBgStyle() + " bg-primary bg-opacity-80 "}>
             {plant.picture && imageURL && imageURL !== '' ?
                 <div className=' px-0 mx-0 pb-0 w-full relative'>
                     <Image
@@ -97,7 +97,7 @@ const PlantCard: FC<Props> = (props) => {
                 </div>
             }
 
-            <div className="px-1 py-1 ">
+            <div className="px-2 py-2 ">
                 <div className='flex justify-between text-xs '>
                     <div className='flex text-base'>
                         <IoWater className="cursor-pointer text-blue-400 pr-1" />
@@ -106,7 +106,7 @@ const PlantCard: FC<Props> = (props) => {
                         </p>
                     </div>
                     {plant.dateObtained &&
-                        <p>
+                        <p className='text-right'>
                             had since {plant.dateObtained.toLocaleDateString()}
                         </p>
                     }
