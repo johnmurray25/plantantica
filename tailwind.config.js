@@ -23,7 +23,7 @@ module.exports = {
         'dry': '#d1b979'
       },
       backgroundImage: {
-        'tree': 'url(/vector/Tree-only.svg)',
+        'flowers': 'url(/flowers-in-glass.jpg)',
       }
     },
   },

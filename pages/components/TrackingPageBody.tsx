@@ -1,11 +1,8 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import Plant from '../../domain/Plant'
-import TextField from './TextField';
-import TrackingCard from './TrackingCard';
 import MiniTrackingCard from './MiniTrackingCard';
 import { IoList } from '@react-icons/all-files/io5/IoList';
 import { IoGrid } from '@react-icons/all-files/io5/IoGrid';
-import { IoSearch } from '@react-icons/all-files/io5/IoSearch';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import db from '../../firebase/db';
@@ -14,6 +11,7 @@ import { waterPlantInDB } from '../../service/PlantService';
 import PlantContext from '../../context/PlantContext';
 import MyPlants from './MyPlants';
 import { AnimatePresence, motion } from 'framer-motion';
+import ReactLoading from "react-loading";
 
 const SM_WIDTH = 420
 
@@ -134,13 +132,17 @@ const TrackingPageBody = (props: Props) => {
     useEffect(() => {
         if (!columns) {
             getViewPreference(uid).then(setColumns)
+                .catch(e => {
+                    console.error(e) 
+                    setColumns(1);
+                })
         }
         filterPlants()
     }, [columns, filterPlants, uid])
 
     return (
         <>
-            <div className={`flex px-2 py-8 items-center w-full
+            <div className={`flex px-2 pt-2 items-center w-full
                     ${width <= 650 ? 'justify-between' : 'justify-start'}`}
             >
                 {/* {width <= 650 && */}
@@ -200,14 +202,17 @@ const TrackingPageBody = (props: Props) => {
                     <div className='text-2xl text-green-400 active:text-white '>+</div>
                 </button>
             </div>
-            {columns === 1 ?
-                <MyPlants plants={filteredPlants} waterPlant={handleWaterPlant} />
+            {columns == null ?
+                <ReactLoading type="bars" color="currentColor" />
                 :
-                <motion.div className={`grid grid-cols-2 gap-1`} style={{ width: '100vw' }}>
-                    <AnimatePresence>
-                        {trackingCards}
-                    </AnimatePresence>
-                </motion.div>
+                columns === 1 ?
+                    <MyPlants plants={filteredPlants} waterPlant={handleWaterPlant} />
+                    :
+                    <motion.div className={`grid grid-cols-2 gap-1`} style={{ width: '100vw' }}>
+                        <AnimatePresence>
+                            {trackingCards}
+                        </AnimatePresence>
+                    </motion.div>
             }
             {/* {width <= 650 ?
                 <motion.div className={`grid grid-cols-${columns || 1} gap-1`} style={{ width: '100vw' }}>

@@ -43,8 +43,12 @@ const getWaterNext = (date: Date): string => {
     if (distance.localeCompare("1 day ago") === 0) {
         return "yesterday"
     }
+    
+    if (distance.localeCompare("in 1 day") === 0) {
+        return "tomorrow";
+    }
 
-    if (!distance.includes("hours")) {
+    if (!distance.includes("hour") && !distance.includes("minute")) {
         return distance
     }
 
@@ -101,7 +105,7 @@ const TrackingCard2 = (props: Props) => {
                         src={plant.imageUrl}
                         alt={`Photo of ${plant.species}`}
                         sizes="200px"
-                        className='object-cover max-h-[370px]'
+                        className='object-cover max-h-[300px]'
                     />
                 }
             </div>
@@ -150,7 +154,7 @@ const TrackingCard2 = (props: Props) => {
                     </div>
                 </div>
                 <div className='flex-col justify-between '>
-                    <div className={`w-full p-1 py-3  text-primary bg-gray-100 bg-opacity-30  text-opacity-70 pl-3 flex justify-between items-center relative `}>
+                    <div className={`w-full p-1 py-3  text-primary bg-gray-100 bg-opacity-30 shadow-sm text-opacity-70 pl-3 flex justify-between items-center relative `}>
                         {/* Water dates */}
                         <div className={`text-sm px-1 `}>
                             Last watered {plant.dateLastWatered.toLocaleDateString()}
@@ -213,14 +217,14 @@ const TrackingCard2 = (props: Props) => {
                                         </button>
                                     </div>
                                 }
-                                <div className='px-4 py-4 '>
+                                <div className='px-4 '>
                                     <div className=" flex justify-center pr-4 py-1 text-lg">
                                         <div>
                                             <div className='futura text-sm flex items-center text-primary text-opacity-60'>
                                                 <>
                                                     Water every&nbsp;
                                                 </>
-                                                <div className="bg-gray-100 bg-opacity-30 shadow-sm rounded-full pt-1">
+                                                <div className="bg-gray-100bg-opacity-30 //shadow-sm rounded-full pt-1">
                                                     <button
                                                         className="bg-green-700 bg-opacity-70 text-white text-opacity-70 hover:bg-lime-700 transition-colors text-2xl font-bold rounded-full h-fit px-1 mx-2 "
                                                         style={{ lineHeight: 0.7 }}
@@ -238,7 +242,7 @@ const TrackingCard2 = (props: Props) => {
                                                             -
                                                         </div>
                                                     </button>
-                                                    <span className=' text-primary text-opacity-90 text'>
+                                                    <span className=' text-primary text-opacity-80 text-lg'>
                                                         {plant.daysBetweenWatering}
                                                     </span>
                                                     <button
@@ -278,9 +282,9 @@ const TrackingCard2 = (props: Props) => {
                                             &nbsp;
                                             {showInstructions ? <span>&nbsp;&darr;</span> : <span>&rarr;</span>}
                                         </button> */}
-                                        <div className="flex justify-end items-center text-sm mt-4">
+                                        <div className="flex justify-end items-center text-sm mt-1">
                                             <button
-                                                className="futura mr-2 py-0.5 px-4 mb-6 mt-3 text-primary bg-tertiary shadow-sm rounded-full text-lg //font-bold
+                                                className="futura mr-2 py-0.5 px-4 mt-3 text-primary bg-gray-100 bg-opacity-30 shadow-sm rounded-full text-lg //font-bold
                                 hover:bg-primary hover:bg-opacity-20 hover:text-green-100 transition-colors"
                                                 onClick={() => setShowUpdates(!showUpdates)}
                                             >
@@ -288,7 +292,7 @@ const TrackingCard2 = (props: Props) => {
                                             </button>
                                             <button
                                                 className="bg-green-700 hover:bg-lime-600 bg-opacity-80 text-gray-200 text-opacity-80 text-2xl shadow-sm rounded-full h-fit //py-0.5 px-2 
-                                 //hover:bg-opacity-60 //hover:text-green-900 mb-6 mt-3 transition-colors"
+                                 //hover:bg-opacity-60 //hover:text-green-900  mt-3 transition-colors"
                                                 onClick={() => props.goToAddUpdateScreen(plant?.id)}
                                             >
                                                 +
@@ -296,12 +300,12 @@ const TrackingCard2 = (props: Props) => {
                                         </div>
                                     </div>
                                     {/* Instructions: */}
-                                    <div
+                                    {/* <div
                                         // layout
                                         // animate={{ height: (!showInstructions || !height ? "0" : height / 15) || "auto" }}
                                         className={`text-primary text-opacity-80 mb-2 py-2 pr-40 ${showInstructions ? 'opacity-100' : 'opacity-0 h-0'} transition-all ease-linear duration-100`}>
                                         {plant?.careInstructions}
-                                    </div>
+                                    </div> */}
                                     {/* Updates: */}
                                     {showUpdates && plant &&
                                         <div className="w-full">
@@ -325,26 +329,28 @@ const TrackingCard2 = (props: Props) => {
                                         </div>
                                     }
                                     <button
-                                        className="w-full bg-gray-100 bg-opacity-30 flex justify-center items-center text-primary text-opacity-60 text-xl py-1 mt-2"
+                                        className="w-full  flex justify-center items-center text-primary text-opacity-60 text-xl py-1 mt-2"
                                         onClick={() => setExpanded(false)}
                                     >
-                                        <IoChevronUp fill='currentColor' />
+                                        <div className='bg-gray-100 bg-opacity-30 px-6 rounded-t-full border-t-[3px] border-secondary border-opacity-70'>
+                                            <IoChevronUp fill='currentColor' />
+                                        </div>
                                     </button>
                                 </div>
                             </>
                             :
                             <button
-                                className="w-full bg-secondary bg-opacity-70 flex justify-center items-center text-primary text-opacity-60 text-xl pb-1"
+                                className="w-full  flex justify-center items-center text-primary text-opacity-60 text-xl pb-1"
                                 onClick={() => setExpanded(true)}
                             >
-                                <div className='bg-[#D5DDD1] py-0.5 px-6 mb-2 rounded-b-full border-t-[3px] border-secondary border-opacity-70'>
+                                <div className='bg-gray-100 bg-opacity-30 px-6 rounded-b-full border-t-[3px] border-secondary border-opacity-70'>
                                     <IoChevronDown fill='currentColor' />
                                 </div>
                             </button>
                         }
                     </ResizablePanel>
-                </div>
-            </div>
+                </div >
+            </div >
         </div >
     )
 }

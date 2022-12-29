@@ -19,6 +19,10 @@ body {
   font-family: 'Futura', sans-serif;
 }
 
+.unbounded {
+  font-family: 'Unbounded', sans-serif;
+}
+
 a {
   color: inherit;
   text-decoration: none;

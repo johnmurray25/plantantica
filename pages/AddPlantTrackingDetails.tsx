@@ -125,10 +125,11 @@ const AddPlantTrackingDetails = (props: Props) => {
     const newPlant = { species, dateLastWatered, dateObtained, dateToWaterNext, daysBetweenWatering, dateLastFed, dateToFeedNext, lightRequired, savedFileName, careInstructions, downloadUrl }
     if (plant) {
       // update
-      const updatedPlant = { ...newPlant, id: plant.id }
+      const updatedPlant = { ...newPlant, id: plant.id, imageUrl: downloadUrl }
       savePlantToDB(true, updatedPlant, user.uid);
       const updatedPlants = plants.filter(p => p.id !== plant.id)
       updatedPlants.push(updatedPlant)
+      setPlants(updatedPlants)
     } 
     else {
       // inserts
@@ -176,7 +177,7 @@ const AddPlantTrackingDetails = (props: Props) => {
   }
 
   return (
-    <div className='antialiased text-lg text-stone-100 bg-brandGreen ' >
+    <div className='antialiased text-lg text-stone-100 bg-brandGreen min-h-screen' >
       {loadingStatus ?
         <div className='flex justify-center items-center pt-60' >
           {loadingStatus} <ReactLoading type='bars' color="#FFF7ED" />

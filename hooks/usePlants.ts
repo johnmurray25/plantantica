@@ -23,15 +23,12 @@ const usePlants = () => {
         }
         setIsLoading(true);
         try {
-            console.log("Fetching plants")
             const res = await getPlants(user.uid)
             setPlants(res)
         } catch (e) {
             console.error(e)
-            console.error("Failed to load plants")
         } finally {
             setIsLoading(false)
-            // console.log("finished loading plants")
         }
     }, [isLoading, plants, user])
 
