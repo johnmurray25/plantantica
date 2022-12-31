@@ -1,20 +1,14 @@
 import React, { useEffect } from "react";
-import Link from "next/link";
-import { IoPeople } from '@react-icons/all-files/io5/IoPeople';
-import { IoChevronForward } from '@react-icons/all-files/io5/IoChevronForward';
 
-import styles from "../styles/Home.module.css";
-import NavBar from "./components/NavBar";
 import { useRouter } from "next/router";
-import TreeLogo from "./components/TreeLogo";
 import useAuth from "../hooks/useAuth";
 import useWindowDimensions from "../hooks/useWindowDimensions";
-import HeroDesktop from "./components/HeroDesktop";
+import HomePage from "./components/HomePage";
+import LandingPage from "./components/LandingPage";
 
 export default function Home() {
 
-    const { width } = useWindowDimensions()
-    const { dBUser } = useAuth()
+    const { dBUser, user } = useAuth()
     const router = useRouter()
 
     useEffect(() => {
@@ -23,12 +17,20 @@ export default function Home() {
         }
     }, [dBUser, router])
 
-    return (
-        <HeroDesktop />
+    return user ?
+        <HomePage />
+        :
+        <LandingPage />
+    }
+    
+    // export async function getStaticProps() {
+        //     return { props: { isStatic: true } }
+        // }
+        
         // <div className={`antialiased text-blue-50 font-light
         //         ${width <= 420 ? '' : 'bg-repeat-space'}`} >
         //     <NavBar hideLogo />
-
+    
         //     <main className="pt-36 flex flex-col items-center w-full">
         //         {/* <div className="m-0 mb-2 p-6 px-12 text-left text-white w-fit bg-gray-200 bg-opacity-10 shadow-md ">
         //             <h3 className=" -translate-x-1 leading-9 text-2xl">
@@ -56,7 +58,7 @@ export default function Home() {
         //                 {/* {width <= 420 && <TreeLogo width={125} height={200} />} */}
         //             </div>
         //         </div>
-
+    
         //         <div className="flex items-center flex-col med:flex-row mt-8 med:mt-16 w-fit ">
         //             <button
         //                 className="w-full bg-primary bg-opacity-80 hover:bg-opacity-40  p-4 px-10 mb-12 shadow rounded-md border-b border-r border-stone-500 border-opacity-25 transition-colors"
@@ -72,7 +74,7 @@ export default function Home() {
         //                     My plants&apos; maintenance
         //                 </p>
         //             </button>
-
+    
         //             <button
         //                 className="w-full px-8 bg-opacity-80 bg-primary hover:bg-opacity-40 //hover:bg-gradient-to-tl p-4 mb-12 shadow rounded-md border-b border-r border-stone-500 border-opacity-25"
         //                 style={{ transition: 'background-color 0.3s ease', fontSize: "2.1rem" }}
@@ -89,16 +91,10 @@ export default function Home() {
         //             </button>
         //         </div>
         //     </main>
-
+    
         //     <footer className={styles.footer}>
         //         {/* <div className="text-right text-lightYellow text-sm pr-6 pb-2 pt-36">
         //             An app by John Murray
         //         </div> */}
         //     </footer>
         // </div>
-    );
-}
-
-// export async function getStaticProps() {
-//     return { props: { isStatic: true } }
-// }

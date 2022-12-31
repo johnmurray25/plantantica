@@ -50,7 +50,7 @@ const MyPlants = (props: Props) => {
     }
 
     return plants && (
-        <div className='w-full items-center border-t bg-secondaryDark bg-opacity-40 border-gray-400 border-opacity-50 pt-4'>
+        <div className='w-full items-center border-t bg-secondary bg-opacity-60 border-gray-400 border-opacity-50 pt-4'>
             <div className='max-w-[1200px] m-auto'>
                 {plantsToWater?.length > 0 ?
                     <>

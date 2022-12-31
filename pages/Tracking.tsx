@@ -9,6 +9,7 @@ import usePlants from "../hooks/usePlants";
 import useAuthRedirect from "../hooks/useAuthRedirect";
 import useAuth from "../hooks/useAuth";
 import PlantContext from "../context/PlantContext";
+import NavBar2 from "./components/NavBar2";
 
 const Home = () => {
 
@@ -19,8 +20,8 @@ const Home = () => {
   const { user } = useAuth()
 
   return (
-    <div className='text-gray-100 min-w-screen bg-gray-100 bg-opacity-20' >
-        <NavBar />
+    <div className='text-gray-100 min-w-screen bg-[#A3A9A3]' >
+        <NavBar2 />
 
         <div className='min-h-screen p-4 px-0 pt-28 flex flex-col items-center m-auto mt-0'>
           {plants && plants.length > 0 ?
