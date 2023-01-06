@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import Image from 'next/image';
 
-import { IoPencilOutline } from '@react-icons/all-files/io5/IoPencilOutline';
+import { IoEllipsisHorizontal } from '@react-icons/all-files/io5/IoEllipsisHorizontal';
 import { IoArrowUndo } from '@react-icons/all-files/io5/IoArrowUndo';
 
 import NavBar from './components/NavBar';
@@ -10,7 +10,6 @@ import FileInput from './components/FileInput';
 import { compressImage, deleteImage, updateProfilePicture, uploadFile } from '../service/FileService';
 import { useRouter } from 'next/router';
 import { saveDisplayName, saveUsername, unsubscribeFromDailyEmails, subscribeToDailyEmails, deleteUser } from '../service/UserService';
-import TextField from './components/TextField';
 import TextInput from './components/TextInput';
 import useAuthRedirect from '../hooks/useAuthRedirect';
 import { doc, setDoc } from 'firebase/firestore';
@@ -20,28 +19,36 @@ import { User } from 'firebase/auth';
 import { signOut } from '../firebase/auth';
 import { getDownloadURL, ref } from 'firebase/storage';
 import storage from '../firebase/storage';
+import Container from './components/BlurredFlowerContainer';
+import AddUsernamePrompt from './components/AddUsernamePrompt';
+import PlantContext from '../context/PlantContext';
+import ddStyles from "../styles/dropdown.module.css";
 
-const deleteAccount = (user: User) => {
-    if (confirm('Are you sure you want to delete your account?')
-        && confirm('Are you really sure you want to delete your account?')) {
-        deleteUser(user);
-        signOut();
-    }
-}
 
 function Home() {
 
     useAuthRedirect()
 
     const { user, dBUser, setDBUser } = useAuth();
+    const { plants, setPlants } = useContext(PlantContext)
     const [profPicUrl, setProfPicUrl] = useState("")
     const [shouldAddUsername, setShouldAddUsername] = useState(false)
     const [inputUsername, setInputUsername] = useState('')
     const [inputDisplayName, setInputDisplayName] = useState('')
     const [editMode, setEditMode] = useState(false)
     const [receiveDailyEmails, setReceiveDailyEmails] = useState(true);
+    const [showMenu, setShowMenu] = useState(false)
 
     const router = useRouter()
+
+    const deleteAccount = (user: User) => {
+        if (confirm('Are you sure you want to delete your account?')
+            && confirm('Are you really sure you want to delete your account?')) {
+            deleteUser(user)
+                .then(() => setPlants([]))
+            signOut();
+        }
+    }
 
     const handleSignOut = () => {
         if (confirm('Sign out?')) {
@@ -115,131 +122,161 @@ function Home() {
     }
 
     return (
-        <div className=' text-stone-200 min-h-screen text-left'>
-            {
-                shouldAddUsername && dBUser ?
-                    <div className='text-center'>
-                        <h2
-                            className='italic '
-                            style={{ fontSize: '3.75rem', }}
-                        >
-                            Welcome
-                        </h2>
-                        <p
-                            className='text-2xl p-3'
-                            style={{ lineHeight: 2 }}
-                        >
-                            Thank you for joining Plantantica.    <br />
-                            Please add a username:
-                        </p>
-                        <div className='flex justify-center'>
-                            <TextField
-                                value={inputUsername}
-                                onChange={setInputUsername}
-                                placeholder='Add username...'
-                                autoFocus={true}
-                                name='inputUsername'
-                                type='text'
-                                width={48}
-                            />
-                            <a
-                                className='cursor-pointer bg-[#53984D] text-stone-200 rounded justify-center h-12 w-8 text-center content-center'
-                                onClick={() => handleSaveUsername(true)}
-                            >
-                                &rarr;
-                            </a>
-                        </div>
-                    </div>
+        <Container>
+            <div className='min-h-screen h-full w-full '>
+                {shouldAddUsername && dBUser ?
+                    <AddUsernamePrompt />
                     :
                     user &&
-                    <div>
-                        <NavBar hideUser />
-                        <div className='pt-24 relative med:w-3/6 m-auto text-center justify-center pb-14 px-6  '>
+                    <div className=''>
+                        <NavBar hideSidebar />
+                        <div className='relative sm:w-3/6 text-center pb-14 px-6  m-auto //max-w-[375px]'>
                             {editMode ?
-                                <button
-                                    className='rounded-full border-darkYellow m-auto mr-4 mb-5 med:mr-64 lg:mr-80 self-center flex items-center border w-fit p-3  hover:bg-darkYellow active:bg-darkYellow'
-                                    style={{ transition: "background-color 0.3s ease-out" }}
-                                    onClick={() => setEditMode(false)}
-                                >
-                                    <IoArrowUndo className='text-xl' />
-                                </button>
-                                :
-                                <button
-                                    className='rounded-full border-primary hover:text-zinc-200 m-auto mr-4 mb-5 mt-8  text-primary med:mr-64 lg:mr-80 self-center flex items-center border border-stone-100s w-fit p-2 hover:bg-darkYellow active:bg-darkYellow'
-                                    style={{ transition: "background-color 0.3s ease-out" }}
-                                    onClick={() => setEditMode(true)}
-                                >
-                                    <IoPencilOutline className='text-3xl' />
-                                </button>
-                            }
-                            {profPicUrl ?
-                                <div className='relative w-fit flex justify-center m-auto'>
-                                    <Image
-                                        src={profPicUrl}
-                                        alt='Profile picture'
-                                        width={200}
-                                        height={220}
-                                        className="object-cover object-center"
-                                    />
-                                    {editMode &&
-                                        <a className='absolute top-2 right-2 bg-stone-100 text-brandGreen cursor-pointer border border-red-700 rounded mb-24 p-1 text-xs'
-                                            onClick={onRemoveFile} >
-                                            &#10060;
-                                        </a>
-                                    }
+                                <div className='flex justify-end w-full'>
+                                    <button
+                                        className='bg-[#D1DAC9] bg-opacity-10 hover:bg-opacity-100 py-1 px-6 text-xl rounded-full  text-primary  '
+                                        style={{ transition: "background-color 0.3s ease-out" }}
+                                        onClick={() => setEditMode(false)}
+                                    >
+                                        <IoArrowUndo className='text-xl' />
+                                    </button>
                                 </div>
                                 :
-                                <div className='relative m-auto pt-6 h-32 w-32 rounded-3xl bg-stone-100 '>
-                                    <div className='absolute flex items-center cursor-pointer mt-2 top-0 right-3 text-brandGreen text-xs'>
-                                        <FileInput
-                                            onAttachFile={async (e: { target: { files: File[]; }; }) => {
-                                                let f: File = e.target.files[0]
-                                                let compressedImage = await compressImage(f)
-                                                setProfPicUrl(URL.createObjectURL(f))
-                                                const fileName = await uploadFile(compressedImage, user)
-                                                const url = await getDownloadURL(ref(storage, `${user.uid}/${fileName}`))
-                                                updateProfilePicture(fileName, url, user.uid)
-                                            }}
-                                            onRemoveFile={onRemoveFile}
-                                            message='Add picture &#10133;'
-                                        />
+                                <div className='flex justify-end pr-4 '>
+                                    <div className={ddStyles.dropdown + " border border-primary px-4 py-2 mb-4 "}>
+                                        <IoEllipsisHorizontal className='text-primary'/>
+                                        <div className={ddStyles.dropdownContent + " bg-[#aaad8c] -translate-x-3/4 rounded-lg bg-opacity-80 backdrop-blur-lg"}>
+                                            <button id="edit_button"
+                                                className='hover:bg-gray-100 hover:bg-opacity-20 w-full px-2'
+                                                onClick={() => { setEditMode(true) }}
+                                            >
+                                                Edit profile
+                                            </button>
+                                            <button id="signout_button"
+                                                className='hover:bg-gray-100 hover:bg-opacity-20 w-full px-2'
+                                                onClick={handleSignOut}
+                                            >
+                                                Sign out
+                                            </button>
+                                            <button id="delete_account_button"
+                                                className='hover:bg-gray-100 hover:bg-opacity-20 w-full px-2'
+                                                onClick={() => { deleteAccount(user) }}
+                                            >
+                                                Delete account
+                                            </button>
+                                            <div className='w-full border border-primary border-opacity-20'></div>
+                                            <div className='text-center leading-tight p-2'>
+                                                Receive daily emails if my plants are thirsty:
+                                                <div className="flex text-left justify-end pt-3">
+                                                    <label className='absolute w-14 h-8 '>
+                                                        <input type="checkbox"
+                                                            checked={receiveDailyEmails}
+                                                            onClick={() => {
+                                                                if (!(user && dBUser)) {
+                                                                    return;
+                                                                }
+                                                                // unsubscribe
+                                                                if (receiveDailyEmails) {
+                                                                    unsubscribeFromDailyEmails(user.uid)
+                                                                        .then(() => setReceiveDailyEmails(false))
+                                                                    console.log('Unsubscribed from daily emails')
+                                                                }
+                                                                // subscribe
+                                                                else {
+                                                                    subscribeToDailyEmails(user.uid)
+                                                                        .then(() => setReceiveDailyEmails(true))
+                                                                    console.log('Subscribed to daily emails')
+                                                                }
+                                                            }}
+                                                        />
+                                                        <span className={`${toggleStyles.slider} ${toggleStyles.round}`}></span>
+                                                    </label>
+                                                </div>
+                                                <div className='pt-2 font-bold text-left text-gray-100 text-opacity-80'>
+                                                    {receiveDailyEmails ? "Yes" : "No"}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             }
-                            <div className='m-10 mb-3 text-primary' >
-                                {editMode ?
-                                    <div className='m-auto flex justify-center'>
-                                        <TextInput
-                                            value={inputDisplayName}
-                                            onChange={setInputDisplayName}
-                                            onSubmit={() => {
-                                                // Save display name to DB
-                                                saveDisplayName(user.uid, inputDisplayName)
-                                                    .then(() => {
-                                                        setDBUser({ ...dBUser, displayName: inputDisplayName })
-                                                        setEditMode(false)
-                                                    })
-                                            }}
-                                            width={10}
-                                            placeholder={dBUser?.displayName ? dBUser.displayName : user?.displayName}
-                                            autoFocus={false}
-                                            name='editDisplayName'
-                                            type='text'
+                            <div id="menu_container"
+                                className={`absolute top-0 right-10 rounded-tr rounded-lg  bg-[#D1DAC9] bg-opacity-70 hover:bg-opacity-100 w-24 h-64 backdrop-blur-sm
+                                ${showMenu ? "opacity-100 z-50" : "opacity-0 -z-50"} transition-opacity`}
+                            >
+
+                            </div>
+                            <div className="flex justify-start">
+                                {profPicUrl ?
+                                    <div className='rounded-full h-32 w-32 border-2 border-gray-100 relative'>
+                                        <Image
+                                            src={profPicUrl}
+                                            alt='Profile picture'
+                                            fill
+                                            className="object-cover object-center rounded-full"
                                         />
+                                        {editMode &&
+                                            <a className='absolute -top-1 -right-1 bg-gray-300 text-red-600 font-bold text-lg cursor-pointer rounded mb-24 p-1'
+                                                onClick={onRemoveFile} >
+                                                X
+                                            </a>
+                                        }
                                     </div>
                                     :
-                                    <h2 className='text-2xl ' >
-                                        {dBUser?.displayName ? dBUser.displayName : user?.displayName}
-                                    </h2>
+                                    <div className='relative m-auto h-32 w-32 rounded-3xl bg-stone-100 '>
+                                        <div className='absolute flex items-center cursor-pointer mt-2 top-0 right-3 text-brandGreen text-xs'>
+                                            <FileInput
+                                                onAttachFile={async (e: { target: { files: File[]; }; }) => {
+                                                    let f: File = e.target.files[0]
+                                                    let compressedImage = await compressImage(f)
+                                                    setProfPicUrl(URL.createObjectURL(f))
+                                                    const fileName = await uploadFile(compressedImage, user)
+                                                    const url = await getDownloadURL(ref(storage, `${user.uid}/${fileName}`))
+                                                    updateProfilePicture(fileName, url, user.uid)
+                                                }}
+                                                onRemoveFile={onRemoveFile}
+                                                message='Add picture &#10133;'
+                                            />
+                                        </div>
+                                    </div>
                                 }
-                            </div>
-                            <div className=''>
-                                <h3 className=' mb-8 pt-0 flex justify-center items-center text-xl translate-y-4 '>
-                                    <p className='text-primary text-opacity-80 text-xs font-bold'>
-                                        USERNAME:
-                                    </p>
+                                <div className='//-translate-y-3'>
+                                    <div className='text-primary text-opacity-80 font-bold text-xl text-left'>
+                                        {editMode ?
+                                            <div className='w-full pl-6'>
+                                                <label className='text-sm uppercase pl-3'>
+                                                    Your name
+                                                </label>
+                                                <TextInput
+                                                    value={inputDisplayName}
+                                                    onChange={setInputDisplayName}
+                                                    onSubmit={() => {
+                                                        // Save display name to DB
+                                                        saveDisplayName(user.uid, inputDisplayName)
+                                                            .then(() => {
+                                                                setDBUser({ ...dBUser, displayName: inputDisplayName })
+                                                                setEditMode(false)
+                                                            })
+                                                    }}
+                                                    width={10}
+                                                    placeholder={dBUser?.displayName ? dBUser.displayName : user?.displayName || ""}
+                                                    autoFocus={false}
+                                                    name='editDisplayName'
+                                                    type='text'
+                                                />
+                                            </div>
+                                            :
+                                            <h2>
+                                                {dBUser?.displayName ? dBUser.displayName : user?.displayName}
+                                            </h2>
+                                        }
+                                    </div>
+                                    {/* username */}
                                     {editMode ?
-                                        <div className='text-sm p-3 flex items-center'>
+                                        <div className='text-sm p-3 text-left font-bold'>
+                                            <label className='text-sm uppercase pl-3'>
+                                                Username
+                                            </label>
                                             <TextInput
                                                 value={inputUsername}
                                                 onChange={setInputUsername}
@@ -251,90 +288,65 @@ function Home() {
                                                         })
                                                 }}
                                                 width={10}
-                                                placeholder={`${dBUser?.username}`}
+                                                placeholder={`${dBUser?.username || ""}`}
                                                 autoFocus={false}
                                                 name='editUsername'
                                                 type='text'
                                             />
                                         </div>
                                         :
-                                        <p className=' p-3 pl-10 rounded-lg m-2 ml-0 text-stone-100 '>
+                                        <p className='text-left p-3 rounded-lg m-2 ml-0 font-bold text-2xl text-gray-100'>
                                             {dBUser && `@${dBUser.username?.toLocaleUpperCase()}`}
                                         </p>
                                     }
-                                </h3>
-                                <h3 className='text-lg flex items-center justify-center w-full text-[#29bc29]'>
-                                    {/* <p className='text-primary text-opacity-80 text-xs font-bold pr-8'>
-                                        EMAIL:
-                                    </p> */}
-                                    <p className='italic pl-8 text-primary text-opacity-50'>
-                                        {user.email}
+                                    {/* <p className='italic  text-primary text-opacity-80'>
+                                    {user.email}
+                                </p> */}
+                                    <p className='text-right text-primary text-opacity-80 mt-4'>
+                                        Member since June 2021
                                     </p>
-                                </h3>
-                            </div>
-                            {/* <h3 className='pt-10 text-[#29bc29]'>
-                                Tracking {dBUser?.plantTrackingDetails?.length || 0} plants
-                            </h3> */}
-                            <div className='mt-14 leading-8 text-gray-100 text-opacity-90'>
-                                Receive daily emails if my plants need water:
-                                <div className='pt-1 flex justify-center '>
-                                    <div className="relative mx-4 w-fit">
-                                        <label className='absolute w-14 h-8 //-translate-y-28'>
-                                            <input type="checkbox"
-                                                checked={receiveDailyEmails}
-                                                onClick={() => {
-                                                    if (!(user && dBUser)) {
-                                                        return;
-                                                    }
-                                                    // unsubscribe
-                                                    if (receiveDailyEmails) {
-                                                        unsubscribeFromDailyEmails(user.uid)
-                                                            .then(() => setReceiveDailyEmails(false))
-                                                        console.log('Unsubscribed from daily emails')
-                                                    }
-                                                    // subscribe
-                                                    else {
-                                                        subscribeToDailyEmails(user.uid)
-                                                            .then(() => setReceiveDailyEmails(true))
-                                                        console.log('Subscribed to daily emails')
-                                                    }
-                                                }}
-                                            />
-                                            <span className={`${toggleStyles.slider} ${toggleStyles.round}`}></span>
-                                        </label>
-                                    </div>
-                                    <div className='translate-x-16 transition-opacity'>
-                                        {receiveDailyEmails ? "YES" : "NO"}
-                                    </div>
                                 </div>
                             </div>
-                            <div className="flex justify-evenly text-center pb-0 pt-10 w-full">
-                                <button
-                                    className='text-primary hover:text-gray-100 text-opacity-80 font-light border-primary hover:bg-primary active:bg-[#29bc29]
-                                     py-4 px-7 mx-2  border  '
-                                    style={{
-                                        borderRadius: "0 222px",
-                                        transition: "background-color 0.5s ease"
-                                    }}
-                                    onClick={handleSignOut}
+                            <section id="plant_info"
+                                className='mt-8 max-w-[375px] bg-[#D9D9D9]bg-opacity-10 m-auto'
+                            >
+                                <div className='flex justify-between text-gray-100 text-[20px] text-opacity-75 font-bold px-4'>
+                                    <h2 className='text-left'>
+                                        Tracking {plants?.length} plants
+                                    </h2>
+                                    <button
+                                        className='text-2xl'
+                                        onClick={() => { router.push("/Tracking") }}
+                                    >
+                                        &rarr;
+                                    </button>
+                                </div>
+                                <div id="plants_horizontal"
+                                    className='flex overflow-auto sm:w-[600px] z-40 '
                                 >
-                                    Sign out
-                                </button>
-                                <button
-                                    className='text-red-800 text-opacity-80 font-light hover:bg-red-800 active:bg-red-800 hover:text-gray-100 border border-red-800 py-4 px-7 mx-2'
-                                    style={{
-                                        borderRadius: "222px 0",
-                                        transition: "background-color 0.5s ease"
-                                    }}
-                                    onClick={() => deleteAccount(user)}
-                                >
-                                    Delete account
-                                </button>
-                            </div>
+                                    {plants?.map(p => {
+                                        return (
+                                            <div key={p.id} className='w-[120px] h-fit relative flex-col m-2'>
+                                                <Image
+                                                    src={p.imageUrl}
+                                                    alt={p.species}
+                                                    width={120}
+                                                    height={120}
+                                                    className="object-cover h-[120px] w-full"
+                                                />
+                                                <div className=' w-[120px] whitespace-normal text-xs text-gray-100 text-opacity-80 '>
+                                                    {p.species}
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            </section>
                         </div>
                     </div>
-            }
-        </div>
+                }
+            </div>
+        </Container>
     )
 }
 

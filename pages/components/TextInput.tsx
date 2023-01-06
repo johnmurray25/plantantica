@@ -1,5 +1,5 @@
 import React from 'react'
-import TextField from './TextField'
+import TextField from './TextField2'
 
 interface Props {
     value: string;
@@ -20,9 +20,7 @@ const TextInput: React.FC<Props> = (props) => {
                 onChange={props.onChange}
                 placeholder={props.placeholder}
                 autoFocus={props.autoFocus}
-                name={props.name}
                 type={props.type}
-                width={props.width}
             />
             <button
                 className='bg-lime-700 text-stone-200 hover:bg-lime-400 hover:text-brandGreen active:bg-lime-400 active:text-brandGreen focus:bg-lime-400 focus:text-brandGreen rounded-sm p-1 justify-center 

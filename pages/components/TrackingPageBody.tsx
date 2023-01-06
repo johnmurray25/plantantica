@@ -142,10 +142,9 @@ const TrackingPageBody = (props: Props) => {
 
     return (
         <>
-            <div className={`flex px-2 pt-2 items-center w-full
+            {/* <div className={`flex px-2 items-center w-full
                     ${width <= 650 ? 'justify-between' : 'justify-start'}`}
             >
-                {/* {width <= 650 && */}
                 <div className="flex sm:ml-8">
                     <button className={`border p-3 m-2 hover:bg-primary hover:text-gray-100 border-gray-600 cursor-pointer
                                 ${columns === 1 ? 'bg-primary border-primary text-gray-100' : "text-primary"}`}
@@ -167,12 +166,11 @@ const TrackingPageBody = (props: Props) => {
                     >
                         <IoGrid />
                     </button>
-                </div>
-                {/* } */}
-            </div>
-            <div className="text-sm flex justify-between items-center pr-2 pl-2 pb-1 pt-6 w-full max-w-[1200px]">
-                <p className='text-primary text-opacity-80'>
-                    You are tracking {plants?.length} plants
+            </div> 
+                    */}
+            <div className="text-sm flex justify-between items-center pr-2 pl-2 pb-1 pt-2 w-full max-w-[1200px]">
+                <p className='inter text-lg'>
+                    You&apos;re tracking {plants?.length} plants
                 </p>
                 {/* <div className="sticky top-0">
                     <div className={`flex justify-end items-center mb-2 w-fit`}>
@@ -192,12 +190,12 @@ const TrackingPageBody = (props: Props) => {
                     </div>
                 </div> */}
                 <button
-                    className="flex items-center justify-between py-3 px-8 mb-4 //helvetica bg-primary hover:text-brandGreen hover:bg-lime-300 p-2 "
-                    style={{ borderRadius: '222px 0px', transition: 'background-color 0.7s ease' }}
+                    className="flex items-center text-gray-100 bg-opacity-70 backdrop-blur-sm justify-between py-3 px-8  bg-primary hover:bg-primary p-2 transition-colors "
+                    style={{ borderRadius: '222px 0px'}}
                     onClick={() => router.push("/AddPlantTrackingDetails")}
                 >
                     <div>
-                        Add a plant &nbsp;&nbsp;
+                        Add a plant&nbsp;
                     </div>
                     <div className='text-2xl text-green-400 active:text-white '>+</div>
                 </button>

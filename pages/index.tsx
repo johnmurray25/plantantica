@@ -1,14 +1,14 @@
 import React, { useEffect } from "react";
-
 import { useRouter } from "next/router";
+
 import useAuth from "../hooks/useAuth";
-import useWindowDimensions from "../hooks/useWindowDimensions";
 import HomePage from "./components/HomePage";
 import LandingPage from "./components/LandingPage";
+import LoadingScreen from "./components/LoadingScreen";
 
 export default function Home() {
 
-    const { dBUser, user } = useAuth()
+    const { dBUser, user, initialized } = useAuth()
     const router = useRouter()
 
     useEffect(() => {
@@ -17,10 +17,13 @@ export default function Home() {
         }
     }, [dBUser, router])
 
-    return user ?
-        <HomePage />
+    return !initialized ?
+        <LoadingScreen />
         :
-        <LandingPage />
+        user ?
+            <HomePage />
+            :
+            <LandingPage />
     }
     
     // export async function getStaticProps() {

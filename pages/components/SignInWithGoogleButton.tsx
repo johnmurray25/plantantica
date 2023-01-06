@@ -1,26 +1,11 @@
-import { GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth';
 import React from 'react'
-import auth from '../../firebase/auth';
-import useWindowDimensions from '../../hooks/useWindowDimensions';
-
-const googleAuthProvider = new GoogleAuthProvider();
+import useAuth from '../../hooks/useAuth';
 
 const SignInWithGoogleButton = () => {
-    const { width } = useWindowDimensions();
-
-    const signInWithGoogle = async () => {
-        // Log in/Sign up with Firebase Auth 
-        try {
-            width <= 650 ?
-                signInWithRedirect(auth, googleAuthProvider)
-                : signInWithPopup(auth, googleAuthProvider)
-        } catch (e) {
-            console.error(e)
-        }
-    }
+    const { signInWithGoogle } = useAuth();
 
     return (
-        <button className='flex flex-row justify-evenly items-center bg-white text-[#757575] font-sans font-semibold px-2 py-3 m-2 text-sm  w-52 rounded-sm mt-6'
+        <button className='flex flex-row justify-evenly items-center bg-white text-[#757575] font-sans font-semibold px-2 py-3 m-2 text-sm  w-52 rounded-sm mt-2 mx-auto'
             onClick={signInWithGoogle}>
             <svg viewBox="0 0 24 24" width="24" height="24" xmlns="http://www.w3.org/2000/svg">
                 <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">

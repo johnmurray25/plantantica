@@ -22,11 +22,11 @@ function Plantantica({ Component, pageProps }) {
       <meta name="description" content="A place to track your plants' maintenance" />
 
       <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-status-bar" content="#AFBDA1" />
-      <meta name="theme-color" content="#AFBDA1" />
+      <meta name="apple-mobile-web-app-status-bar" content="#294748" />
+      <meta name="theme-color" content="#294748" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
 
-      {/* <link rel='manifest' href='./manifest.json' /> */}
+      <link rel='manifest' href='./manifest.json' />
       <link rel="icon" href="./vector/Tree-only-light.svg" />
       <link rel="apple-touch-icon" href="./icons/apple-icon-180.png" />
       <link rel="apple-touch-startup-image" href="./splash/apple-splash-2048-2732.jpg" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
@@ -60,7 +60,7 @@ function Plantantica({ Component, pageProps }) {
       <link rel="apple-touch-startup-image" href="./splash/apple-splash-640-1136.jpg" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
       <link rel="apple-touch-startup-image" href="./splash/apple-splash-1136-640.jpg" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" />
     </Head>
-    <div className="antialiased select-none text-primary bg-secondary //bg-opacity-90 w-screen min-h-screen break-words">
+    <div className="antialiased select-none text-gray-100 text-opacity-80 bg-[#8A9796] //bg-opacity-90 w-screen min-h-screen break-words">
       <PlantContext.Provider value={{ plants, setPlants, deletePlant }}>
         <Component {...pageProps} />
       </PlantContext.Provider>

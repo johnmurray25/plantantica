@@ -12,6 +12,7 @@ import DisplayCard from '../components/DisplayCard'
 import gridStyles from '../../styles/smallGrid.module.css'
 import DBUser from '../../domain/DBUser';
 import { getPlants } from '../../service/PlantService';
+import Container from '../components/BlurredFlowerContainer';
 
 function Home() {
 
@@ -86,57 +87,78 @@ function Home() {
     }, [profPicUrl, username, uid]);
 
     return (
-        <div className=' text-stone-100 min-h-screen text-left'>
-            <NavBar />
-            {
-                user &&
-                <div>
-                    <div className='relative w-full med:w-3/6 m-auto text-center justify-center pt-28 px-6 med:border border-stone-100 rounded '>
-                        {profPicUrl && profPicUrl != '' &&
-                            isProfPicLoading ?
-                            <div className='relative w-fit flex justify-center m-auto border rounded-xl p-3'>
-                                <ReactLoading type='spinningBubbles' color="#fff" />
-                            </div>
-                            :
-                            <div className='relative w-fit flex justify-center m-auto bg-[#473432] rounded-xl p-3'>
-                                <Image
-                                    src={profPicUrl}
-                                    alt='Profile picture'
-                                    width={100}
-                                    height={120}
-                                />
-                            </div>
-                        }
-                        <div className='mx-10 mb-3 flex justify-evenly items-center' >
-                            {/* display name */}
-                            <h2 className='text-2xl' >
-                                {user ? user.displayName : ''}
-                            </h2>
-                            {/* username */}
-                            <h3 className='p-5 pt-0 flex justify-evenly items-center text-xl'>
-                                <p className='font-bold p-3 pr-10 pl-2 rounded-lg m-2 ml-0'>
-                                    {user ? `@${user.username}` : ''}
-                                </p>
-                            </h3>
-                        </div>
+        <div className='min-h-screen h-full w-full bg-[#0E1402]'>
+            {user &&
+                <div className=''>
+                    <NavBar />
+                    <div className='relative sm:w-3/6 text-center pb-14 px-6  m-auto //max-w-[375px]'>
 
-                        {/* <h3 className='text-lg flex justify-evenly'>
-                            <p className='italic'>
-                                {user ? user.email : ''}
-                            </p>
-                        </h3> */}
-                        <h3 className='pt-0 font-mono text-left pb-2'>
-                            {/* number of plants tracked */}
-                            {trackingMsg}
-                        </h3>
-                    </div>
-                    {plants && plants.length > 0 &&
-                        <div
-                            className={gridStyles.container}
-                        >
-                            {plantCards}
+                        <div className="flex justify-start">
+                            {profPicUrl ?
+                                <div className='rounded-full h-32 w-32 border-2 border-gray-100 relative'>
+                                    <Image
+                                        src={profPicUrl}
+                                        alt='Profile picture'
+                                        fill
+                                        className="object-cover object-center rounded-full"
+                                    />
+                                </div>
+                                :
+                                <div className='relative m-auto h-32 w-32 rounded-3xl bg-stone-100 '>
+
+                                </div>
+                            }
+                            <div className='//-translate-y-3'>
+                                <div className='text-gray-100 text-opacity-70 font-bold text-xl text-left'>
+                                    <h2>
+                                        {user.displayName}
+                                    </h2>
+                                </div>
+                                {/* username */}
+                                <p className='text-left p-3 rounded-lg m-2 ml-0 futura font-bold text-2xl text-gray-100'>
+                                    @{user.username?.toLocaleUpperCase()}
+                                </p>
+                                <p className='text-right text-gray-100 text-opacity-70 mt-4'>
+                                    Member since June 2021
+                                </p>
+                            </div>
                         </div>
-                    }
+                        <section id="plant_info"
+                            className='mt-8 max-w-[375px] bg-[#D9D9D9]bg-opacity-10 m-auto'
+                        >
+                            <div className='flex justify-between text-gray-100 text-[20px] text-opacity-75 font-bold px-4'>
+                                <h2 className='text-left'>
+                                    Tracking {plants?.length} plants
+                                </h2>
+                                <button
+                                    className='text-2xl'
+                                    onClick={() => { router.push("/Tracking") }}
+                                >
+                                    &rarr;
+                                </button>
+                            </div>
+                            <div id="plants_horizontal"
+                                className='flex overflow-auto sm:w-[600px] z-40 '
+                            >
+                                {plants?.map(p => {
+                                    return (
+                                        <div key={p.id} className='w-[120px] h-fit relative flex-col m-2'>
+                                            <Image
+                                                src={p.imageUrl}
+                                                alt={p.species}
+                                                width={120}
+                                                height={120}
+                                                className="object-cover h-[120px] w-full"
+                                            />
+                                            <div className=' w-[120px] whitespace-normal text-xs text-gray-100 text-opacity-80 '>
+                                                {p.species}
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </section>
+                    </div>
                 </div>
             }
         </div>

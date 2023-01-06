@@ -6,7 +6,7 @@ import { browserLocalPersistence, signInWithEmailAndPassword } from 'firebase/au
 import auth from '../firebase/auth';
 import SignInWithGoogleButton from './components/SignInWithGoogleButton';
 import TreeLogo from './components/TreeLogo';
-import TextField from './components/TextField';
+import TextField from './components/TextField2';
 import { getUserByUsername } from '../service/UserService';
 import { useRouter } from 'next/router';
 import useAuth from '../hooks/useAuth';
@@ -61,61 +61,59 @@ const SignInScreen = () => {
     }, [handleKeyPress, router, user])
 
     return (
-        <div className='antialiased text-stone-200 min-h-screen text-center pt-10 text-xl' id='firebaseui-auth-container' >
+        <div className='antialiased text-gray-100 min-h-screen text-center pt-6 text-xl' id='firebaseui-auth-container' >
             <div className='w-screen flex justify-center pb-0'>
                 <Link href='/' passHref>
-                    <h1 className=' text-primary text-3xl'>
+                    <h1 className='font-bold text-3xl'>
                         PLANTANTICA
                     </h1>
-                    <span className='cursor-pointer '>
-                        <TreeLogo height={140} width={300} />
-                    </span>
+                    <div className='cursor-pointer flex justify-center'>
+                        <TreeLogo height={140} width={200} />
+                    </div>
                 </Link>
             </div>
-            <div className='flex flex-col items-center justify-center'>
-                <p className='pb-4'>
-                    Please sign in:
+            <div className='block text-center w-11/12 max-w-[350px] m-auto '>
+                <div className="font-bold mx-auto mb-2">SIGN IN</div>
+                <div className="m-auto">
+                    <SignInWithGoogleButton />
+                </div>
+                <p className='m-auto font-bold text-sm text-gray-100 mb-6 mt-6'>
+                    OR:
                 </p>
-                <TextField
-                    onChange={setIdentifier}
-                    value={identifier}
-                    width={150}
-                    placeholder="Username or email"
-                />
-                <TextField
-                    onChange={setPassword}
-                    value={password}
-                    width={150}
-                    placeholder="Password"
-                    type='password'
-                />
-                <div className="flex items-center">
+                <div className='text-left'>
+                    <label>Username or Email</label>
+                    <TextField
+                        onChange={setIdentifier}
+                        value={identifier}
+                    />
+                    <label>Password</label>
+                    <TextField
+                        onChange={setPassword}
+                        value={password}
+                        type='password'
+                    />
+                </div>
+                <div className="flex justify-evenly items-center mt-2 mx-auto">
                     <Link href='/ResetPassword'
-                        className='text-sm text-stone-300 -translate-x-2 cursor-pointer hover:text-lime-300'
+                        className='text-sm text-primary text-opacity-80 cursor-pointer hover:text-opacity-100'
                     >
                         Forgot password?
                     </Link>
-                    <button className='bg-lime-700 text-zinc-100 px-4 py-2 w-28 rounded
-                                            text-center translate-x-2 hover:bg-lime-400 hover:text-brandGreen'
+                    <button className='bg-lime-700 bg-opacity-70 text-gray-100 text-opacity-90 px-4 py-2 w-fit rounded transition-colors
+                                        text-center hover:bg-lime-400 hover:text-brandGreen'
                         onClick={() => signIn(identifier, password)}
                     >
-                        &rarr;
+                        Sign in &rarr;
                     </button>
                 </div>
-                <p className='text-sm text-right pb-6 pt-2'>
+                <p className='text-sm text-center pb-6 mt-8'>
                     Don&apos; have an account yet? &nbsp;
                     <Link href="/SignUp" passHref>
-                        <span className='text-lime-400 cursor-pointer hover:underline'>
+                        <span className='text-lime-300 cursor-pointer hover:underline'>
                             Sign up
                         </span>
                     </Link>
                 </p>
-                <div className='border border-b-stone-600 border-t-0 border-x-0 w-1/3'>
-                </div>
-                <div className="pt-6 pb-2">
-                    Or (recommended):
-                </div>
-                <SignInWithGoogleButton />
             </div>
         </div>
     );

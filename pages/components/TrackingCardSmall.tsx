@@ -66,20 +66,12 @@ const getWaterNext = (date: Date): string => {
 
 const TrackingCardSmall = (props: Props) => {
     const { userID, needsWater } = props
-    const [plant, setPlant] = useState(props.plant)
-    const { deletePlant } = useContext(PlantContext)
+    const [plant] = useState(props.plant)
     const [updates, setUpdates] = useState<Update[]>([])
     const [showUpdates, setShowUpdates] = useState(false)
-    const [showInstructions, setShowInstructions] = useState(false)
     const [isLoadingUpdates, setIsLoadingUpdates] = useState(true)
     const [waterNext, setWaterNext] = useState(getWaterNext(plant?.dateToWaterNext))
-    const { width, height } = useWindowDimensions()
-    // console.log(plant.species)
-    // console.log(plant.dateToWaterNext?.toLocaleDateString())
-    // console.log(waterNext)
     const [daysBetweenWatering, setDaysBetweenWatering] = useState(plant?.daysBetweenWatering);
-    const [expanded, setExpanded] = useState(false)
-    const [showEditDelete, setShowEditDelete] = useState(false)
     const [hidden, setHidden] = useState(false)
 
     const loadUpdates = useCallback(async () => {
@@ -106,27 +98,22 @@ const TrackingCardSmall = (props: Props) => {
                         alt={`Photo of ${plant.species}`}
                         width={200}
                         height={200}
-                        // sizes="200px"
-                        // className='object-cover max-h-[150px]'
+                    // sizes="200px"
+                    // className='object-cover max-h-[150px]'
                     />
                 }
             </div>
             <div className="w-2/3 relative h-fit ">
                 <div className='flex justify-between w-full h-full pr-2 pt-3 //pb-2 '>
-                    <h3 className='text-left text-xl ml-4 mr-2 italic text-gray-100 text-opacity-70'>
+                    <h3 className='text-left text-xl ml-4 mr-2 max-w-full poppins italic text-gray-100 text-opacity-70'>
                         {plant.species}
                     </h3>
                 </div>
                 <div className='flex-col justify-between '>
                     <div className={`w-full p-1 py-3 pl-3 flex justify-between items-center relative `}>
                         {/* Water dates */}
-                        <div className={`text-left px-1 text-gray-100 text-opacity-90`}>
-                            <p className={`text-md flex pt-1`}>
-                                Water&nbsp;
-                                <div className='text-md '>
-                                    {waterNext}
-                                </div>
-                            </p>
+                        <div className={`text-left text-lg px-1 text-gray-100 text-opacity-80 pt-1`}>
+                            Water {waterNext}
                         </div>
                         {/* Water button: */}
                         <button

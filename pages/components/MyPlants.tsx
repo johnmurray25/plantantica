@@ -50,12 +50,12 @@ const MyPlants = (props: Props) => {
     }
 
     return plants && (
-        <div className='w-full items-center border-t bg-secondary bg-opacity-60 border-gray-400 border-opacity-50 pt-4'>
+        <div className='w-full items-center pt-4'>
             <div className='max-w-[1200px] m-auto'>
                 {plantsToWater?.length > 0 ?
                     <>
-                        <h2 className='text-left font-bold text-sm text-primary text-opacity-70 pl-12'>
-                            THESE PLANTS MIGHT NEED WATER:
+                        <h2 className='text-left text-md font-bold italic text-lg pl-3 sm:pl-12'>
+                            Might need water:
                         </h2>
                         <motion.div className={`${width >= 420 ? "grid grid-cols-2 gap-y-1 gap-x-4" : "grid grid-cols-1"}  max-w-[960px] m-auto pt-6 sm:px-2`}>
                             <AnimatePresence>
@@ -82,8 +82,8 @@ const MyPlants = (props: Props) => {
                 }
                 {otherPlants?.length > 0 &&
                     <>
-                        <h2 className='text-left font-bold text-sm text-primary text-opacity-70 pl-12 pt-6'>
-                            WATER ANOTHER DAY:
+                        <h2 className='text-left font-bold text-lg italic pl-3 sm:pl-12 pt-6 pb-1'>
+                            Water another day:
                         </h2>
                         <motion.div className={`${width >= 420 ? "grid grid-cols-2 gap-y-1 gap-x-4" : "grid grid-cols-1"}  max-w-[960px] m-auto pt-6 sm:px-2`}>
                             <AnimatePresence>

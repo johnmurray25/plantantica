@@ -2,9 +2,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import useWindowDimensions from '../../hooks/useWindowDimensions'
-import NavBar2 from './NavBar2'
+import NavBar2 from './NavBar'
 import GithubLogo from "../../public/vector/github.svg";
-import Container from './Container'
+import Container from './BlurredFlowerContainer'
 
 const LandingPage = () => {
 
@@ -32,7 +32,7 @@ const LandingPage = () => {
                 </li>
             </ul>
             <div className='flex justify-center text-center pb-0 pt-8 text-gray-100'>
-                <Link href="/auth" passHref className='backdrop-blur-sm bg-primary bg-opacity-90 hover:bg-primary transition-colors text-[36px] w-fit px-12 py-4 rounded-full leading-none'>
+                <Link href="/SignUp" passHref className='backdrop-blur-sm bg-primary bg-opacity-80 hover:bg-primary transition-colors text-[36px] w-fit px-12 py-4 rounded-full leading-none'>
                     Join now <span className='text-[20px] font-normal'>It&apos;s free</span>
                 </Link>
             </div>

@@ -24,6 +24,7 @@ module.exports = {
       },
       backgroundImage: {
         'flowers': 'url(/flowers-in-glass.jpg)',
+        'flowersPortrait': 'url(/flowers-in-glass2.jpg)',
       }
     },
   },

@@ -3,8 +3,6 @@ import { IoChevronDown } from '@react-icons/all-files/io5/IoChevronDown';
 import { IoChevronUp } from '@react-icons/all-files/io5/IoChevronUp';
 import { IoLeafOutline } from '@react-icons/all-files/io5/IoLeafOutline';
 import { IoWaterOutline } from '@react-icons/all-files/io5/IoWaterOutline';
-import { IoEllipsisHorizontalSharp } from '@react-icons/all-files/io5/IoEllipsisHorizontalSharp';
-import Image from 'next/image'
 import { formatDistance, compareAsc } from 'date-fns'
 import ReactLoading from 'react-loading'
 
@@ -43,7 +41,7 @@ const getWaterNext = (date: Date): string => {
     if (distance.localeCompare("1 day ago") === 0) {
         return "yesterday"
     }
-    
+
     if (distance.localeCompare("in 1 day") === 0) {
         return "tomorrow";
     }
@@ -98,7 +96,8 @@ const TrackingCard2 = (props: Props) => {
     }, [loadUpdates, showUpdates, updates])
 
     return plant && (
-        <div className={hidden ? "hidden" : 'flex shadow min-h-64 bg-[#BBC6B0] //bg-gray-100bg-opacity-40 mb-2 mx-auto w-full'}>
+        <div className={hidden ? "hidden" : 'flex shadow min-h-64  bg-[#506741] bg-opacity-40 //bg-[#aaad8c]bg-opacity-90 backdrop-blur mb-2 mx-auto w-full'}
+        >
             <div className="pr-2 mx-0 w-1/3 relative h-full transition-all">
                 {plant.imageUrl &&
                     <ImageWithZoom
@@ -109,9 +108,11 @@ const TrackingCard2 = (props: Props) => {
                     />
                 }
             </div>
-            <div className="w-2/3 relative h-fit ">
-                <div className='flex text-primary text-opacity-80 justify-between w-full pr-2 pt-3 pb-2 bg-[#BBC6B0]'>
-                    <h3 className='text-left text-xl ml-4 mr-2 italic'>
+            <div className="w-2/3 relative h-fit "
+                // style={{ background: 'linear-gradient(90deg, rgba(165,169,142,1) 0%, rgba(144,150,140,1) 28%, rgba(149,159,152,1) 100%)' }}
+            >
+                <div className='flex text-gray-100 text-opacity-70 justify-between w-full pr-2 pt-3 pb-2 //bg-[#BBC6B0]'>
+                    <h3 className='text-left text-2xl ml-4 mr-2 italic'>
                         {plant.species}
                     </h3>
                     <div className='flex-col justify-end'>
@@ -125,15 +126,15 @@ const TrackingCard2 = (props: Props) => {
                             : */}
                         <div className='flex justify-end'>
                             <button
-                                className="border-[1.5px] border-primary border-opacity-60 text-primary text-opacity-70 rounded-xl p-1 text-lg
+                                className="border-[1.5px] border-primary border-opacity-90 text-primary text-opacity-90 rounded-full p-1 text-lg
                                     hover:bg-gray-200 hover:border-gray-200  hover:text-gray-700 transition-colors"
                                 onClick={() => props.goToEditScreen(plant?.id)}
                             >
                                 <IoPencilOutline />
                             </button>
                             <button
-                                className="border-[1.5px]  border-primary border-opacity-60 rounded-xl p-1 text-primary text-opacity-70 text-lg 
-                                    hover:bg-red-400 hover:border-red-400 hover:border-opacity-80 hover:text-gray-100 transition-colors ml-6"
+                                className="border-[1.5px]  border-primary border-opacity-90 rounded-full p-1 text-primary text-opacity-90 text-lg 
+                                    hover:bg-red-400 hover:border-red-400 hover:border-opacity-80 hover:text-gray-100 transition-colors ml-4"
                                 onClick={() => {
                                     if (!confirm(`Delete ${plant.species}?`)) {
                                         return;
@@ -147,7 +148,7 @@ const TrackingCard2 = (props: Props) => {
                         </div>
                         {/* } */}
                         {plant.dateObtained &&
-                            <p className='text-primary text-right text-sm text-opacity-70 pt-4'>
+                            <p className='text-primary text-right text-sm text-opacity-100 pt-4'>
                                 had since {plant.dateObtained.toLocaleDateString()}
                             </p>
                         }
@@ -159,7 +160,7 @@ const TrackingCard2 = (props: Props) => {
                         <div className={`text-sm px-1 `}>
                             Last watered {plant.dateLastWatered.toLocaleDateString()}
                             {/* <div className='flex w-full justify-center border border-t-0 border-x-0 border-gray-800 border-opacity-50 my-0.5 -translate-x-2'></div> */}
-                            <p className={`text-lg text-primary text-opacity-90 flex pt-1`}>
+                            <p className={`text-lg text-gray-100 text-opacity-90  flex pt-1`}>
                                 Water&nbsp;
                                 <div className='text-md '>
                                     {waterNext}
@@ -343,7 +344,7 @@ const TrackingCard2 = (props: Props) => {
                                 className="w-full  flex justify-center items-center text-primary text-opacity-60 text-xl pb-1"
                                 onClick={() => setExpanded(true)}
                             >
-                                <div className='bg-gray-100 bg-opacity-30 px-6 rounded-b-full border-t-[3px] border-secondary border-opacity-70'>
+                                <div className='//bg-gray-100 bg-opacity-30 px-6 rounded-b-full //border-t-[3px] border-secondary border-opacity-70'>
                                     <IoChevronDown fill='currentColor' />
                                 </div>
                             </button>
