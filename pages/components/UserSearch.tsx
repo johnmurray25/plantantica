@@ -1,3 +1,4 @@
+import { IoSearch } from '@react-icons/all-files/io5/IoSearch'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -6,7 +7,7 @@ import useAuth from '../../hooks/useAuth'
 import useWindowDimensions from '../../hooks/useWindowDimensions'
 import { docToUser } from '../../service/DBMappings'
 import { getUserByUsername } from '../../service/UserService'
-import TextField from './TextField'
+import TextField from './TextField2'
 
 const UserSearch = () => {
 
@@ -61,29 +62,24 @@ const UserSearch = () => {
     return (
         <>
             {/* Search bar */}
-            <div className='flex w-full justify-center'>
-                <TextField
-                    name="search"
-                    type="text"
-                    value={searchText}
-                    onChange={setSearchText}
-                    placeholder="Search by username..."
-                    width={80}
-                />
-                <a
-                    className='cursor-pointer bg-[#53984D] text-stone-200 rounded justify-center h-12 w-8 text-center content-center'
-                    onClick={searchUsers}
+            <div id="search"
+                    className='flex justify-center items-center text-[20px] m-2 bg-secondary pb-12 bg-opacity-70'
                 >
-                    &rarr;
-                </a>
-            </div>
-            {searchMessage &&
-                <div className='flex justify-evenly items-center m-10'>
-                    <p>
-                        {searchMessage}
-                    </p>
+                    <div className='text-left inter w-2/3 min-w-[200px] text-primary text-opacity-90 mt-8'>
+                        <label>
+                            Search by username/name/email
+                        </label>
+                        <TextField
+                            value={searchText}
+                            onChange={setSearchText}
+                        />
+                    </div>
+                    <button id="search_btn"
+                        className="px-6 py-3 mt-14 flex items-center text-primary text-md bg-secondary ml-4 rounded-lg "
+                    >
+                        <IoSearch />
+                    </button>
                 </div>
-            }
 
             {searchActive && searchResult &&
                 <div className='rounded w-fit py-4 px-8 med:px-20 bg-[#473432]'>

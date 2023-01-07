@@ -134,7 +134,7 @@ function Home() {
                             {editMode ?
                                 <div className='flex justify-end w-full'>
                                     <button
-                                        className='bg-[#D1DAC9] bg-opacity-10 hover:bg-opacity-100 py-1 px-6 text-xl rounded-full  text-primary  '
+                                        className='bg-[#D1DAC9] bg-opacity-10 hover:bg-opacity-100 py-1 px-6 text-xl rounded-full   '
                                         style={{ transition: "background-color 0.3s ease-out" }}
                                         onClick={() => setEditMode(false)}
                                     >
@@ -143,8 +143,8 @@ function Home() {
                                 </div>
                                 :
                                 <div className='flex justify-end pr-4 '>
-                                    <div className={ddStyles.dropdown + " border border-primary px-4 py-2 mb-4 "}>
-                                        <IoEllipsisHorizontal className='text-primary'/>
+                                    <div className={ddStyles.dropdown + " border border-gray-100 border-opacity-70 px-4 py-2 mb-4 "}>
+                                        <IoEllipsisHorizontal className=''/>
                                         <div className={ddStyles.dropdownContent + " bg-[#aaad8c] -translate-x-3/4 rounded-lg bg-opacity-80 backdrop-blur-lg"}>
                                             <button id="edit_button"
                                                 className='hover:bg-gray-100 hover:bg-opacity-20 w-full px-2'
@@ -241,7 +241,7 @@ function Home() {
                                     </div>
                                 }
                                 <div className='//-translate-y-3'>
-                                    <div className='text-primary text-opacity-80 font-bold text-xl text-left'>
+                                    <div className=' text-opacity-80 font-bold text-xl text-left'>
                                         {editMode ?
                                             <div className='w-full pl-6'>
                                                 <label className='text-sm uppercase pl-3'>
@@ -295,27 +295,27 @@ function Home() {
                                             />
                                         </div>
                                         :
-                                        <p className='text-left p-3 rounded-lg m-2 ml-0 font-bold text-2xl text-gray-100'>
+                                        <p className='text-[#A1C720] text-left p-3 rounded-lg m-2 ml-0 font-bold text-2xl '>
                                             {dBUser && `@${dBUser.username?.toLocaleUpperCase()}`}
                                         </p>
                                     }
                                     {/* <p className='italic  text-primary text-opacity-80'>
                                     {user.email}
                                 </p> */}
-                                    <p className='text-right text-primary text-opacity-80 mt-4'>
+                                    <p className='text-right  text-opacity-80 mt-4'>
                                         Member since June 2021
                                     </p>
                                 </div>
                             </div>
                             <section id="plant_info"
-                                className='mt-8 max-w-[375px] bg-[#D9D9D9]bg-opacity-10 m-auto'
+                                className='mt-8 bg-[#D9D9D9]bg-opacity-10 m-auto'
                             >
                                 <div className='flex justify-between text-gray-100 text-[20px] text-opacity-75 font-bold px-4'>
                                     <h2 className='text-left'>
                                         Tracking {plants?.length} plants
                                     </h2>
                                     <button
-                                        className='text-2xl'
+                                        className='text-2xl text-[#A1C720]'
                                         onClick={() => { router.push("/Tracking") }}
                                     >
                                         &rarr;
@@ -332,7 +332,7 @@ function Home() {
                                                     alt={p.species}
                                                     width={120}
                                                     height={120}
-                                                    className="object-cover h-[120px] w-full"
+                                                    className="object-cover h-[120px] w-full rounded-full border-2 border-[#A1C720]"
                                                 />
                                                 <div className=' w-[120px] whitespace-normal text-xs text-gray-100 text-opacity-80 '>
                                                     {p.species}

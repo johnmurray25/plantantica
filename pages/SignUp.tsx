@@ -3,14 +3,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 import auth from '../firebase/auth'
-import { getUserByEmail, getUserByUsername, initializeUser } from '../service/UserService'
+import { getUserByUsername, initializeUser } from '../service/UserService'
 import SignInWithGoogleButton from './components/SignInWithGoogleButton'
 import TextField from './components/TextField2'
 import TreeLogo from './components/TreeLogo'
-
-const signUp = async ({ email, username, password }): Promise<User> => {
-
-}
 
 const SignUp = () => {
     const router = useRouter()

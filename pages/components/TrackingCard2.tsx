@@ -96,7 +96,7 @@ const TrackingCard2 = (props: Props) => {
     }, [loadUpdates, showUpdates, updates])
 
     return plant && (
-        <div className={hidden ? "hidden" : 'flex shadow min-h-64  bg-[#506741] bg-opacity-40 //bg-[#aaad8c]bg-opacity-90 backdrop-blur mb-2 mx-auto w-full'}
+        <div className={hidden ? "hidden" : 'flex shadow min-h-64  bg-[#506741]bg-opacity-70 bg-[#aaad8c] bg-opacity-70 backdrop-blur mb-2 mx-auto w-full'}
         >
             <div className="pr-2 mx-0 w-1/3 relative h-full transition-all">
                 {plant.imageUrl &&
@@ -148,7 +148,7 @@ const TrackingCard2 = (props: Props) => {
                         </div>
                         {/* } */}
                         {plant.dateObtained &&
-                            <p className='text-primary text-right text-sm text-opacity-100 pt-4'>
+                            <p className='futura text-gray-100 text-opacity-50 text-right text-sm pt-4'>
                                 had since {plant.dateObtained.toLocaleDateString()}
                             </p>
                         }
@@ -221,7 +221,7 @@ const TrackingCard2 = (props: Props) => {
                                 <div className='px-4 '>
                                     <div className=" flex justify-center pr-4 py-1 text-lg">
                                         <div>
-                                            <div className='futura text-sm flex items-center text-primary text-opacity-60'>
+                                            <div className='futura text-sm flex items-center text-gray-100 text-opacity-60'>
                                                 <>
                                                     Water every&nbsp;
                                                 </>
@@ -243,7 +243,7 @@ const TrackingCard2 = (props: Props) => {
                                                             -
                                                         </div>
                                                     </button>
-                                                    <span className=' text-primary text-opacity-80 text-lg'>
+                                                    <span className=' text-gray-100 text-opacity-80 text-lg'>
                                                         {plant.daysBetweenWatering}
                                                     </span>
                                                     <button
@@ -333,7 +333,7 @@ const TrackingCard2 = (props: Props) => {
                                         className="w-full  flex justify-center items-center text-primary text-opacity-60 text-xl py-1 mt-2"
                                         onClick={() => setExpanded(false)}
                                     >
-                                        <div className='bg-gray-100 bg-opacity-30 px-6 rounded-t-full border-t-[3px] border-secondary border-opacity-70'>
+                                        <div className='bg-gray-100 bg-opacity-30 px-6 rounded-t-full '>
                                             <IoChevronUp fill='currentColor' />
                                         </div>
                                     </button>

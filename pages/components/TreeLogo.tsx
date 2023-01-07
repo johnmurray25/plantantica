@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import React from 'react'
-import logo from '../../public/vector/Tree-only.svg';
+import logo from '../../public/vector/Tree-only-light.svg';
 
 interface Props {
     width?: number;

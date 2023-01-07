@@ -177,7 +177,7 @@ const AddPlantTrackingDetails = (props: Props) => {
   }
 
   return (
-    <div className='antialiased text-lg text-stone-100 bg-brandGreen min-h-screen' >
+    <div className='antialiased text-lg text-stone-100 min-h-screen' >
       {loadingStatus ?
         <div className='flex justify-center items-center pt-60' >
           {loadingStatus} <ReactLoading type='bars' color="#FFF7ED" />

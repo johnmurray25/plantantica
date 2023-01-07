@@ -12,6 +12,7 @@ const nextConfig = {
       'plantantica.web.app',
       'plantantica.firebase.app',
       'plantantica.vercel.app',
+      "icongr.am",
     ],
     // loader: "custom",
     // remotePatterns: [

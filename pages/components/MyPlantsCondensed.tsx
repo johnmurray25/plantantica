@@ -1,4 +1,6 @@
+import { IoWater } from '@react-icons/all-files/io5/IoWater';
 import { AnimatePresence, motion } from 'framer-motion'
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react'
@@ -75,36 +77,48 @@ const MyPlantsCondensed = () => {
     }, [alreadyChecked, plants, plantsToWater.length])
 
     return plantsToWater?.length && (
-        <div className='max-w-[960px] flex justify-center m-auto items-center  '>
-            <div className='m-auto'>
-                <div className='w-full flex items-center justify-between text-gray-100 text-opacity-80 font-bold text-sm px-2'>
-                    <h2 className='inter text-left lowercase max-w-1/2 italic text-xl font-normal'>
-                        {plantsToWater.length} PLANTS MIGHT NEED WATER:
+        <div className='max-w-[960px] m-auto '>
+            <section>
+                <div className='w-full flex items-center justify-between text-gray-100 text-opacity-80 font-bold text-sm p-2 pt-8'>
+                    <h2 className='inter flex items-center text-left lowercase max-w-1/2 italic text-xl font-normal'>
+                        <IoWater className='text-blue-400 mr-1' /> {plantsToWater.length} PLANTS MIGHT NEED WATER:
                     </h2>
                     <h2 className={`text-right ${width >= 420 ? "" : " "}`}>
-                        <Link href="/Tracking" className={`text-right text-primary text-opacity-70 font-bold hover:text-primary transition-colors`}>
+                        <Link href="/Tracking" className={`text-right text-opacity-70 font-bold hover:text-primary transition-colors`}>
                             All my plants &rarr;
                         </Link>
                     </h2>
                 </div>
-                <motion.div className={`${width >= 420 ? "grid grid-cols-3 gap-y-4 gap-x-4" : "grid grid-cols-1"}  m-auto pt-2 `}>
-                    <AnimatePresence>
-                        {plantsToWater.map(p => {
-                            return (
-                                <TrackingCardSmall
-                                    key={p.id}
-                                    plant={p}
-                                    userID={user.uid}
-                                    needsWater
-                                    waterPlant={handleWaterPlant}
-                                    goToEditScreen={(plantId) => router.push(`/EditPlantTrackingDetails/${plantId}`)}
-                                    goToAddUpdateScreen={(plantId) => router.push(`/AddUpdateForPlant/${plantId}`)}
+                <div id="plants_horizontal"
+                    className='flex overflow-auto //sm:w-[600px] z-40 m-auto '
+                >
+                    {plantsToWater.map(p => {
+                        return (
+                            // <TrackingCardSmall
+                            //     key={p.id}
+                            //     plant={p}
+                            //     userID={user.uid}
+                            //     needsWater
+                            //     waterPlant={handleWaterPlant}
+                            //     goToEditScreen={(plantId) => router.push(`/EditPlantTrackingDetails/${plantId}`)}
+                            //     goToAddUpdateScreen={(plantId) => router.push(`/AddUpdateForPlant/${plantId}`)}
+                            // />
+                            <div key={p.id} className='w-[120px] h-fit relative flex-col m-2'>
+                                <Image
+                                    src={p.imageUrl}
+                                    alt={p.species}
+                                    width={120}
+                                    height={120}
+                                    className="object-cover h-[120px] w-full rounded-full border-2 border-[#A1C720]"
                                 />
-                            )
-                        })}
-                    </AnimatePresence>
-                </motion.div>
-            </div>
+                                <div className='mt-2 w-[120px] whitespace-normal text-sm italic text-gray-100 text-opacity-80 '>
+                                    {p.species}
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            </section>
         </div>
     )
 }

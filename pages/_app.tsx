@@ -60,7 +60,7 @@ function Plantantica({ Component, pageProps }) {
       <link rel="apple-touch-startup-image" href="./splash/apple-splash-640-1136.jpg" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
       <link rel="apple-touch-startup-image" href="./splash/apple-splash-1136-640.jpg" media="(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: landscape)" />
     </Head>
-    <div className="antialiased select-none text-gray-100 text-opacity-80 bg-[#8A9796] //bg-opacity-90 w-screen min-h-screen break-words">
+    <div className="antialiased select-none text-gray-100 text-opacity-80 bg-[#0E1402] //bg-[#8A9796] //bg-opacity-90 w-screen min-h-screen break-words">
       <PlantContext.Provider value={{ plants, setPlants, deletePlant }}>
         <Component {...pageProps} />
       </PlantContext.Provider>

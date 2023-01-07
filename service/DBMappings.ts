@@ -49,5 +49,6 @@ export const docToUser = (docSnap) => {
         displayName: data.displayName,
         dailyEmails: data.dailyEmails,
         following: data.following,
+        dateCreated: data.date_created,
     }
 }

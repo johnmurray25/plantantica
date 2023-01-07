@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import Container from './components/BlurredFlowerContainer';
 
 import NavBar from './components/NavBar'
 import UserSearch from './components/UserSearch';
@@ -19,14 +20,14 @@ const Home: React.FC = () => {
     }, [])
 
     return (
-        <div className='text-stone-200  min-w-full' /**Container */>
+        <Container>
             <NavBar />
 
             <div className='min-h-screen p-4 pt-48 flex flex-col items-center m-auto'>
                 <UserSearch />
             </div>
 
-        </div >
+        </Container >
     )
 }
 

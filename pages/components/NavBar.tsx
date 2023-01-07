@@ -5,6 +5,7 @@ import ReactLoading from 'react-loading'
 import useWindowDimensions from '../../hooks/useWindowDimensions'
 import TreeLogo from './TreeLogo'
 import hamburger from '../../public/vector/hamburger.svg'
+import { IoMenu } from '@react-icons/all-files/io5/IoMenu'
 import Image from 'next/image'
 import useAuth from '../../hooks/useAuth'
 
@@ -30,17 +31,17 @@ const NavBar: React.FC<{ hideSidebar?: boolean; }> = (props) => {
     }, [dBUser, loading])
 
     return (
-        <div className='futura flex justify-between text-primary text-opacity-90 items-center px-4 py-4'>
+        <div className='flex justify-between  text-opacity-90 items-center px-2 py-4'>
             {/* Left */}
             <Link href="/" passHref>
-                <div className="futura font-bold text-gray-50 hover:text-lime-300 transition-colors text-3xl flex items-center flex-shrink-0  cursor-pointer med:pr-4 py-1 px-2 ">
+                <div className="poppins text-gray-50 text-opacity-90 hover:text-lime-300 transition-colors text-3xl flex items-center flex-shrink-0  cursor-pointer med:pr-4 py-1 px-2 ">
                     <TreeLogo width={80} height={80} />
                     Plantantica
                 </div>
             </Link>
 
             {/* Right */}
-            {width >= 800 ?
+            {width >= 675 ?
                 <div className="flex justify-evenly items-center">
                     <Link href="/" className='px-4'>
                         Home
@@ -97,17 +98,18 @@ const NavBar: React.FC<{ hideSidebar?: boolean; }> = (props) => {
                 : !props.hideSidebar &&
                 <div>
                     <button onClick={() => setShowSidebar(!showSidebar)}>
-                        <Image
+                        {/* <Image
                             src={hamburger}
                             alt="menu"
                             width={40}
                             height={40}
-                        />
+                        /> */}
+                        <IoMenu className='text-[40px] text-secondary //text-[#314015] '/>
                     </button>
                     {/* Sidebar */}
                     <div id='sidebar'
-                        className={`fixed h-full min-h-screen w-3/5 top-0 right-0 z-50 text-xl px-8 pt-6
-                        ${showSidebar ? 'translate-x-0' : 'translate-x-full'} ease-in-out duration-200 bg-primary bg-opacity-90 backdrop-blur-lg text-gray-100 text-opacity-70`}>
+                        className={`fixed h-full min-h-screen w-2/5 top-0 right-0 z-50 text-xl px-8 pt-6
+                        ${showSidebar ? 'translate-x-0' : 'translate-x-full'} ease-in-out duration-200 bg-opacity-90 backdrop-blur-2xl text-gray-100 text-opacity-70`}>
                         <div className="flex w-full justify-end">
                             <button
                                 className='text-[40px]'

@@ -40,7 +40,8 @@ export const initializeUser = async (user: User, username?: string) => {
         email: user.email,
         displayName: user.displayName,
         dailyEmails: true,
-        username: username || ""
+        username: username || "",
+        created_date: new Date().getTime(),
     }
     try {
         await setDoc(userDoc, userData, { merge: true })

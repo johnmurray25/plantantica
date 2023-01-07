@@ -9,4 +9,5 @@ export default interface DBUser {
     displayName?: string;
     dailyEmails?: boolean;
     following?: string[];
+    dateCreated?: number;
 }
