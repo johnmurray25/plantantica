@@ -1,12 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: 'class',
   content: [
     "pages/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       colors: {
-        'primary': '#294749',
+        'primary': '#082022',
         'secondary': '#AFBDA1',
         'secondaryDark': "#8A9889",
         'tertiary': '#BFCAB7',
@@ -20,7 +21,10 @@ module.exports = {
         'lightGrayGreen': '#e8ffec',
         // 'blue': '#7ed6df',
         'slate': 'darkslategrey',
-        'dry': '#d1b979'
+        'dry': '#d1b979',
+        'dark': '#111902',
+        'highlight': '#A1C720',
+        "lightbg": "#a1a891"
       },
       backgroundImage: {
         'flowers': 'url(/flowers-in-glass.jpg)',

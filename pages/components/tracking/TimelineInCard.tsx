@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { getDownloadURL, ref } from 'firebase/storage';
 import ReactLoading from "react-loading"
 
-import storage from '../../firebase/storage';
-import Update from '../../domain/Update';
+import storage from '../../../firebase/storage';
+import Update from '../../../domain/Update';
 import TimelineItem from './TimelineItem';
 
 interface Props {
@@ -50,7 +50,7 @@ const TimelineInCard = (props: Props) => {
             {updateItems?.length > 0 ?
                 updateItems
                 :
-                <p className='text-lg bg-red text-gray-100 text-opacity-60 mt-2'>
+                <p className='text-lg bg-red text-black dark:text-gray-100 text-opacity-60 mt-2 ml-4 mb-2'>
                     No updates for this plant.
                 </p>
             }

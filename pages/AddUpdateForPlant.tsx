@@ -1,14 +1,14 @@
 import Image from 'next/image';
 import React, { useState } from 'react'
 import ReactLoading from 'react-loading'
-import FileInput from './components/FileInput';
+import FileInput from './components/forms/FileInput';
 
 import { deleteUpdatePictureInDB, saveUpdateForPlant } from '../service/PlantService';
 import { compressImage, deleteImage, uploadFile } from '../service/FileService';
-import TextField from './components/TextField';
+import TextField from './components/forms/TextField';
 import Plant from '../domain/Plant';
 import { useRouter } from 'next/router';
-import GenericDatePicker from './components/GenericDatePicker';
+import GenericDatePicker from './components/forms/GenericDatePicker';
 import Update from '../domain/Update';
 import useAuth from '../hooks/useAuth';
 

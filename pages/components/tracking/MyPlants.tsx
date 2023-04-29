@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/router';
 import React, { useContext, useState } from 'react'
-import PlantContext from '../../context/PlantContext';
-import Plant from '../../domain/Plant';
-import useAuth from '../../hooks/useAuth';
-import useWindowDimensions from '../../hooks/useWindowDimensions';
+import PlantContext from '../../../context/PlantContext';
+import Plant from '../../../domain/Plant';
+import useAuth from '../../../hooks/useAuth';
+import useWindowDimensions from '../../../hooks/useWindowDimensions';
 import TrackingCard2 from './TrackingCard2';
 
 interface Props {
@@ -54,10 +54,8 @@ const MyPlants = (props: Props) => {
             <div className='max-w-[1200px] m-auto'>
                 {plantsToWater?.length > 0 ?
                     <>
-                        <h2 className='text-left text-md font-bold italic text-lg pl-3 sm:pl-12'>
-                            Might need water:
-                        </h2>
-                        <motion.div className={`${width >= 420 ? "grid grid-cols-2 gap-y-1 gap-x-4" : "grid grid-cols-1"}  max-w-[960px] m-auto pt-6 sm:px-2`}>
+                        {/* </h2> */}
+                        <motion.div className={`${width >= 420 ? "grid grid-cols-2 gap-y-1 gap-x-4" : "grid grid-cols-1"}  max-w-[960px] m-auto pt-3 sm:px-2`}>
                             <AnimatePresence>
                                 {plantsToWater.map(p => {
                                     return (
@@ -82,10 +80,7 @@ const MyPlants = (props: Props) => {
                 }
                 {otherPlants?.length > 0 &&
                     <>
-                        <h2 className='text-left font-bold text-lg italic pl-3 sm:pl-12 pt-6 pb-1'>
-                            Water another day:
-                        </h2>
-                        <motion.div className={`${width >= 420 ? "grid grid-cols-2 gap-y-1 gap-x-4" : "grid grid-cols-1"}  max-w-[960px] m-auto pt-6 sm:px-2`}>
+                        <motion.div className={`${width >= 420 ? "grid grid-cols-2 gap-y-1 gap-x-4" : "grid grid-cols-1"}  max-w-[960px] m-auto pt-3 sm:px-2`}>
                             <AnimatePresence>
                                 {otherPlants.map(p => {
                                     return (

@@ -1,7 +1,7 @@
 import { IoTrash } from '@react-icons/all-files/io5/IoTrash';
 import { deleteDoc, doc } from 'firebase/firestore';
-import Update from '../../domain/Update';
-import db from '../../firebase/db';
+import Update from '../../../domain/Update';
+import db from '../../../firebase/db';
 // import { deleteUpdateForPlant } from '../../service/PlantService';
 import ImageInTimeline from './ImageInTimeline';
 
@@ -22,10 +22,10 @@ const CustomTimelineItem = (props: Props) => {
     const { update, plantId, uid, species } = props;
 
     return update && (
-        <div className='relative w-full border border-t-0 border-x-0 border-gray-800 pb-3 mb-4'>
+        <div className='text-gray-900 relative w-full border border-t-0 border-x-0 border-gray-800 pb-3 mb-4 pr-4 pt-2'>
             <div className='flex justify-end pb-2'>
                 <a
-                    className="text-gray-100 bg-red-800 border border-red-800 hover:bg-red-700 rounded-full text-sm p-1 px-2 cursor-pointer "
+                    className=" border-[0.5px] border-black rounded text-sm p-1 px-2 cursor-pointer "
                     onClick={() => {
                         if (!confirm("Delete this update?")) {
                             return;
@@ -47,7 +47,7 @@ const CustomTimelineItem = (props: Props) => {
                     />
                 }
             </div>
-            <div className='//absolute //top-1/2 //-left-24 //z-50 pt-2 //text-xl //text-white text-right'>
+            <div className='text-right'>
                 {update.dateCreated?.toUTCString().substring(0, 17)}
             </div>
             <div className='text-left'>

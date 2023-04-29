@@ -2,12 +2,12 @@ import { IoSearch } from '@react-icons/all-files/io5/IoSearch'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
-import DBUser from '../../domain/DBUser'
-import useAuth from '../../hooks/useAuth'
-import useWindowDimensions from '../../hooks/useWindowDimensions'
-import { docToUser } from '../../service/DBMappings'
-import { getUserByUsername } from '../../service/UserService'
-import TextField from './TextField2'
+import DBUser from '../../../domain/DBUser'
+import useAuth from '../../../hooks/useAuth'
+import useWindowDimensions from '../../../hooks/useWindowDimensions'
+import { docToUser } from '../../../service/DBMappings'
+import { getUserByUsername } from '../../../service/UserService'
+import TextField from '../forms/TextField2'
 
 const UserSearch = () => {
 

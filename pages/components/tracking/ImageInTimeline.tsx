@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import ImageWithZoom from './ImageWithZoom';
+import ImageWithZoom from '../util/ImageWithZoom';
 
 interface Props {
     src: string;

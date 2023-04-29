@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
-import Plant from '../../domain/Plant';
-import useWindowDimensions from '../../hooks/useWindowDimensions';
+import Plant from '../../../domain/Plant';
+import useWindowDimensions from '../../../hooks/useWindowDimensions';
 import { IoWater } from '@react-icons/all-files/io5/IoWater';
 
 interface Props {

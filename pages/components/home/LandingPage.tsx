@@ -1,10 +1,9 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import useWindowDimensions from '../../hooks/useWindowDimensions'
-import NavBar2 from './NavBar'
-import GithubLogo from "../../public/vector/github.svg";
-import Container from './BlurredFlowerContainer'
+import useWindowDimensions from '../../../hooks/useWindowDimensions'
+import NavBar2 from '../util/NavBar'
+import Container from '../util/Container'
 
 const LandingPage = () => {
 
@@ -71,7 +70,7 @@ const LandingPage = () => {
                 </div>
             </div>
             {/* Footer */}
-            <div className="flex justify-end items-center pr-12 text-lg py-4 mt-12 bg-gray-700 text-gray-800 text-opactiy-70 bg-opacity-10">
+            {/* <div className="flex justify-end items-center pr-12 text-lg py-4 mt-12 bg-gray-700 text-gray-800 text-opactiy-70 bg-opacity-10">
                 <Link href="https://github.com/johnmurray25/plantantica" passHref>
                     <Image
                         src={GithubLogo}
@@ -83,7 +82,7 @@ const LandingPage = () => {
                 <p className='ml-12'>
                     An app by John Murray
                 </p>
-            </div>
+            </div> */}
         </Container>
     )
 }

@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react'
-import useAuth from '../../hooks/useAuth';
-import { saveUsername } from '../../service/UserService'
+import useAuth from '../../../hooks/useAuth';
+import { saveUsername } from '../../../service/UserService'
 import TextField from './TextField2'
 
 const AddUsernamePrompt = () => {

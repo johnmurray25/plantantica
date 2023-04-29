@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactLoading from "react-loading"
 
-import Container from './BlurredFlowerContainer'
+import Container from './Container'
 import NavBar from './NavBar'
 
 const LoadingScreen = () => {

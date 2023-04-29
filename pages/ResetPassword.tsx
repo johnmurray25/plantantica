@@ -4,8 +4,8 @@ import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 import auth from '../firebase/auth'
 import { getUserByEmail } from '../service/UserService'
-import TextField from './components/TextField'
-import TreeLogo from './components/TreeLogo'
+import TextField from './components/forms/TextField'
+import TreeLogo from './components/util/TreeLogo'
 
 const ResetPassword = () => {
     const router = useRouter()

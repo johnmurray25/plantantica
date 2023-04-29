@@ -4,9 +4,9 @@ import Image from 'next/image';
 import { IoWater } from '@react-icons/all-files/io5/IoWater';
 import { getDownloadURL, ref } from 'firebase/storage';
 
-import storage from '../../firebase/storage';
-import Plant from '../../domain/Plant';
-import useWindowDimensions from '../../hooks/useWindowDimensions';
+import storage from '../../../firebase/storage';
+import Plant from '../../../domain/Plant';
+import useWindowDimensions from '../../../hooks/useWindowDimensions';
 
 interface Props {
     plant: Plant;

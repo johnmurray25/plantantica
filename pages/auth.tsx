@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { browserLocalPersistence, signInWithEmailAndPassword } from 'firebase/auth';
 
 import auth from '../firebase/auth';
-import SignInWithGoogleButton from './components/SignInWithGoogleButton';
-import TreeLogo from './components/TreeLogo';
-import TextField from './components/TextField2';
+import SignInWithGoogleButton from './components/forms/SignInWithGoogleButton';
+import TreeLogo from './components/util/TreeLogo';
+import TextField from './components/forms/TextField2';
 import { getUserByUsername } from '../service/UserService';
 import { useRouter } from 'next/router';
 import useAuth from '../hooks/useAuth';
@@ -50,15 +50,18 @@ const SignInScreen = () => {
     }, [identifier, password])
 
     useEffect(() => {
-        if (user) {
-            router.push('/profile');
-        }
         document.addEventListener('keydown', handleKeyPress)
-        auth.setPersistence(browserLocalPersistence)
         return () => {
             document.removeEventListener('keydown', handleKeyPress)
         }
-    }, [handleKeyPress, router, user])
+    }, [handleKeyPress])
+
+    useEffect(() => {
+        if (user) {
+            router.push('/profile');
+        }
+        auth.setPersistence(browserLocalPersistence)
+    }, [router, user])
 
     return (
         <div className='antialiased text-gray-100 min-h-screen text-center pt-6 text-xl' id='firebaseui-auth-container' >
@@ -67,7 +70,7 @@ const SignInScreen = () => {
                     <h1 className='font-bold text-3xl'>
                         PLANTANTICA
                     </h1>
-                    <div className='cursor-pointer flex justify-center'>
+                    <div className='cursor-pointer flex justify-center text-primary dark:text-highlight'>
                         <TreeLogo height={140} width={200} />
                     </div>
                 </Link>

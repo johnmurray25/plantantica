@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
-import Container from './components/BlurredFlowerContainer';
+import Container from './components/util/Container';
 
-import NavBar from './components/NavBar'
-import UserSearch from './components/UserSearch';
+import NavBar from './components/util/NavBar'
+import UserSearch from './components/home/UserSearch';
 
 const Home: React.FC = () => {
 

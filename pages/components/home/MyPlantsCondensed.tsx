@@ -1,15 +1,13 @@
 import { IoWater } from '@react-icons/all-files/io5/IoWater';
-import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import React, { useContext, useEffect, useState } from 'react'
-import PlantContext from '../../context/PlantContext';
-import Plant from '../../domain/Plant';
-import useAuth from '../../hooks/useAuth';
-import useWindowDimensions from '../../hooks/useWindowDimensions';
-import { waterPlantInDB } from '../../service/PlantService';
-import TrackingCardSmall from './TrackingCardSmall';
+import PlantContext from '../../../context/PlantContext';
+import Plant from '../../../domain/Plant';
+import useAuth from '../../../hooks/useAuth';
+import useWindowDimensions from '../../../hooks/useWindowDimensions';
+import { waterPlantInDB } from '../../../service/PlantService';
 
 interface Props {
     plants: Plant[];
@@ -77,20 +75,20 @@ const MyPlantsCondensed = () => {
     }, [alreadyChecked, plants, plantsToWater.length])
 
     return plantsToWater?.length && (
-        <div className='max-w-[960px] m-auto '>
+        <div className='max-w-[960px] m-auto text-[16px] mt-2 '>
             <section>
-                <div className='w-full flex items-center justify-between text-gray-100 text-opacity-80 font-bold text-sm p-2 pt-8'>
-                    <h2 className='inter flex items-center text-left lowercase max-w-1/2 italic text-xl font-normal'>
-                        <IoWater className='text-blue-400 mr-1' /> {plantsToWater.length} PLANTS MIGHT NEED WATER:
-                    </h2>
+                <div className='w-full  items-center justify-between text-gray-100 text-opacity-75 p-2 '>
                     <h2 className={`text-right ${width >= 420 ? "" : " "}`}>
-                        <Link href="/Tracking" className={`text-right text-opacity-70 font-bold hover:text-primary transition-colors`}>
-                            All my plants &rarr;
+                        <Link passHref href="/Tracking" className={`text-black dark:text-gray-100 text-opacity-60 leading-relaxed tracking-widest text-right hover:text-primary dark:hover:text-highlight active:text-primary dark:active:text-highlight transition-colors`}>
+                            All my plants <span className=' dark:text-highlight'>&rarr;</span>
                         </Link>
+                    </h2>
+                    <h2 className='flex mt-8 justify-center text-center  text-black dark:text-gray-100 text-opacity-60 font-semibold leading-relaxed tracking-wider '>
+                        <IoWater className='text-blue-900 dark:text-blue-400 mr-1 translate-y-1' /> {plantsToWater.length} plants might need water <IoWater className='text-blue-900 dark:text-blue-400 mr-1 translate-y-1' />
                     </h2>
                 </div>
                 <div id="plants_horizontal"
-                    className='flex overflow-auto //sm:w-[600px] z-40 m-auto '
+                    className='flex flex-wrap justify-center  //sm:w-[600px] z-40 m-auto  '
                 >
                     {plantsToWater.map(p => {
                         return (
@@ -103,15 +101,15 @@ const MyPlantsCondensed = () => {
                             //     goToEditScreen={(plantId) => router.push(`/EditPlantTrackingDetails/${plantId}`)}
                             //     goToAddUpdateScreen={(plantId) => router.push(`/AddUpdateForPlant/${plantId}`)}
                             // />
-                            <div key={p.id} className='w-[120px] h-fit relative flex-col m-2'>
+                            <div key={p.id} className='w-[120px] h-fit relative flex-col m-2 mb-4'>
                                 <Image
                                     src={p.imageUrl}
                                     alt={p.species}
                                     width={120}
                                     height={120}
-                                    className="object-cover h-[120px] w-full rounded-full border-2 border-[#A1C720]"
+                                    className="object-cover h-[120px] w-full rounded-full border-2 border-primary border-opacity-40 dark:border-highlight "
                                 />
-                                <div className='mt-2 w-[120px] whitespace-normal text-sm italic text-gray-100 text-opacity-80 '>
+                                <div className='mt-2 text-center whitespace-normal text-sm italic text-black text-opacity-80 dark:text-gray-100 tracking-normal'>
                                     {p.species}
                                 </div>
                             </div>

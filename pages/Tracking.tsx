@@ -1,13 +1,12 @@
 import React, { useContext } from "react";
 
-
-import NavBar from "./components/NavBar";
-import TrackingPageBody from "./components/TrackingPageBody";
+import NavBar from "./components/util/NavBar";
+import TrackingPageBody from "./components/tracking/TrackingPageBody";
 import Link from "next/link";
 import useAuthRedirect from "../hooks/useAuthRedirect";
 import useAuth from "../hooks/useAuth";
 import PlantContext from "../context/PlantContext";
-import Container from "./components/BlurredFlowerContainer"
+import Container from "./components/util/Container"
 
 const Home = () => {
 
@@ -19,9 +18,9 @@ const Home = () => {
 
   return (
     <Container>
-      <NavBar/>
+      {/* <NavBar/> */}
 
-      <div className='min-h-screen text-gray-100 text-opacity-90 pb-12 flex flex-col items-center m-auto '>
+      <div className='min-h-screen py-12 flex flex-col items-center m-auto '>
         {plants && plants.length > 0 ?
           <TrackingPageBody
             uid={user?.uid}
@@ -38,7 +37,7 @@ const Home = () => {
             You aren&apos;t tracking any plants yet...
             <Link href="/AddPlantTrackingDetails" passHref >
               <div
-                className="ml-4 p-4 text-gray-100 bg-[#2bb32b] hover:bg-[#32cd32] cursor-pointer"
+                className="ml-4 p-4 bg-[#2bb32b] hover:bg-[#32cd32] cursor-pointer"
                 style={{ borderRadius: '222px 0' }}
               >
                 Add a plant +

@@ -8,16 +8,16 @@ import Image from 'next/image'
 import { formatDistance, compareAsc } from 'date-fns'
 import ReactLoading from 'react-loading'
 
-import Plant from '../../domain/Plant';
-import { feedPlantInDB, getUpdatesForPlant, updateDaysBetweenWatering } from '../../service/PlantService';
-import ResizablePanel from './ResizablePanel';
-import Update from '../../domain/Update';
+import Plant from '../../../domain/Plant';
+import { feedPlantInDB, getUpdatesForPlant, updateDaysBetweenWatering } from '../../../service/PlantService';
+import ResizablePanel from '../util/ResizablePanel';
+import Update from '../../../domain/Update';
 import TimelineInCard from './TimelineInCard';
-import useWindowDimensions from '../../hooks/useWindowDimensions';
+import useWindowDimensions from '../../../hooks/useWindowDimensions';
 import { IoPencilOutline } from '@react-icons/all-files/io5/IoPencilOutline';
 import { IoTrash } from '@react-icons/all-files/io5/IoTrash';
-import PlantContext from '../../context/PlantContext';
-import ImageWithZoom from './ImageWithZoom';
+import PlantContext from '../../../context/PlantContext';
+import ImageWithZoom from '../util/ImageWithZoom';
 
 interface Props {
     plant: Plant;
@@ -105,7 +105,7 @@ const TrackingCardSmall = (props: Props) => {
             </div>
             <div className="w-2/3 relative h-fit ">
                 <div className='flex justify-between w-full h-full pr-2 pt-3 //pb-2 '>
-                    <h3 className='text-left text-xl ml-4 mr-2 max-w-full poppins italic text-gray-100 text-opacity-70'>
+                    <h3 className='text-left text-xl ml-4 mr-2 max-w-full italic text-gray-100 text-opacity-70'>
                         {plant.species}
                     </h3>
                 </div>
@@ -133,7 +133,7 @@ const TrackingCardSmall = (props: Props) => {
                     </div>
                     <div className=" flex justify-center py-1 text-lg">
                         <div>
-                            <div className='futura text-xs flex items-center text-gray-100 text-opacity-70 '>
+                            <div className='text-xs flex items-center text-gray-100 text-opacity-70 '>
                                 <>
                                     Water every&nbsp;
                                 </>

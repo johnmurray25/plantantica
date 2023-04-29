@@ -1,16 +1,17 @@
-import { createUserWithEmailAndPassword, deleteUser, User } from 'firebase/auth'
+import { browserLocalPersistence, createUserWithEmailAndPassword, deleteUser, User } from 'firebase/auth'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { useCallback, useEffect, useState } from 'react'
 import auth from '../firebase/auth'
+import useAuth from '../hooks/useAuth'
 import { getUserByUsername, initializeUser } from '../service/UserService'
-import SignInWithGoogleButton from './components/SignInWithGoogleButton'
-import TextField from './components/TextField2'
-import TreeLogo from './components/TreeLogo'
+import SignInWithGoogleButton from './components/forms/SignInWithGoogleButton'
+import TextField from './components/forms/TextField2'
+import TreeLogo from './components/util/TreeLogo'
 
 const SignUp = () => {
     const router = useRouter()
-    const [user, setUser] = useState<User>(null)
+    const { user } = useAuth()
     const [email, setEmail] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('');
@@ -49,7 +50,7 @@ const SignUp = () => {
             if (await initializeUser(newCredential.user, username)) {
                 // sendEmailVerification(newCredential.user)
                 // .then(() => alert("We are sending you an email verification link. Please open it to complete the sign up process"))
-                setUser(newCredential.user)
+                // setUser(newCredential.user)
             } else {
                 deleteUser(newCredential.user)
                 alert("An error occurred. Please try again later")
@@ -74,13 +75,18 @@ const SignUp = () => {
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyPress)
-        if (user) {
-            router.push('/profile')
-        }
         return () => {
             document.removeEventListener('keydown', handleKeyPress)
         }
-    }, [handleKeyPress, router, user])
+    }, [handleKeyPress])
+
+    useEffect(() => {
+        if (user) {
+            console.log("user: " + user.uid)
+            router.push('/profile');
+        }
+        auth.setPersistence(browserLocalPersistence)
+    }, [router, user])
 
     return (
         <div className='antialiased text-gray-100 min-h-screen text-center pt-2 text-xl' id='firebaseui-auth-container' >
@@ -88,7 +94,7 @@ const SignUp = () => {
                 <h1 className='font-bold text-3xl'>
                     PLANTANTICA
                 </h1>
-                <div className='flex justify-center'>
+                <div className='flex justify-center text-primary dark:text-highlight'>
                     <TreeLogo height={140} width={150} />
                 </div>
             </Link>
@@ -135,7 +141,7 @@ const SignUp = () => {
             <div className='flex justify-between items-center text-left w-3/5 m-auto -translate-x-12'>
                 <div className='text-sm'>
                     Already have an account? &nbsp;
-                    <Link href="/auth" className='text-primary focus:underline hover:underline'>
+                    <Link href="/auth" className='text-primary dark:text-highlight focus:underline hover:underline'>
                         Sign in
                     </Link>
                 </div>

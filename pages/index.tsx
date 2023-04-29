@@ -2,9 +2,9 @@ import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 
 import useAuth from "../hooks/useAuth";
-import HomePage from "./components/HomePage";
-import LandingPage from "./components/LandingPage";
-import LoadingScreen from "./components/LoadingScreen";
+import HomePage from "./components/home/HomePage";
+import LandingPage from "./components/home/LandingPage";
+import LoadingScreen from "./components/util/LoadingScreen";
 
 export default function Home() {
 

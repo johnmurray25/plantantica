@@ -1,14 +1,12 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
-import Plant from '../../domain/Plant'
+import Plant from '../../../domain/Plant'
 import MiniTrackingCard from './MiniTrackingCard';
-import { IoList } from '@react-icons/all-files/io5/IoList';
-import { IoGrid } from '@react-icons/all-files/io5/IoGrid';
-import useWindowDimensions from '../../hooks/useWindowDimensions';
+import useWindowDimensions from '../../../hooks/useWindowDimensions';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import db from '../../firebase/db';
+import db from '../../../firebase/db';
 import { useRouter } from 'next/router';
-import { waterPlantInDB } from '../../service/PlantService';
-import PlantContext from '../../context/PlantContext';
+import { waterPlantInDB } from '../../../service/PlantService';
+import PlantContext from '../../../context/PlantContext';
 import MyPlants from './MyPlants';
 import { AnimatePresence, motion } from 'framer-motion';
 import ReactLoading from "react-loading";
@@ -133,7 +131,7 @@ const TrackingPageBody = (props: Props) => {
         if (!columns) {
             getViewPreference(uid).then(setColumns)
                 .catch(e => {
-                    console.error(e) 
+                    console.error(e)
                     setColumns(1);
                 })
         }
@@ -168,9 +166,9 @@ const TrackingPageBody = (props: Props) => {
                     </button>
             </div> 
                     */}
-            <div className="text-sm flex justify-between items-center pr-2 pl-2 pb-1 pt-2 w-full max-w-[1200px]">
-                <p className='inter text-lg'>
-                    You&apos;re tracking {plants?.length} plants
+            <div className="text-sm flex justify-between items-center px-2 pb-1 pt-2 w-full max-w-[1200px]">
+                <p className='inter font-extralight text-[20px] tracking-wider text-primary'>
+                    Tracking {plants?.length} plants
                 </p>
                 {/* <div className="sticky top-0">
                     <div className={`flex justify-end items-center mb-2 w-fit`}>
@@ -190,14 +188,18 @@ const TrackingPageBody = (props: Props) => {
                     </div>
                 </div> */}
                 <button
-                    className="flex items-center text-gray-100 bg-opacity-70 backdrop-blur-sm justify-between py-3 px-8  bg-primary hover:bg-primary p-2 transition-colors "
-                    style={{ borderRadius: '222px 0px'}}
+                    className="flex rounded border border-black border-opacity-50 justify-center items-center text-gray-900 backdrop-blur-sm pt-2 pb-1 px-4 dark:bg-slate dark:bg-opacity-60 bg-gray-100 bg-opacity-50 hover:bg-primary p-2 transition-colors "
                     onClick={() => router.push("/AddPlantTrackingDetails")}
                 >
-                    <div>
-                        Add a plant&nbsp;
-                    </div>
-                    <div className='text-2xl text-green-400 active:text-white '>+</div>
+                    <label className='inter lowercase flex items-center text-[14px]' style={{textDecoration:"none"}}>
+                        <span className='uppercase'>
+                            A
+                        </span>
+                        dd plant&nbsp;
+                        <div className='font-bold translate-x-0.5'>
+                            +
+                        </div>
+                    </label>
                 </button>
             </div>
             {columns == null ?

@@ -6,11 +6,11 @@ import ReactLoading from 'react-loading'
 
 import db from '../firebase/db';
 import Plant from "../domain/Plant";
-import FileInput from "./components/FileInput";
+import FileInput from "./components/forms/FileInput";
 import Image from "next/image";
 import { compressImage, uploadFile, getImageUrl, deleteImage } from "../service/FileService";
-import GenericDatePicker from "./components/GenericDatePicker";
-import TextField from "./components/TextField";
+import GenericDatePicker from "./components/forms/GenericDatePicker";
+import TextField from "./components/forms/TextField";
 import useAuth from "../hooks/useAuth";
 import { getDownloadURL, ref } from "firebase/storage";
 import storage from "../firebase/storage";
@@ -50,6 +50,14 @@ const savePlantToDB = async (update: boolean, plant: { species: any; dateLastWat
     docRef = await addDoc(collection(doc(db, 'users', uid), 'plantTrackingDetails'), plantTrackingDetails);
     id = docRef.id
     console.log(`Document written with ID: ${docRef.id}`);
+    // Save event to Activity collection
+    const activityCollectionRef = collection(db, 'activity')
+    const activityDoc = await addDoc(activityCollectionRef, {
+      uid,
+      plantId: [plant.id],
+      type: 'add', 
+    })
+    console.log(`Activity document written with ID: ${activityDoc.id}`);
   }
   return id;
 }
@@ -177,24 +185,24 @@ const AddPlantTrackingDetails = (props: Props) => {
   }
 
   return (
-    <div className='antialiased text-lg text-stone-100 min-h-screen' >
+    <div className='antialiased text-lg text-black text-opacity-70 tracking-tighter min-h-screen' >
       {loadingStatus ?
         <div className='flex justify-center items-center pt-60' >
           {loadingStatus} <ReactLoading type='bars' color="#FFF7ED" />
         </div>
         :
         <div>
-          <div className="text-3xl text-center italic text-zinc-100 border-4 border-x-0 border-t-0 border-zinc-200 border-dotted w-full p-6 bg-lime-900">
+          <div className="text-[28px] font-light tracking-tighter text-center uppercase italic text-gray-100 text-opacity-80 w-full px-2 py-4 bg-primary bg-opacity-50">
             <a className='pt-20'>
               {`${plant ? 'Edit' : 'Add'} Plant Info`}
             </a>
           </div>
-          <div className='flex flex-col items-center m-auto p-4 '>
+          <div className='flex flex-col items-center m-auto p-4'>
             {/** Divide form content by page */}
             <div className=' min-h-100 top-50'>
               {/* // Page 1: General Plant Info */}
               <div>
-                <div className="relative  m-auto w-fit p-1">
+                <div className="relative w-fit  m-auto p-1">
                   {imageUrl ?
                     <div>
                       <Image
@@ -221,7 +229,7 @@ const AddPlantTrackingDetails = (props: Props) => {
                     />
                   }
                 </div>
-                < div className='grid grid-cols-2 gap-x-1 gap-y-6 items-center pt-6' >
+                < div className='w-full items-center pt-6 ' >
                   <label htmlFor='species'>
                     Species:
                   </label>
@@ -229,8 +237,10 @@ const AddPlantTrackingDetails = (props: Props) => {
                     placeholder='Enter a species...'
                     value={species}
                     onChange={setSpecies}
-                    textarea={true}
+                    textarea={false}
                     width="full"
+                    bgColor="gray-400"
+                    color="gray-100"
                   />
                   {/* <label htmlFor="lightReq">
                     Requires
@@ -248,12 +258,12 @@ const AddPlantTrackingDetails = (props: Props) => {
                 </div>
               </div>
               <div>
-                <div className='flex flex-row justify-center items-center pt-6'>
+                <div className='flex justify-center items-center pt-6'>
                   <label htmlFor="minDays">
                     Water every &nbsp;
                   </label>
                   <input
-                    className='bg-orange-50 p-2 px-0 my-2 text-slate text-center w-14'
+                    className='bg-orange-50 p-2 px-0 my-2 text-slate text-center w-40'
                     type="text"
                     name="minDays"
                     id="minDays"
@@ -302,7 +312,7 @@ const AddPlantTrackingDetails = (props: Props) => {
                         &#10060;
                       </a>}
                   </div>
-                  <div className='flex justify-center items-center'>
+                  {/* <div className='flex justify-center items-center'>
                     <GenericDatePicker
                       label='Feed next on'
                       value={dateToFeedNext}
@@ -318,7 +328,7 @@ const AddPlantTrackingDetails = (props: Props) => {
                         &#10060;
                       </a>
                     }
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div>
@@ -333,9 +343,9 @@ const AddPlantTrackingDetails = (props: Props) => {
                   />
                 </div>
                 {/* Other care instructions */}
-                <div className='grid grid-cols-2 gap-x-2 gap-y-6 m-7 items-center pr-10' >
+                <div className='text-left  my-6' >
                   <label htmlFor='species'>
-                    Other care instructions
+                    Other care instructions:
                   </label>
                   <TextField
                     placeholder=''

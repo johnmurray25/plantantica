@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import Image from 'next/image';
 
-import NavBar from '../components/NavBar';
+import NavBar from '../components/util/NavBar';
 import { getProfilePictureUrl } from '../../service/FileService';
 import { useRouter } from 'next/router';
 import { getUserDBRecord, getUserByUsername } from '../../service/UserService';
 import Plant from '../../domain/Plant';
-import DisplayCard from '../components/DisplayCard'
+import DisplayCard from '../components/tracking/DisplayCard'
 import DBUser from '../../domain/DBUser';
 import { getPlants } from '../../service/PlantService';
 
@@ -111,7 +111,7 @@ function Home() {
                                     </h2>
                                 </div>
                                 {/* username */}
-                                <p className='text-left p-3 rounded-lg m-2 ml-0 poppins font-black text-xl text-gray-50'>
+                                <p className='text-left p-3 rounded-lg m-2 ml-0 font-black text-xl text-gray-50'>
                                     @{user.username?.toLocaleUpperCase()}
                                 </p>
                                 {user.dateCreated &&
