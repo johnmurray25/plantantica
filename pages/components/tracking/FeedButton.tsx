@@ -14,8 +14,8 @@ const FeedButton = (props: {
                 }
                 feedPlant()
             }}
-            className='bg-gray-100 bg-opacity-30 border-[0.5px] border-gray-900 flex items-center hover:bg-gray-100 hover:bg-opacity-40 //text-green-800 
-                            cursor-pointer px-3 py-1 rounded h-fit  transition-colors'
+            className='bg-gray-100 bg-opacity-30 border-[0.5px] border-gray-900 flex items-center hover:bg-gray-100 hover:bg-opacity-70 transition-colors 
+                            cursor-pointer rounded h-8 justify-center w-20'
         >
             Fertilize
             {/* <IoLeafOutline className='cursor-pointer text-xl' /> */}

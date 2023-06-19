@@ -17,8 +17,8 @@ const WaterButton = (props: {
                 // let wnext = 
                 // setWaterNext(getWateringStatus(p?.dateToWaterNext))
             }}
-            className='bg-gray-100 bg-opacity-30 border-[0.5px] border-gray-900 flex items-center 
-                            cursor-pointer px-3 py-1 rounded '
+            className='bg-gray-100 bg-opacity-30 border-[0.5px] border-gray-900 flex items-center justify-center
+                            cursor-pointer px-3 h-8 rounded w-20 hover:bg-gray-100 hover:bg-opacity-70 transition-colors '
         >
             Water
             {/* <IoWater className="text-xl" /> */}

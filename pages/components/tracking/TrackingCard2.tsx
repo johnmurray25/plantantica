@@ -170,7 +170,7 @@ const TrackingCard2 = (props: Props) => {
                     <div className="flex justify-end items-center text-sm mt-1 mb-2 mr-4">
                         <button
                             className="mr-2 border-[0.5px] text-[18px] border-black py-0.5 px-4 mt-1 text-black text-opacity-60 bg-gray-100 bg-opacity-30 rounded
-                                 hover:bg-primary hover:bg-opacity-20 hover:text-green-100 transition-colors"
+                                hover:bg-gray-100 hover:bg-opacity-70 transition-colors h-5 flex justify-center items-center"
                             onClick={() => setShowUpdates(!showUpdates)}
                         >
                             {/* Updates */}
@@ -181,8 +181,8 @@ const TrackingCard2 = (props: Props) => {
                             }
                         </button>
                         <button
-                            className="text-black border-[0.5px] border-black text-opacity-80 text-[18px] rounded h-fit bg-gray-100 bg-opacity-30 px-2  py-0.5
-                              //hover:bg-opacity-60 //hover:text-green-900  mt-1 transition-colors"
+                            className="text-black border-[0.5px] border-black text-opacity-80 text-[18px] rounded bg-gray-100 bg-opacity-30 px-2  py-0.5
+                              mt-1 hover:bg-gray-100 hover:bg-opacity-70 transition-colors h-5 flex items-center justify-center"
                             onClick={() => props.goToAddUpdateScreen(plant?.id)}
                         >
                             +

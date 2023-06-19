@@ -188,7 +188,7 @@ const TrackingPageBody = (props: Props) => {
                     </div>
                 </div> */}
                 <button
-                    className="flex rounded border border-black border-opacity-50 justify-center items-center text-gray-900 backdrop-blur-sm pt-2 pb-1 px-4 dark:bg-slate dark:bg-opacity-60 bg-gray-100 bg-opacity-50 hover:bg-primary p-2 transition-colors "
+                    className="flex rounded border border-black border-opacity-50 justify-center items-center text-gray-900 backdrop-blur-sm pt-2 pb-1 px-4 dark:bg-slate dark:bg-opacity-60 bg-gray-100 bg-opacity-50 hover:bg-gray-100 hover:bg-opacity-70 p-2 transition-colors "
                     onClick={() => router.push("/AddPlantTrackingDetails")}
                 >
                     <label className='inter lowercase flex items-center text-[14px]' style={{textDecoration:"none"}}>
