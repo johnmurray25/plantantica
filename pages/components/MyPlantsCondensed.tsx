@@ -9,6 +9,7 @@ import Plant from '../../domain/Plant';
 import useAuth from '../../hooks/useAuth';
 import useWindowDimensions from '../../hooks/useWindowDimensions';
 import { waterPlantInDB } from '../../service/PlantService';
+import { getImageUrl } from '../../service/FileService';
 import TrackingCardSmall from './TrackingCardSmall';
 
 interface Props {
@@ -106,6 +107,7 @@ const MyPlantsCondensed = () => {
                             <div key={p.id} className='w-[120px] h-fit relative flex-col m-2'>
                                 <Image
                                     src={p.imageUrl}
+                                    // src={getImageUrl(p.picture, user.uid)}
                                     alt={p.species}
                                     width={120}
                                     height={120}

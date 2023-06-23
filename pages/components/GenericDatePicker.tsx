@@ -20,7 +20,7 @@ const GenericDatePicker: React.FC<Props> = (props) => {
                     label={props.label}
                     value={props.value}
                     onChange={(newValue) => props.onSelect(newValue)}
-                    renderInput={(params) => <TextField {...params} />}
+                    // renderInput={(params) => <TextField {...params} />}
                 />
             </LocalizationProvider>
         </div>

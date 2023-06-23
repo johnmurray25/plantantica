@@ -30,23 +30,26 @@ export const mapDocsToPlants = async (docs: QueryDocumentSnapshot<DocumentData>[
             if (p.dateToFeedNext) {
                 res.dateToFeedNext = new Date(p.dateToFeedNext);
             }
-            if (!p.imageUrl && p.picture) {
+            // if (!p.imageUrl && p.picture) {
+            if (p.picture) {
                 console.log("Getting imageUrl")
                 try {
                     const downloadUrl = await getImageUrl(p.picture, uid);
                     res.imageUrl = downloadUrl
-                    setDoc(doc(db, `users/${uid}/plantTrackingDetails/${p.id}`),
-                        {
-                            imageUrl: downloadUrl
-                        },
-                        {
-                            merge: true,
-                        }
-                    ).then(() => console.log("Saved imageUrl to DB"))
+                    if (!p.imageUrl) {
+                        setDoc(doc(db, `users/${uid}/plantTrackingDetails/${p.id}`),
+                            {
+                                imageUrl: downloadUrl
+                            },
+                            {
+                                merge: true,
+                            }
+                        ).then(() => console.log("Saved imageUrl to DB"))
+                    }
                 } catch (e) {
                     console.error(e)
                 }
-            } 
+            }
             // res.updates = await getUpdatesForPlant(uid, p.id);
             return res;
         })
@@ -66,7 +69,7 @@ export const getPlants = async (uid: string): Promise<Plant[]> => {
     return Promise.all(plants)
 };
 
-export const deletePlantInDB= async (plant: Plant, uid: string) => {
+export const deletePlantInDB = async (plant: Plant, uid: string) => {
     if (plant.picture) {
         deleteImage(plant.picture, uid)
             .catch(console.error);

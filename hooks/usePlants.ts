@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import Plant from '../domain/Plant';
+import { getImageUrl } from '../service/FileService';
 import { deletePlantInDB, getPlants } from '../service/PlantService';
 import useAuth from './useAuth';
 
@@ -24,6 +25,10 @@ const usePlants = () => {
         setIsLoading(true);
         try {
             const res = await getPlants(user.uid)
+            res.forEach(async p => {
+                p.imageUrl = await getImageUrl(p.picture, user.uid);
+                console.log('got image url for ' + p.species + ": " + p.imageUrl)
+            })
             setPlants(res)
         } catch (e) {
             console.error(e)
